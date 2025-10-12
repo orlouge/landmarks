@@ -1,0 +1,6 @@
+{
+  "type": "landmarks:negate",
+  "argument": {
+    "type": "landmarks:y"
+  }
+}

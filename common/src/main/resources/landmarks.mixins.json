@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "package": "io.github.orlouge.landmarks.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "minVersion": "0.8",
+  "client": [
+  ],
+  "mixins": [
+    "ChunkRegionMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

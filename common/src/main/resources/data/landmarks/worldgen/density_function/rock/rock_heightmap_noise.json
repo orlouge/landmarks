@@ -1,0 +1,8 @@
+{
+  "type": "landmarks:noise2d",
+  "xz_scale": {
+    "type": "landmarks:feature_user_parameter",
+    "parameter": "horizontal_scale"
+  },
+  "seed": 0
+}

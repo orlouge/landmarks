@@ -1,0 +1,54 @@
+{
+  "type": "landmarks:feature_cache",
+  "key": "rock_normalized_noisy_relative_height",
+  "argument": {
+    "type": "minecraft:add",
+    "argument1": {
+      "type": "minecraft:mul",
+      "argument1": {
+        "type": "minecraft:mul",
+        "argument1": {
+          "type": "landmarks:shift",
+          "input": "landmarks:relative_feature_height_normalized",
+          "y_shift": {
+            "type": "minecraft:add",
+            "argument1": {
+              "type": "landmarks:power",
+              "argument2": { "type": "minecraft:constant", "argument": 1.5 },
+              "argument1": "landmarks:rock/rock_3d_noise_detail"
+            },
+            "argument2": {
+              "type": "minecraft:clamp",
+              "min": 0,
+              "max": 0.3,
+              "input": {
+                "type": "minecraft:add",
+                "argument1": { "type": "landmarks:negate", "argument": "landmarks:rock/rock_heightmap_filtered" },
+                "argument2": { "type": "minecraft:constant", "argument": 1 }
+              }
+            }
+          }
+        },
+        "argument2": {
+          "type": "landmarks:feature_user_parameter",
+          "parameter": "layered_noise_range"
+        }
+      },
+      "argument2": {
+        "type": "minecraft:add",
+        "argument1": { "type": "minecraft:constant", "argument": 1 },
+        "argument2": {
+          "type": "landmarks:negate",
+          "argument": {
+            "type": "landmarks:feature_user_parameter",
+            "parameter": "layered_noise_min"
+          }
+        }
+      }
+    },
+    "argument2": {
+      "type": "landmarks:feature_user_parameter",
+      "parameter": "layered_noise_min"
+    }
+  }
+}

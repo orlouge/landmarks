@@ -1,0 +1,6 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#landmarks:has_fairy_rings",
+  "features": "landmarks:fairy_ring",
+  "step": "vegetal_decoration"
+}

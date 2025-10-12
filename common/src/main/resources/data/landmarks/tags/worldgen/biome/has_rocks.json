@@ -1,0 +1,6 @@
+{
+  "values": [
+    "#minecraft:is_overworld",
+    "#landmarks:has_overgrown_rocks"
+  ]
+}

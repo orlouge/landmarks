@@ -1,0 +1,803 @@
+{
+  "type": "landmarks:surface_noise",
+  "config": [
+    {
+      "usable_space_above": "#landmarks:rocks_replace",
+      "usable_space_below": "#landmarks:rocks_place_on",
+      "min_width": [
+        10,
+        { "input": 48, "any_variant": ["huge", "ocean_rocks_shallow", "ocean_rocks_deep"], "weight": 100}
+      ],
+      "max_width": [30, 48, 48],
+      "min_surface": [
+        50,
+        { "input": 5, "any_variant": ["froglight"], "weight": 100}
+      ],
+      "min_height": [
+        3, 5, 5, 5,
+        { "input": 16, "has_variants": ["ocean_rocks_shallow"], "weight": 1000},
+        { "input": 34, "has_variants": ["ocean_rocks_deep"], "weight": 1000}
+      ],
+      "max_height": [
+        { "input": 5, "any_variant": ["froglight", "prismarine"], "weight": 100000},
+        5, 5, 5, 5, 7, 7, 7, 7, 10, 10, 10, 10, 10, 15, 30,
+        { "input": 40, "any_variant": ["ocean_rocks_shallow"], "weight": 50},
+        { "input": 60, "any_variant": ["ocean_rocks_deep"], "weight": 50},
+        { "input": 80, "any_variant": ["huge"], "weight": 100},
+        { "input": 250, "has_variants": ["huge"], "weight": 10}
+      ],
+      "min_depth": 1,
+      "max_depth": 1,
+      "circular_border": true,
+      "density_functions": {
+        "rock_density": "landmarks:rock/rock_density",
+        "rock_heightmap": "landmarks:rock/rock_heightmap",
+        "layered_noise": [
+          { "function": "landmarks:rock/noisy_relative_height", "has_variants": ["regular_layered_noise"] },
+          {
+            "has_variants": ["inverted_layered_noise"],
+            "function": {
+              "type": "minecraft:add",
+              "argument1": { "type": "minecraft:constant", "argument": 1 },
+              "argument2": { "type": "landmarks:negate", "argument": "landmarks:rock/noisy_relative_height"}
+            }
+          }
+        ]
+      },
+      "user_parameters": [
+        {
+          "horizontal_scale": [0.05, 0.06, 0.07, 0.08, 0.09, 0.1],
+          "horizontal_scale_detail": [0.05, 0.08, 0.12, 0.15, 0.2],
+          "horizontal_scale_3d": [0.05, 0.08, 0.1, 0.12, 0.15, 0.2],
+          "vertical_scale": [0.06, 0.08, 0.1, 0.12],
+          "spikiness": [0.5, 0.7, 0.8, 0.9, 1, 1.1, 1.3],
+          "slab_threshold": 0.2,
+          "density": [-0.3, -0.4, -0.5, -0.6, -0.7, -0.8],
+          "density3d": [0.3, 0.2, 0, -0.1, -0.2, -0.3, -0.4, -0.6, -0.7, -0.8, -0.9, -0.9, -0.9, -0.9],
+          "layered_noise_min": [0, 0, 0, 0, 0.2, 0.4, 0.6, 0.8],
+          "layered_noise_range": [1, 1, 1, 1, 0.8, 0.6, 0.4, 0.2, 0.05]
+        },
+        {
+          "any_variant": ["ocean_rocks_deep", "ocean_rocks_shallow"],
+          "weight": 10000000,
+          "params": {
+            "horizontal_scale": [0.07, 0.06, 0.05, 0.04, 0.03, 0.02],
+            "horizontal_scale_detail": [0.06, 0.07, 0.08, 0.09, 0.1, 0.12, 0.14],
+            "horizontal_scale_3d": [0.06, 0.07, 0.08, 0.09, 0.1],
+            "vertical_scale": [0.06, 0.07, 0.08, 0.09, 0.1],
+            "spikiness": [0.3, 0.5, 0.7, 0.9, 1.1],
+            "slab_threshold": 0.2,
+            "density": [-0.4, -0.2, 0, 0.2, 0.4],
+            "density3d": [0, -0.3, -0.8, -0.9, -0.9, -0.9, -0.9, -0.9, -0.9, -0.9, -0.9, -0.9, -0.9, -0.9, -0.9, -0.9, -0.9, -0.9, -0.95, -0.95, -0.95, -0.95, -0.95, -0.95, -0.99, -0.99],
+            "layered_noise_min": [0, 0, 0, 0, 0.2, 0.5, 0.8],
+            "layered_noise_range": [1, 1, 1, 1, 0.8, 0.4, 0.05]
+          }
+        }
+      ],
+      "variants": [
+        [
+          { "name": "ocean_rocks_deep", "biome": "#landmarks:has_ocean_rocks_deep" },
+          { "name": "ocean_rocks_shallow", "biome": "#landmarks:has_ocean_rocks_shallow" },
+          { "name": "surface_rocks", "weight": 0.000000001 }
+        ],
+        [
+          { "name": "normal", "weight": 200 },
+          { "name": "huge", "weight": 1 }
+        ],
+        [
+          "stone",
+          {
+            "name": "snow",
+            "biome": "#c:is_snowy",
+            "origin": ["minecraft:grass_block"],
+            "weight": 5
+          },
+          {
+            "name": "froglight",
+            "biome": "#c:is_swamp",
+            "origin": ["minecraft:dirt", "minecraft:clay", "minecraft:gravel"],
+            "weight": 500
+          },
+          {
+            "name": "prismarine",
+            "biome": "#c:is_deep_ocean",
+            "origin": ["minecraft:dirt", "minecraft:clay", "minecraft:gravel"],
+            "weight": 10
+          }
+        ],
+        [
+          { "name": "overgrown", "biome": "#landmarks:has_overgrown_rocks", "any_variant": ["stone", "dirt"] },
+          { "name": "dead", "weight": 0.5 },
+          { "name": "dead", "weight": 8, "biome": "#minecraft:is_ocean" }
+        ],
+        [
+          { "name": "flowers_1", "has_variants": ["overgrown"] },
+          { "name": "flowers_2", "has_variants": ["overgrown"] },
+          { "name": "flowers_3", "has_variants": ["overgrown"] },
+          { "name": "no_flowers" }
+        ],
+        [
+          { "name": "andesite", "has_variants": ["stone"] },
+          { "name": "tuff_to_stone", "has_variants": ["stone"] },
+          { "name": "smooth_basalt_to_stone", "has_variants": ["stone"] },
+          { "name": "dripstone_to_stone", "has_variants": ["stone"] },
+          { "name": "dripstone", "has_variants": ["stone"] },
+          { "name": "diorite", "has_variants": ["stone"] },
+          { "name": "granite_to_stone", "has_variants": ["stone"] },
+          { "name": "calcite_to_stone", "has_variants": ["stone"] },
+          { "name": "calcite_to_tuff", "has_variants": ["stone"] },
+          { "name": "stone_to_moss", "has_variants": ["stone", "overgrown"] },
+          {
+            "name": "smooth_basalt_to_sandstone",
+            "has_variants": ["stone"],
+            "biome": "#c:is_sandy",
+            "origin": ["minecraft:sand", "minecraft:sandstone"],
+            "weight": 10
+          },
+          {
+            "name": "sand_bone",
+            "has_variants": ["stone"],
+            "biome": "#c:is_sandy",
+            "origin": ["minecraft:sand", "minecraft:sandstone"],
+            "weight": 10
+          },
+          {
+            "name": "tuff_to_sandstone",
+            "has_variants": ["stone"],
+            "biome": "#c:is_sandy",
+            "origin": ["minecraft:sand", "minecraft:sandstone"],
+            "weight": 10
+          },
+          {
+            "name": "sandstone",
+            "has_variants": ["stone"],
+            "biome": "#c:is_desert",
+            "origin": ["minecraft:sand", "minecraft:sandstone"],
+            "weight": 20
+          },
+          {
+            "name": "red_sandstone",
+            "has_variants": ["stone"],
+            "biome": "#minecraft:is_badlands",
+            "origin": ["minecraft:red_sand", "minecraft:red_sandstone"],
+            "weight": 40
+          },
+          {
+            "name": "sandstone_coral",
+            "has_variants": ["stone"],
+            "biome": "#minecraft:is_beach",
+            "origin": ["minecraft:sand", "minecraft:sandstone"],
+            "weight": 20
+          },
+          {
+            "name": "sandstone_dripstone",
+            "has_variants": ["stone"],
+            "biome": "#minecraft:is_beach",
+            "origin": ["minecraft:sand", "minecraft:sandstone"],
+            "weight": 20
+          }
+        ],
+        [
+          {
+            "name": "mossy",
+            "has_variants": ["overgrown"],
+            "any_variant": ["andesite", "tuff_to_stone", "calcite_to_stone", "calcite_to_tuff", "stone_to_moss"]
+          },
+          { "name": "not_mossy", "weight": 0.3 }
+        ],
+        [
+          {
+            "name": "inverted_layered_noise",
+            "any_variant": [
+              "tuff_to_stone", "granite_to_stone", "calcite_to_stone",
+              "dripstone_to_stone", "smooth_basalt_to_stone", "smooth_basalt_to_sandstone",
+              "dripstone", "tuff_to_sandstone", "calcite_to_tuff"
+            ]
+          },
+          { "name": "regular_layered_noise", "weight": 1 }
+        ],
+        [
+          "no_abort",
+          { "name": "abort", "any_variant": ["prismarine"], "weight": 10}
+        ]
+      ],
+      "palette": {
+        "entries": {
+          "extra_rocks": [
+            {
+              "block": "mossy_cobblestone",
+              "has_variants": ["mossy"]
+            }
+          ],
+          "extra_slabs": [
+            {
+              "block": "mossy_cobblestone_slab",
+              "has_variants": ["mossy"]
+            }
+          ],
+          "inner5": [
+            {
+              "block": "stone;stone;andesite;andesite;%?extra_rocks",
+              "any_variant": ["andesite", "tuff_to_stone", "smooth_basalt_to_stone", "dripstone_to_stone", "granite_to_stone", "calcite_to_stone"]
+            },
+            {
+              "block": "tuff;tuff;tuff;stone;%?extra_rocks",
+              "any_variant": ["calcite_to_tuff"]
+            },
+            {
+              "block": "mossy_cobblestone;moss_block;grass_block;moss_block",
+              "any_variant": ["stone_to_moss"]
+            },
+            {
+              "block": "sandstone;sandstone;sandstone;sandstone;sandstone;smooth_sandstone;smooth_sandstone;bone_block[axis=x];bone_block[axis=y];bone_block[axis=z];%?extra_rocks",
+              "any_variant": ["smooth_basalt_to_sandstone"]
+            },
+            {
+              "block": "sandstone;smooth_sandstone;%?extra_rocks",
+              "any_variant": ["tuff_to_sandstone", "sandstone"]
+            },
+            {
+              "block": "red_sandstone;smooth_red_sandstone;terracotta;%?extra_rocks",
+              "any_variant": ["red_sandstone"]
+            },
+            {
+              "block": "sandstone;sandstone;sandstone;sand;sandstone;smooth_sandstone;sand;sandstone;smooth_sandstone;sand;sandstone;smooth_sandstone;sand;sandstone;smooth_sandstone;dead_brain_coral_block;dead_fire_coral_block;dead_bubble_coral_block;dead_horn_coral_block;dead_tube_coral_block",
+              "any_variant": ["sandstone_coral"]
+            },
+            {
+              "block": "sandstone;sandstone;sandstone;sand;sandstone;smooth_sandstone;sand;sandstone;smooth_sandstone;sand;sandstone;smooth_sandstone;sand;sandstone;smooth_sandstone;dripstone_block;dripstone_block;dripstone_block;dripstone_block;dripstone_block;dripstone_block;dripstone_block;dripstone_block;dripstone_block",
+              "any_variant": ["sandstone_dripstone"]
+            },
+            {
+              "block": "snow_block",
+              "any_variant": ["snow"]
+            },
+            {
+              "block": "mud",
+              "any_variant": ["froglight"]
+            },
+            {
+              "block": "prismarine",
+              "any_variant": ["prismarine"]
+            },
+            {
+              "block": "%inner1",
+              "weight": 0.00000000000001
+            }
+          ],
+          "inner4": [
+            {
+              "block": "stone;andesite;cobblestone;andesite;%?extra_rocks",
+              "any_variant": ["andesite", "tuff_to_stone"]
+            },
+            {
+              "block": "stone;stone;cobblestone;tuff;%?extra_rocks",
+              "any_variant": ["smooth_basalt_to_stone"]
+            },
+            {
+              "block": "tuff;tuff;cobblestone;stone;%?extra_rocks",
+              "any_variant": ["dripstone_to_stone", "granite_to_stone"]
+            },
+            {
+              "block": "andesite;andesite;diorite;stone;%?extra_rocks",
+              "any_variant": ["calcite_to_stone"]
+            },
+            {
+              "block": "andesite;tuff;stone;%?extra_rocks",
+              "any_variant": ["calcite_to_tuff"]
+            },
+            {
+              "block": "mossy_cobblestone;cobblestone;moss_block",
+              "any_variant": ["stone_to_moss"]
+            },
+            {
+              "block": "sandstone;sandstone;sandstone;diorite;diorite;bone_block[axis=x];bone_block[axis=y];bone_block[axis=z];%?extra_rocks",
+              "any_variant": ["smooth_basalt_to_sandstone", "sand_bone"]
+            },
+            {
+              "block": "smooth_sandstone;white_terracotta;%?extra_rocks",
+              "any_variant": ["tuff_to_sandstone"]
+            },
+            {
+              "block": "packed_ice;snow_block;snow_block",
+              "any_variant": ["snow"]
+            },
+            {
+              "block": "pearlescent_froglight",
+              "any_variant": ["froglight"]
+            },
+            {
+              "block": "verdant_froglight",
+              "any_variant": ["froglight"]
+            },
+            {
+              "block": "ochre_froglight",
+              "any_variant": ["froglight"]
+            },
+            {
+              "block": "prismarine;prismarine;prismarine;prismarine;prismarine;prismarine;sea_lantern",
+              "any_variant": ["prismarine"]
+            },
+            {
+              "block": "%inner5",
+              "weight": 0.00000000000001
+            }
+          ],
+          "inner3": [
+            {
+              "block": "stone;cobblestone;cobblestone;tuff;tuff;%?extra_rocks",
+              "any_variant": ["tuff_to_stone"]
+            },
+            {
+              "block": "cobblestone;tuff;tuff;deepslate;cobbled_deepslate;%?extra_rocks",
+              "any_variant": ["smooth_basalt_to_stone"]
+            },
+            {
+              "block": "dripstone_block;tuff;tuff;tuff;cobblestone;%?extra_rocks",
+              "any_variant": ["dripstone_to_stone"]
+            },
+            {
+              "block": "granite;dripstone_block;tuff;tuff;%?extra_rocks",
+              "any_variant": ["granite_to_stone"]
+            },
+            {
+              "block": "andesite;diorite;diorite;%?extra_rocks",
+              "any_variant": ["calcite_to_stone", "smooth_basalt_to_sandstone"]
+            },
+            {
+              "block": "andesite;andesite;stone;calcite;diorite;%?extra_rocks",
+              "any_variant": ["calcite_to_tuff"]
+            },
+            {
+              "block": "mossy_cobblestone;cobblestone;stone;%?extra_rocks",
+              "any_variant": ["stone_to_moss"]
+            },
+            {
+              "block": "packed_mud;white_terracotta;%?extra_rocks",
+              "any_variant": ["tuff_to_sandstone"]
+            },
+            {
+              "block": "packed_ice;snow_block",
+              "any_variant": ["snow"]
+            },
+            {
+              "block": "%inner4",
+              "weight": 0.00000000000001
+            }
+          ],
+          "inner2": [
+            {
+              "block": "tuff;tuff;tuff;cobblestone;%?extra_rocks",
+              "any_variant": ["tuff_to_stone"]
+            },
+            {
+              "block": "smooth_basalt;cobblestone;tuff;tuff;deepslate;cobbled_deepslate;%?extra_rocks",
+              "any_variant": ["smooth_basalt_to_stone"]
+            },
+            {
+              "block": "dripstone_block;dripstone_block;tuff;tuff;cobblestone;%?extra_rocks",
+              "any_variant": ["dripstone_to_stone"]
+            },
+            {
+              "block": "granite;granite;dripstone_block;tuff;%?extra_rocks",
+              "any_variant": ["granite_to_stone"]
+            },
+            {
+              "block": "calcite;diorite;diorite;diorite;andesite;%?extra_rocks",
+              "any_variant": ["calcite_to_stone", "calcite_to_tuff", "diorite"]
+            },
+            {
+              "block": "stone;cobblestone;andesite;%?extra_rocks",
+              "any_variant": ["stone_to_moss"]
+            },
+            {
+              "block": "andesite;tuff;tuff;deepslate;cobbled_deepslate;%?extra_rocks",
+              "any_variant": ["smooth_basalt_to_sandstone"]
+            },
+            {
+              "block": "packed_mud;dripstone_block;%?extra_rocks",
+              "any_variant": ["tuff_to_sandstone", "dripstone"]
+            },
+            {
+              "block": "packed_ice",
+              "any_variant": ["snow"]
+            },
+            {
+              "block": "%inner3",
+              "weight": 0.00000000000001
+            }
+          ],
+          "inner1": [
+            {
+              "block": "tuff;tuff;tuff;tuff;tuff;tuff;cobblestone;%?extra_rocks",
+              "any_variant": ["tuff_to_stone"]
+            },
+            {
+              "block": "smooth_basalt;tuff;deepslate;smooth_basalt;%?extra_rocks",
+              "any_variant": ["smooth_basalt_to_stone", "smooth_basalt_to_sandstone"]
+            },
+            {
+              "block": "dripstone_block;dripstone_block;dripstone_block;tuff;%?extra_rocks",
+              "any_variant": ["dripstone_to_stone", "tuff_to_sandstone"]
+            },
+            {
+              "block": "granite;granite;granite;dripstone_block;%?extra_rocks",
+              "any_variant": ["granite_to_stone"]
+            },
+            {
+              "block": "calcite;calcite;calcite;diorite;%?extra_rocks",
+              "any_variant": ["calcite_to_stone", "calcite_to_tuff"]
+            },
+            {
+              "block": "stone;stone;andesite;andesite",
+              "any_variant": ["stone_to_moss"]
+            },
+            {
+              "block": "blue_ice;packed_ice",
+              "any_variant": ["snow"]
+            },
+            {
+              "block": "%inner2",
+              "weight": 0.00000000000001
+            }
+          ],
+          "top_full": [
+            {
+              "block": "%%surface_reset_state;*;moss_block",
+              "weight": 3,
+              "any_variant": ["mossy"]
+            },
+            {
+              "block": "%%surface_reset_state;%%surface_reset_state;*",
+              "weight": 2,
+              "any_variant": ["overgrown"]
+            },
+            {
+              "block": "mud",
+              "any_variant": ["froglight"]
+            },
+            {
+              "block": "prismarine",
+              "any_variant": ["prismarine"]
+            },
+            "*"
+          ],
+          "slab5": [
+            {
+              "block": "stone_slab;andesite_slab;cobblestone_slab;%?extra_slabs",
+              "any_variant": ["andesite", "tuff_to_stone", "smooth_basalt_to_stone", "dripstone_to_stone", "granite_to_stone", "calcite_to_stone"]
+            },
+            {
+              "block": "sandstone_slab;smooth_sandstone_slab;%?extra_slabs",
+              "any_variant": ["smooth_basalt_to_sandstone", "tuff_to_sandstone", "sandstone", "sand_bone", "sandstone_coral", "sandstone_dripstone"]
+            },
+            {
+              "block": "sandstone_red_slab;smooth_red_sandstone_slab;%?extra_slabs",
+              "any_variant": ["red_sandstone"]
+            },
+            {
+              "block": "snow[layers=4];snow[layers=5];snow[layers=6]",
+              "any_variant": ["snow"]
+            },
+            {
+              "block": "*",
+              "any_variant": ["calcite_to_tuff", "stone_to_moss", "dripstone"]
+            },
+            {
+              "block": "mud",
+              "any_variant": ["froglight"]
+            },
+            {
+              "block": "prismarine_slab",
+              "any_variant": ["prismarine"]
+            },
+            {
+              "block": "%slab1",
+              "weight": 0.00000000000001
+            }
+          ],
+          "slab4": [
+            {
+              "block": "%slab5",
+              "weight": 0.00000000000001
+            }
+          ],
+          "slab3": [
+            {
+              "block": "*;cobblestone_slab",
+              "any_variant": ["tuff_to_stone", "smooth_basalt_to_stone", "calcite_to_tuff", "stone_to_moss"]
+            },
+            {
+              "block": "granite_slab;*",
+              "any_variant": ["granite_to_stone"]
+            },
+            {
+              "block": "diorite_slab;*",
+              "any_variant": ["calcite_to_stone"]
+            },
+            {
+              "block": "diorite_slab;andesite_slab;*",
+              "any_variant": ["smooth_basalt_to_sandstone"]
+            },
+            {
+              "block": "*",
+              "any_variant": ["tuff_to_sandstone"]
+            },
+            {
+              "block": "%slab4",
+              "weight": 0.00000000000001
+            }
+          ],
+          "slab2": [
+            {
+              "block": "cobbled_deepslate_slab;*;%?extra_rocks",
+              "any_variant": ["smooth_basalt_to_stone", "smooth_basalt_to_sandstone"]
+            },
+            {
+              "block": "diorite_slab",
+              "any_variant": ["calcite_to_stone", "calcite_to_tuff", "diorite"]
+            },
+            {
+              "block": "%slab3",
+              "weight": 0.00000000000001
+            }
+          ],
+          "slab1": [
+            {
+              "block": "cobbled_deepslate_slab;*",
+              "any_variant": ["smooth_basalt_to_stone"]
+            },
+            {
+              "block": "granite_slab;granite_slab;*",
+              "any_variant": ["granite_to_stone"]
+            },
+            {
+              "block": "diorite_slab;*",
+              "any_variant": ["calcite_to_stone", "calcite_to_tuff", "diorite"]
+            },
+            {
+              "block": "stone_slab;andesite_slab;cobblestone_slab",
+              "any_variant": ["stone_to_moss"]
+            },
+            {
+              "block": "snow[layers=1];snow[layers=2];snow[layers=3]",
+              "any_variant": ["snow"]
+            },
+            {
+              "block": "*",
+              "any_variant": ["dripstone"]
+            },
+            {
+              "block": "%slab2",
+              "weight": 0.00000000000001
+            }
+          ],
+          "above_surface_dirt": [
+            {
+              "block": "short_grass;tall_grass;%?flowers;*;*;*",
+              "has_variants": ["overgrown"]
+            }
+          ],
+          "above_surface_sand": [
+            {
+              "block": "dead_bush;dead_bush;dead_bush;sea_pickle[waterlogged=false];sea_pickle[waterlogged=false,pickles=2];sea_pickle[waterlogged=false,pickles=3];sea_pickle[waterlogged=false,pickles=4];dead_brain_coral_fan[waterlogged=false];dead_fire_coral_fan[waterlogged=false];dead_bubble_coral_fan[waterlogged=false];dead_horn_coral_fan[waterlogged=false];dead_tube_coral_fan[waterlogged=false];*;*;*;*;*;*;*;*;*;*;*;*",
+              "any_variant": ["sandstone_coral"]
+            },
+            {
+              "block": "dead_bush;dead_bush;minecraft:pointed_dripstone[vertical_direction=up];*;*;*;*",
+              "any_variant": ["sandstone_dripstone"]
+            }
+          ],
+          "above_surface_overworld_stone": [
+            {
+              "block": "stone_button[face=floor,facing=east];stone_button[face=floor,facing=north];*;*;*;*;*;*",
+              "any_variant": ["andesite", "stone_to_moss"]
+            },
+            {
+              "block": "dead_bush;dead_bush;dead_bush;sea_pickle[waterlogged=false];sea_pickle[waterlogged=false,pickles=2];sea_pickle[waterlogged=false,pickles=3];sea_pickle[waterlogged=false,pickles=4];dead_brain_coral_fan[waterlogged=false];dead_fire_coral_fan[waterlogged=false];dead_bubble_coral_fan[waterlogged=false];dead_horn_coral_fan[waterlogged=false];dead_tube_coral_fan[waterlogged=false];*;*;*;*;*;*;*;*;*;*;*;*",
+              "any_variant": ["sandstone_coral"],
+              "weight": 100
+            },
+            {
+              "block": "dead_bush;dead_bush;minecraft:pointed_dripstone[vertical_direction=up];*;*;*;*",
+              "any_variant": ["sandstone_dripstone"],
+              "weight": 100
+            }
+          ],
+          "above_top_dirt": [
+            {
+              "block": "short_grass;tall_grass;%?flowers;%?flowers;*",
+              "has_variants": ["overgrown"]
+            },
+            {
+              "block": "snow[layers=1];snow[layers=2];snow[layers=3]",
+              "any_variant": ["snow"]
+            }
+          ],
+          "above_top_sculk_replaceable": [
+            {
+              "block": "stone_button[face=floor,facing=east];stone_button[face=floor,facing=north];*;*;*;*;*;*;*;*;*;*;*;*",
+              "any_variant": ["andesite", "stone_to_moss"]
+            },
+            {
+              "block": "dead_bush;dead_bush;dead_bush;sea_pickle[waterlogged=false];sea_pickle[waterlogged=false,pickles=2];sea_pickle[waterlogged=false,pickles=3];sea_pickle[waterlogged=false,pickles=4];dead_brain_coral_fan[waterlogged=false];dead_fire_coral_fan[waterlogged=false];dead_bubble_coral_fan[waterlogged=false];dead_horn_coral_fan[waterlogged=false];dead_tube_coral_fan[waterlogged=false];*;*;*;*;*;*;*;*;*;*;*;*",
+              "any_variant": ["sandstone_coral"],
+              "weight": 100
+            },
+            {
+              "block": "dead_bush;dead_bush;minecraft:pointed_dripstone[vertical_direction=up];*;*;*;*",
+              "any_variant": ["sandstone_dripstone"],
+              "weight": 100
+            }
+          ],
+          "exposed_surface": "%?inner1;*;*;*;*",
+          "flowers": [
+            {
+              "block": "azure_bluet;oxeye_daisy;dandelion;cornflower",
+              "has_variants": ["flowers_1"]
+            },
+            {
+              "block": "red_tulip;orange_tulip;white_tulip;pink_tulip",
+              "has_variants": ["flowers_2"]
+            },
+            {
+              "block": "allium;blue_orchid;poppy",
+              "has_variants": ["flowers_3"]
+            }
+          ]
+        }
+      },
+      "processing_sequence": [
+        {
+          "steps": [
+            {
+              "start_relative_y": 1,
+              "rules": [
+                {
+                  "place": "%inner5",
+                  "pass_through_if_not_replaced": true,
+                  "density_conditions": ["rock_density>=slab_threshold", "layered_noise>=0.8"]
+                },
+                {
+                  "place": "%inner4",
+                  "pass_through_if_not_replaced": true,
+                  "density_conditions": ["rock_density>=slab_threshold", "layered_noise>=0.6"]
+                },
+                {
+                  "place": "%inner3",
+                  "pass_through_if_not_replaced": true,
+                  "density_conditions": ["rock_density>=slab_threshold", "layered_noise>=0.4"]
+                },
+                {
+                  "place": "%inner2",
+                  "pass_through_if_not_replaced": true,
+                  "density_conditions": ["rock_density>=slab_threshold", "layered_noise>=0.2"]
+                },
+                {
+                  "place": "%inner1",
+                  "pass_through_if_not_replaced": true,
+                  "density_conditions": ["rock_density>=slab_threshold"]
+                }
+              ]
+            },
+            {
+              "start_relative_y": 30,
+              "end_relative_y": 1,
+              "rules": [
+                {
+                  "place": "%top_full",
+                  "block_above_is": ["minecraft:air", "minecraft:cave_air", "minecraft:void_air", "minecraft:water"],
+                  "pass_through_if_not_replaced": true,
+                  "auto_waterlog": true,
+                  "density_conditions": ["0.6<rock_density<=1"]
+                },
+                {
+                  "place": "%slab5",
+                  "block_above_is": ["minecraft:air", "minecraft:cave_air", "minecraft:void_air", "minecraft:water"],
+                  "pass_through_if_not_replaced": true,
+                  "auto_waterlog": true,
+                  "density_conditions": ["slab_threshold<=rock_density<0.6", "layered_noise>=0.8"]
+                },
+                {
+                  "place": "%slab4",
+                  "block_above_is": ["minecraft:air", "minecraft:cave_air", "minecraft:void_air", "minecraft:water"],
+                  "pass_through_if_not_replaced": true,
+                  "auto_waterlog": true,
+                  "density_conditions": ["slab_threshold<=rock_density<0.6", "layered_noise>=0.6"]
+                },
+                {
+                  "place": "%slab3",
+                  "block_above_is": ["minecraft:air", "minecraft:cave_air", "minecraft:void_air", "minecraft:water"],
+                  "pass_through_if_not_replaced": true,
+                  "auto_waterlog": true,
+                  "density_conditions": ["slab_threshold<=rock_density<0.6", "layered_noise>=0.4"]
+                },
+                {
+                  "place": "%slab2",
+                  "block_above_is": ["minecraft:air", "minecraft:cave_air", "minecraft:void_air", "minecraft:water"],
+                  "pass_through_if_not_replaced": true,
+                  "auto_waterlog": true,
+                  "density_conditions": ["slab_threshold<=rock_density<0.6", "layered_noise>=0.2"]
+                },
+                {
+                  "place": "%slab1",
+                  "block_above_is": ["minecraft:air", "minecraft:cave_air", "minecraft:void_air", "minecraft:water"],
+                  "pass_through_if_not_replaced": true,
+                  "auto_waterlog": true,
+                  "density_conditions": ["slab_threshold<=rock_density<0.6"]
+                }
+              ]
+            },
+            {
+              "start_relative_y": 0,
+              "end_relative_y": 0,
+              "rules": [
+                {
+                  "place": "dirt;dirt;coarse_dirt",
+                  "block_is": "minecraft:grass_block",
+                  "density_conditions": ["rock_heightmap>=slab_threshold"]
+                },
+                {
+                  "place": "%buried_surface",
+                  "block_is": "#landmarks:rocks_replace",
+                  "pass_through_if_not_replaced": true,
+                  "density_conditions": ["rock_heightmap>=slab_threshold"]
+                },
+                {
+                  "place": "%exposed_surface",
+                  "block_is": "#landmarks:rocks_replace",
+                  "density_conditions": ["rock_heightmap>=0.005"]
+                }
+              ]
+            },
+            {
+              "start_relative_y": 1,
+              "end_relative_y": 1,
+              "rules": [
+                {
+                  "place": "%above_surface_dirt",
+                  "block_is": "#landmarks:rocks_replace",
+                  "block_below_is": "#minecraft:dirt",
+                  "pass_through_if_not_replaced": true,
+                  "density_conditions": ["rock_heightmap>=0.02"]
+                },
+                {
+                  "place": "%above_surface_sand",
+                  "block_is": "#landmarks:rocks_replace",
+                  "block_below_is": "#minecraft:sand",
+                  "pass_through_if_not_replaced": true,
+                  "density_conditions": ["rock_heightmap>=0.02"]
+                },
+                {
+                  "place": "%above_surface_overworld_stone",
+                  "block_is": "#landmarks:rocks_replace",
+                  "block_below_is": "#base_stone_overworld",
+                  "pass_through_if_not_replaced": true,
+                  "density_conditions": ["rock_heightmap>=0.02"]
+                }
+              ]
+            },
+            {
+              "start_relative_y": 2,
+              "rules": [
+                {
+                  "place": "%above_top_dirt",
+                  "block_is": "#minecraft:air",
+                  "block_below_is": "#minecraft:dirt",
+                  "pass_through_if_not_replaced": true,
+                  "density_conditions": ["rock_heightmap>=0.02"]
+                },
+                {
+                  "place": "%above_top_sculk_replaceable",
+                  "block_is": "#minecraft:air",
+                  "block_below_is": "#sculk_replaceable",
+                  "density_conditions": ["rock_heightmap>=0.02"]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

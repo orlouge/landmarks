@@ -1,0 +1,15 @@
+{
+  "type": "landmarks:noise2d",
+  "xz_scale": {
+    "type": "minecraft:add",
+    "argument1": {
+      "type": "landmarks:feature_user_parameter",
+      "parameter": "horizontal_scale"
+    },
+    "argument2": {
+      "type": "landmarks:feature_user_parameter",
+      "parameter": "horizontal_scale_detail"
+    }
+  },
+  "seed": 2
+}

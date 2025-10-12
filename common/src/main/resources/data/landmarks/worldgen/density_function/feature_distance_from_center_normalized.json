@@ -1,0 +1,63 @@
+{
+  "type": "minecraft:clamp",
+  "min": 0,
+  "max": 1,
+  "input": {
+    "type": "minecraft:mul",
+    "argument1": {
+      "type": "landmarks:power",
+      "argument1": {
+        "type": "minecraft:add",
+        "argument1": {
+          "type": "landmarks:power",
+          "argument1": {
+            "type": "minecraft:add",
+            "argument1": "landmarks:x",
+            "argument2": { "type": "landmarks:negate", "argument": "landmarks:feature_center_x" }
+          },
+          "argument2": 2
+        },
+        "argument2": {
+          "type": "landmarks:power",
+          "argument1": {
+            "type": "minecraft:add",
+            "argument1": "landmarks:z",
+            "argument2": { "type": "landmarks:negate", "argument": "landmarks:feature_center_z" }
+          },
+          "argument2": 2
+        }
+      },
+      "argument2": 0.5
+    },
+    "argument2": {
+      "type": "landmarks:invert",
+      "argument": {
+        "type": "minecraft:min",
+        "argument1": {
+          "type": "minecraft:mul",
+          "argument1": {
+            "type": "minecraft:add",
+            "argument1": {
+              "type": "landmarks:negate",
+              "argument": { "type": "landmarks:feature_min_z" }
+            },
+            "argument2": { "type": "landmarks:feature_max_z" }
+          },
+          "argument2": 0.5
+        },
+        "argument2": {
+          "type": "minecraft:mul",
+          "argument1": {
+            "type": "minecraft:add",
+            "argument1": {
+              "type": "landmarks:negate",
+              "argument": { "type": "landmarks:feature_min_x" }
+            },
+            "argument2": { "type": "landmarks:feature_max_x" }
+          },
+          "argument2": 0.5
+        }
+      }
+    }
+  }
+}

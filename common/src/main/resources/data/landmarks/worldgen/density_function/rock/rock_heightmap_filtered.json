@@ -1,0 +1,22 @@
+{
+  "type": "landmarks:feature_cache",
+  "key": "rock_heightmap_filtered",
+  "y2d": true,
+  "argument": {
+    "type": "landmarks:power",
+    "argument1": {
+      "type": "minecraft:clamp",
+      "min": 0,
+      "max": 1,
+      "input": {
+        "type": "minecraft:mul",
+        "argument1": "landmarks:rock/rock_heightmap_raw",
+        "argument2": "landmarks:rock/border_filter"
+      }
+    },
+    "argument2": {
+      "type": "landmarks:feature_user_parameter",
+      "parameter": "spikiness"
+    }
+  }
+}

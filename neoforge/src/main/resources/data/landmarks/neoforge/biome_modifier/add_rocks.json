@@ -1,0 +1,6 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#landmarks:has_rocks",
+  "features": "landmarks:rocks",
+  "step": "top_layer_modification"
+}

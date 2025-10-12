@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:add",
+  "argument1": {
+    "type": "landmarks:negate",
+    "argument": {
+      "type": "landmarks:feature_min_y"
+    }
+  },
+  "argument2": {
+    "type": "landmarks:feature_surface_y"
+  }
+}

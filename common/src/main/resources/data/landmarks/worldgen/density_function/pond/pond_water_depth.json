@@ -1,0 +1,17 @@
+{
+  "type": "landmarks:feature_cache",
+  "key": "pond_water_depth",
+  "y2d": true,
+  "argument": {
+    "type": "minecraft:mul",
+    "argument1": {
+      "type": "minecraft:add",
+      "argument1": "landmarks:feature_max_depth",
+      "argument2": {
+        "type": "minecraft:constant",
+        "argument": -1
+      }
+    },
+    "argument2": "landmarks:pond/heightmap_filtered"
+  }
+}

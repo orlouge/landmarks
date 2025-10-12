@@ -1,0 +1,18 @@
+{
+  "type": "landmarks:convolution",
+  "input": "landmarks:rock/rock_density_simple",
+  "factor": 1,
+  "kernel": [
+    0, 0, 0,
+    0, 0, 0,
+    0, 0, 0,
+
+    0, 1, 0,
+    1, 0, 1,
+    0, 1, 0,
+
+    0, 0, 0,
+    0, 0, 0,
+    0, 0, 0
+  ]
+}

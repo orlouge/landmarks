@@ -1,0 +1,17 @@
+{
+  "type": "landmarks:feature_cache",
+  "key": "rock_density_3d_binary",
+  "argument": {
+    "type": "landmarks:select",
+    "argument1": 1,
+    "argument2": -1,
+    "condition": {
+      "type": "minecraft:add",
+      "argument1": {
+        "type": "minecraft:constant",
+        "argument": -0.6
+      },
+      "argument2": "landmarks:rock/rock_density_3d"
+    }
+  }
+}

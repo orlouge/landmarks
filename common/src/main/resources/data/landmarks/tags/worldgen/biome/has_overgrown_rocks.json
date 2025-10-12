@@ -1,0 +1,21 @@
+{
+  "values": [
+    "#minecraft:has_structure/village_plains",
+    "#minecraft:has_structure/trail_ruins",
+    "#minecraft:is_jungle",
+    "#minecraft:is_taiga",
+    "#minecraft:is_hill",
+    "minecraft:grove",
+    "minecraft:flower_forest",
+    "minecraft:beach",
+    "#c:is_jungle",
+    "#c:is_lush",
+    "#c:is_floral",
+    "#c:is_old_growth",
+    "#c:is_dense_vegetation/overworld",
+    "minecraft:deep_lukewarm_ocean",
+    "minecraft:deep_ocean",
+    "minecraft:lukewarm_ocean",
+    "minecraft:ocean"
+  ]
+}

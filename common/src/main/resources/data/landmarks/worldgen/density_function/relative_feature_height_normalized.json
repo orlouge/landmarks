@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:clamp",
+  "min": 0,
+  "max": 1,
+  "input": {
+    "type": "minecraft:mul",
+    "argument1": "landmarks:relative_feature_height",
+    "argument2": {
+      "type": "landmarks:invert",
+      "argument": "landmarks:feature_max_height"
+    }
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "type": "landmarks:feature_cache",
+  "y2d": true,
+  "key": "fairy_ring_mushroom_density",
+  "argument": {
+    "type": "minecraft:clamp",
+    "min": 0,
+    "max": 1,
+    "input": {
+      "type": "minecraft:add",
+      "argument1": {
+        "type": "landmarks:power",
+        "argument1": {
+          "type": "minecraft:mul",
+          "argument1": {
+            "type": "minecraft:clamp",
+            "min": 0,
+            "max": 1,
+            "input": {
+              "type": "minecraft:add",
+              "argument1": "landmarks:feature_distance_from_center_normalized",
+              "argument2": {
+                "type": "minecraft:mul",
+                "argument1": {
+                  "type": "minecraft:max",
+                  "argument1": 0,
+                  "argument2": {
+                    "type": "minecraft:add",
+                    "argument1": "landmarks:feature_distance_from_center_normalized",
+                    "argument2": -0.8
+                  }
+                },
+                "argument2": -10
+              }
+            }
+          },
+          "argument2": 1.25
+        },
+        "argument2": 4
+      },
+      "argument2": "landmarks:fairy_ring/noise"
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:mul",
+  "argument1": {
+    "type": "minecraft:add",
+    "argument1": { "type": "landmarks:feature_min_x" },
+    "argument2": { "type": "landmarks:feature_max_x" }
+  },
+  "argument2": 0.5
+}

@@ -1,0 +1,21 @@
+{
+  "type": "landmarks:feature_cache",
+  "key": "pond_border_distance",
+  "y2d": true,
+  "argument": {
+    "type": "minecraft:mul",
+    "argument1": {
+      "type": "landmarks:power",
+      "argument1": {
+        "type": "landmarks:border_chamfer_distance",
+        "normalized": true
+      },
+      "argument2": {"type": "minecraft:constant", "argument": 0.7}
+    },
+    "argument2": {
+      "type": "landmarks:border_blurred",
+      "kernel_radius": 2,
+      "sigma": 1.5
+    }
+  }
+}
