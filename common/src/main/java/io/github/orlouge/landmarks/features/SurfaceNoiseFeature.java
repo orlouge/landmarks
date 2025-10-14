@@ -9,6 +9,7 @@ import io.github.orlouge.landmarks.LandmarksMod;
 import io.github.orlouge.landmarks.generation.BlockTemplate;
 import io.github.orlouge.landmarks.utils.MaxDensitySquare;
 import io.github.orlouge.landmarks.utils.RandomProperty;
+import io.github.orlouge.landmarks.utils.StringUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -63,8 +64,8 @@ public class SurfaceNoiseFeature extends Feature<SurfaceNoiseFeature.Config> {
                 debug = true;
                 System.out.println("#################################");
                 System.out.println("Variants: " + String.join(", ", variantContext.variant));
-                System.out.println("Biome: " + variantContext.biome.getIdAsString());
-                System.out.println("Origin: " + variantContext.origin.getBlock().getRegistryEntry().getIdAsString() + " at " + origin);
+                System.out.println("Biome: " + variantContext.biome.getKeyOrValue().map(l -> l.getValue(), r -> ""));
+                System.out.println("Origin: " + variantContext.origin.getBlock().getRegistryEntry().getKeyOrValue().map(l -> l.getValue(), r -> "") + " at " + origin);
             }
 
             if (variantContext.variant.contains("abort")) return false;
@@ -600,11 +601,11 @@ public class SurfaceNoiseFeature extends Feature<SurfaceNoiseFeature.Config> {
 
     public record Condition(List<Operand> operands, List<Operator> operators) {
         public static Condition parse(String condition, Map<String, Double> constants, Map<String, double[]> arrays, Map<String, DensityFunction> functions) {
-            String[] split = condition.replaceAll(" +", "").splitWithDelimiters("([><!=]=?|[-+])", 0);
+            List<String> split = StringUtils.splitWithDelimiters(condition.replaceAll(" +", ""), "([><!=]=?|[-+])");
 
             List<Operand> operands = new ArrayList<>();
-            for (int i = 0; i < split.length; i += 2) {
-                String variable = split[i];
+            for (int i = 0; i < split.size(); i += 2) {
+                String variable = split.get(i);
                 if (variable.isEmpty()) {
                     operands.add(new Constant(0));
                 } else if (arrays.containsKey(variable)) {
@@ -621,8 +622,8 @@ public class SurfaceNoiseFeature extends Feature<SurfaceNoiseFeature.Config> {
             }
 
             List<Operator> operators = new ArrayList<>();
-            for (int i = 1; i < split.length; i += 2) {
-                String operator = split[i];
+            for (int i = 1; i < split.size(); i += 2) {
+                String operator = split.get(i);
                 operators.add(switch (operator) {
                     case "==" -> Operator.EQ;
                     case "!=" -> Operator.NE;
@@ -645,7 +646,7 @@ public class SurfaceNoiseFeature extends Feature<SurfaceNoiseFeature.Config> {
             if (operands.size() > 1) {
                 List<Double> conditionOperands = new ArrayList<>();
                 List<Operator> conditionOperators = new ArrayList<>();
-                double accValue = operands.getFirst().get(idx, pos);
+                double accValue = operands.get(0).get(idx, pos);
                 int operatorIdx = 0;
                 for (int i = 1; i < operands.size(); i++) {
                     double value = operands.get(i).get(idx, pos);
@@ -665,7 +666,7 @@ public class SurfaceNoiseFeature extends Feature<SurfaceNoiseFeature.Config> {
                 }
                 conditionOperands.add(accValue);
 
-                double lastValue = conditionOperands.getFirst();
+                double lastValue = conditionOperands.get(0);
                 operatorIdx = 0;
                 for (int i = 1; i < conditionOperands.size(); i++) {
                     double value = conditionOperands.get(i);

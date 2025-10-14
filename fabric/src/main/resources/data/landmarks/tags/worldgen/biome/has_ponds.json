@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "#c:jungle",
+    "#c:floral",
+    "#c:vegetation_dense",
+    "#c:desert",
+    "#c:snowy"
+  ]
+}

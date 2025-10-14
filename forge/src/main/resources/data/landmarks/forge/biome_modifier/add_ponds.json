@@ -1,0 +1,6 @@
+{
+  "type": "forge:add_features",
+  "biomes": "#landmarks:has_ponds",
+  "features": "landmarks:pond",
+  "step": "lakes"
+}

@@ -5,13 +5,6 @@
     "#minecraft:is_jungle",
     "#minecraft:is_taiga",
     "minecraft:flower_forest",
-    "#c:is_jungle",
-    "#c:is_lush",
-    "#c:is_floral",
-    "#c:is_old_growth",
-    "#c:is_dense_vegetation/overworld",
-    "minecraft:desert",
-    "#c:is_desert",
-    "#c:is_snowy"
+    "minecraft:desert"
   ]
 }

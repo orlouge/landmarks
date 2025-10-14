@@ -1,0 +1,6 @@
+{
+  "type": "forge:add_features",
+  "biomes": "#landmarks:has_ocean_rocks_shallow",
+  "features": "landmarks:ocean_rocks_shallow",
+  "step": "top_layer_modification"
+}

@@ -372,7 +372,7 @@ public abstract class BlockTemplate {
     );
 
     private static final Codec<BlockTemplate> RECORD_CODEC =
-        TEMPLATE_TYPE_CODEC.dispatch("type", BlockTemplate::getType, BlockTemplateType::codec);
+        TEMPLATE_TYPE_CODEC.dispatch("type", BlockTemplate::getType, t -> t.codec().codec());
 
     public static final Codec<BlockTemplate> CODEC = Codec.either(Codec.STRING, RECORD_CODEC).xmap(
         either -> either.map(BlockTemplate::parse, t -> t),

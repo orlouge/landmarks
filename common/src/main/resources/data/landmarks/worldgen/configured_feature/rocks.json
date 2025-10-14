@@ -88,19 +88,19 @@
           "stone",
           {
             "name": "snow",
-            "biome": "#c:is_snowy",
+            "biome": "#minecraft:spawns_snow_foxes",
             "origin": ["minecraft:grass_block"],
             "weight": 5
           },
           {
             "name": "froglight",
-            "biome": "#c:is_swamp",
+            "biome": "#minecraft:has_structure/ruined_portal_swamp",
             "origin": ["minecraft:dirt", "minecraft:clay", "minecraft:gravel"],
             "weight": 500
           },
           {
             "name": "prismarine",
-            "biome": "#c:is_deep_ocean",
+            "biome": "#minecraft:is_deep_ocean",
             "origin": ["minecraft:dirt", "minecraft:clay", "minecraft:gravel"],
             "weight": 10
           }
@@ -130,28 +130,28 @@
           {
             "name": "smooth_basalt_to_sandstone",
             "has_variants": ["stone"],
-            "biome": "#c:is_sandy",
+            "biome": "#minecraft:is_desert",
             "origin": ["minecraft:sand", "minecraft:sandstone"],
             "weight": 10
           },
           {
             "name": "sand_bone",
             "has_variants": ["stone"],
-            "biome": "#c:is_sandy",
+            "biome": "#minecraft:is_desert",
             "origin": ["minecraft:sand", "minecraft:sandstone"],
             "weight": 10
           },
           {
             "name": "tuff_to_sandstone",
             "has_variants": ["stone"],
-            "biome": "#c:is_sandy",
+            "biome": "#minecraft:is_desert",
             "origin": ["minecraft:sand", "minecraft:sandstone"],
             "weight": 10
           },
           {
             "name": "sandstone",
             "has_variants": ["stone"],
-            "biome": "#c:is_desert",
+            "biome": "#minecraft:is_desert",
             "origin": ["minecraft:sand", "minecraft:sandstone"],
             "weight": 20
           },

@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "#forge:is_wet",
+    "#forge:is_lush",
+    "#forge:is_dense/overworld",
+    "#forge:is_desert",
+    "#forge:is_snowy"
+  ]
+}

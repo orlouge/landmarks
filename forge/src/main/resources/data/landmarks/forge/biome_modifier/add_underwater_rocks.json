@@ -1,0 +1,6 @@
+{
+  "type": "forge:add_features",
+  "biomes": "#landmarks:has_underwater_rocks",
+  "features": "landmarks:underwater_rocks",
+  "step": "top_layer_modification"
+}

@@ -44,7 +44,7 @@
           "dirt", "stone", "mud",
           {
             "name": "snow",
-            "biome": "#c:is_snowy",
+            "biome": "#minecraft:spawns_snow_foxes",
             "weight": 10000
           }
         ]

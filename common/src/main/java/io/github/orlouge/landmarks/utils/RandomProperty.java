@@ -22,7 +22,7 @@ public record RandomProperty<T, C, S extends RandomProperty.ContextPredicate<C>>
             }
         }
         List<WrappedEntry<T, S>> sampledEntries = validEntries;
-        if (validEntries.size() == 1) return random -> () -> sampledEntries.getFirst().value;
+        if (validEntries.size() == 1) return random -> () -> sampledEntries.get(0).value;
         return random -> {
             WeightedRandomList<T> sampler = new WeightedRandomList<>();
             for (WrappedEntry<T, ? extends ContextPredicate<C>> entry : sampledEntries) {
@@ -65,14 +65,14 @@ public record RandomProperty<T, C, S extends RandomProperty.ContextPredicate<C>>
     }
 
     public static <T extends Entry<S>, C, S extends ContextPredicate<C>> Codec<RandomProperty<T, C, S>> flatCodec(Codec<T> entryCodecInList, Codec<T> entryCodec, S defaultContextPredicate) {
-        return Codec.either(entryCodecInList.listOf(1, Integer.MAX_VALUE), entryCodec).xmap(
+        return Codec.either(entryCodecInList.listOf(), entryCodec).xmap(
             either -> either.map(
                 entries -> new RandomProperty<>(entries.stream().map(
                     entry -> new WrappedEntry<>(entry, entry.getWeight(), entry.getContextPredicate())
                 ).toList()),
                 entry -> new RandomProperty<>(List.of(new WrappedEntry<>(entry, defaultContextPredicate)))
             ),
-            prop -> prop.entries.size() == 1 ? Either.right(prop.entries.getFirst().value)
+            prop -> prop.entries.size() == 1 ? Either.right(prop.entries.get(0).value)
                                                                   : Either.left(prop.entries.stream().map(WrappedEntry::value).toList())
         );
     }
