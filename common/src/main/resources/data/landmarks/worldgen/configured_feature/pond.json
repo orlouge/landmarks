@@ -31,7 +31,7 @@
           "not_rocky", "not_rocky", "rocky",
           {
             "name": "oasis",
-            "biome": "#minecraft:is_desert",
+            "biome": "#c:is_desert",
             "weight": 10000
           },
           {

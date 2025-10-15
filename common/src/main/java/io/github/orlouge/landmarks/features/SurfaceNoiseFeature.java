@@ -70,7 +70,7 @@ public class SurfaceNoiseFeature extends Feature<SurfaceNoiseFeature.Config> {
             if (variantContext.variant.contains("abort")) return false;
 
             int maxHeight = randomBetween(random, config.minHeight.sample(random, variantContext), config.maxHeight.sample(random, variantContext));
-            maxHeight = Math.min(maxHeight, world.getTopY() - origin.getY());
+            maxHeight = Math.min(maxHeight, world.getTopYInclusive() - origin.getY());
             int maxDepth = randomBetween(random, config.minDepth.sample(random, variantContext), config.maxDepth.sample(random, variantContext));
             maxDepth = Math.min(maxDepth, origin.getY() - world.getBottomY() + 1);
             int maxWidth = randomBetween(random, config.minWidth.sample(random, variantContext), config.maxWidth.sample(random, variantContext));
@@ -175,7 +175,7 @@ public class SurfaceNoiseFeature extends Feature<SurfaceNoiseFeature.Config> {
             }
 
             int surfaceY = origin.getY() - 1;
-            int maxY = Math.min(world.getTopY(), surfaceY + maxHeight), minY = Math.max(world.getBottomY(), surfaceY - maxDepth + 1);
+            int maxY = Math.min(world.getTopYInclusive(), surfaceY + maxHeight), minY = Math.max(world.getBottomY(), surfaceY - maxDepth + 1);
             int yExt = maxY - minY + 1;
 
             FeatureDensityFunctionContext densityContext = new FeatureDensityFunctionContext(seed, minX, maxX, minY, maxY, minZ, maxZ, surfaceY, cantPlace, userParameters);
@@ -392,11 +392,11 @@ public class SurfaceNoiseFeature extends Feature<SurfaceNoiseFeature.Config> {
             wrappedRandomCodec(RuleSet.CODEC.codec().listOf(), "steps").fieldOf("processing_sequence").forGetter(InstanceConfig::processingSteps),
             wrappedRandomCodec(Codec.intRange(1, 48)).fieldOf("min_width").forGetter(InstanceConfig::minWidth),
             wrappedRandomCodec(Codec.intRange(1, 48)).fieldOf("max_width").forGetter(InstanceConfig::maxWidth),
-            wrappedRandomCodec(Codecs.NONNEGATIVE_INT).fieldOf("min_height").forGetter(InstanceConfig::minHeight),
-            wrappedRandomCodec(Codecs.NONNEGATIVE_INT).fieldOf("max_height").forGetter(InstanceConfig::maxHeight),
-            wrappedRandomCodec(Codecs.NONNEGATIVE_INT).fieldOf("min_depth").forGetter(InstanceConfig::minDepth),
-            wrappedRandomCodec(Codecs.NONNEGATIVE_INT).fieldOf("max_depth").forGetter(InstanceConfig::maxDepth),
-            wrappedRandomCodec(Codecs.NONNEGATIVE_INT).fieldOf("min_surface").forGetter(InstanceConfig::minSurface),
+            wrappedRandomCodec(Codecs.NON_NEGATIVE_INT).fieldOf("min_height").forGetter(InstanceConfig::minHeight),
+            wrappedRandomCodec(Codecs.NON_NEGATIVE_INT).fieldOf("max_height").forGetter(InstanceConfig::maxHeight),
+            wrappedRandomCodec(Codecs.NON_NEGATIVE_INT).fieldOf("min_depth").forGetter(InstanceConfig::minDepth),
+            wrappedRandomCodec(Codecs.NON_NEGATIVE_INT).fieldOf("max_depth").forGetter(InstanceConfig::maxDepth),
+            wrappedRandomCodec(Codecs.NON_NEGATIVE_INT).fieldOf("min_surface").forGetter(InstanceConfig::minSurface),
             Codec.BOOL.optionalFieldOf("search_around", false).forGetter(InstanceConfig::searchAround),
             extendRandomCodec(Palette.CODEC).optionalFieldOf("palette", defaultRandomProperty(new Palette())).forGetter(InstanceConfig::palette),
             wrappedRandomCodec(Codec.STRING, "name").listOf().optionalFieldOf("variants", List.of()).forGetter(InstanceConfig::variant),

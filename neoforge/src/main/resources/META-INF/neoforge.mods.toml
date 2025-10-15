@@ -1,5 +1,5 @@
 modLoader = "javafml"
-loaderVersion = "[4,)"
+loaderVersion = "[9,)"
 #issueTrackerURL = ""
 license = "Insert License Here"
 
@@ -7,7 +7,7 @@ license = "Insert License Here"
 modId = "landmarks"
 version = "${version}"
 displayName = "Landmarks"
-authors = "Me!"
+authors = "orlouge"
 description = '''
 This is an example description! Tell everyone what your mod is about!
 '''
@@ -16,14 +16,14 @@ This is an example description! Tell everyone what your mod is about!
 [[dependencies.landmarks]]
 modId = "neoforge"
 type = "required"
-versionRange = "[21.1,)"
+versionRange = "[21.8,)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.landmarks]]
 modId = "minecraft"
 type = "required"
-versionRange = "[1.21.1,)"
+versionRange = "[1.21.8,)"
 ordering = "NONE"
 side = "BOTH"
 
