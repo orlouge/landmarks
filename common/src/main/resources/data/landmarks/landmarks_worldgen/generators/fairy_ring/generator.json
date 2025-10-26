@@ -1,0 +1,53 @@
+{
+  "parameters": {
+    "horizontal_scale_1": [0.05, 0.07, 0.1],
+    "horizontal_scale_2": [0.15, 0.2],
+    "density": 0,
+    "density_threshold": [0.7, 0.75, 0.8],
+    "free_space": "landmarks:count_free_space",
+    "min_free_space": {
+      "type": "minecraft:mul",
+      "argument1": 3.14,
+      "argument2": {
+        "type": "landmarks:power",
+        "argument1": "landmarks:feature_radius",
+        "argument2": 2
+      }
+    },
+    "mushroom_density": "landmarks:fairy_ring/mushroom_density"
+  },
+  "abort": [
+    {
+      "value": false,
+      "fallback": true
+    },
+    {
+      "value": true,
+      "conditions": ["free_space<min_free_space"]
+    }
+  ],
+  "processing_sequence": [
+    {
+      "mask": "landmarks:masks/origin",
+      "rules": [
+        {
+          "place": "%mushroom",
+          "conditions": ["mushroom_density>=density_threshold"],
+          "block_is": "#landmarks:rocks_replace",
+          "block_below_is": "#minecraft:dirt",
+          "post_processing": false
+        }
+      ]
+    },
+    {
+      "mask": "landmarks:masks/surface",
+      "rules": [
+        {
+          "place": "minecraft:grass_block",
+          "conditions": ["mushroom_density>=density_threshold"],
+          "block_is": "minecraft:grass_block"
+        }
+      ]
+    }
+  ]
+}

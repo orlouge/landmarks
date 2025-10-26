@@ -1,6 +1,6 @@
 {
   "type": "landmarks:feature_cache",
-  "y2d": true,
+  "repeat_y": "landmarks:feature_surface_y",
   "key": "fairy_ring_mushroom_density",
   "argument": {
     "type": "minecraft:clamp",

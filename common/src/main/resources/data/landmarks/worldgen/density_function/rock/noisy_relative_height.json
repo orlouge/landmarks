@@ -24,7 +24,7 @@
               "input": {
                 "type": "minecraft:add",
                 "argument1": { "type": "landmarks:negate", "argument": "landmarks:rock/rock_heightmap_filtered" },
-                "argument2": { "type": "minecraft:constant", "argument": 1 }
+                "argument2": 1
               }
             }
           }
@@ -36,7 +36,7 @@
       },
       "argument2": {
         "type": "minecraft:add",
-        "argument1": { "type": "minecraft:constant", "argument": 1 },
+        "argument1": 1,
         "argument2": {
           "type": "landmarks:negate",
           "argument": {

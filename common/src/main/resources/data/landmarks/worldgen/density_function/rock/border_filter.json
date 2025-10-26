@@ -1,26 +1,25 @@
 {
   "type": "landmarks:feature_cache",
   "key": "rock_border_filter",
-  "y2d": true,
+  "repeat_y": "landmarks:feature_surface_y",
   "argument": {
     "type": "minecraft:mul",
     "argument1": {
       "type": "landmarks:power",
-      "argument1": {
-        "type": "landmarks:border_chamfer_distance",
-        "normalized": true
-      },
-      "argument2": {
-        "type": "minecraft:constant",
-        "argument": 0.7
-      }
+      "argument1": "landmarks:distance_to_border_normalized",
+      "argument2": 0.7
     },
     "argument2": {
       "type": "landmarks:power",
       "argument1": {
-        "type": "landmarks:border_blurred",
+        "type": "landmarks:gaussian_blur_2d",
+        "argument": "landmarks:free_space_2d_map",
         "kernel_radius": 2,
-        "sigma": 1
+        "sigma": 1.5,
+        "min_x": { "type": "add", "argument1": { "type": "landmarks:feature_min_x" }, "argument2": -1},
+        "min_z": { "type": "add", "argument1": { "type": "landmarks:feature_min_z" }, "argument2": -1},
+        "max_x": { "type": "add", "argument1": { "type": "landmarks:feature_max_x" }, "argument2": 1},
+        "max_z": { "type": "add", "argument1": { "type": "landmarks:feature_max_z" }, "argument2": 1}
       },
       "argument2": 1.5
     }

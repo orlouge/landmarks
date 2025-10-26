@@ -1,325 +1,67 @@
 {
-  "type": "landmarks:surface_noise",
-  "config": [
-    {
-      "usable_space_above": [
-        { "blocks": "#landmarks:ponds_replace" },
-        { "blocks": "#minecraft:replaceable_by_trees", "weight": 3 }
-      ],
-      "usable_space_below": "#landmarks:rocks_place_on",
-      "min_width": 25,
-      "max_width": 48,
-      "min_surface": 150,
-      "min_height": 2,
-      "max_height": 5,
-      "min_depth": 6,
-      "max_depth": 10,
-      "circular_border": true,
-      "density_functions": {
-        "water_density": "landmarks:pond/pond_water_density",
-        "heightmap": "landmarks:pond/heightmap_filtered",
-        "border_distance": "landmarks:pond/border_distance"
+  "type": "landmarks:noise",
+  "config": {
+    "debug": false,
+    "parameters": {
+      "origin_y": { "type": "landmarks:feature_origin_y" },
+      "surface_y": { "type": "add", "argument1": -1, "argument2": { "type": "landmarks:feature_origin_y" } },
+      "radius": {
+        "type": "landmarks:feature_random_number",
+        "seed": "radius",
+        "min": 13,
+        "max": "landmarks:feature_radius",
+        "mean": 15,
+        "std": 7
       },
-      "user_parameters": {
-        "horizontal_scale_1": [0.04, 0.03, 0.02, 0.01],
-        "horizontal_scale_2": [0.04, 0.05, 0.06, 0.07],
-        "density": -0.6,
-        "water_density_threshold": 0.1
-      },
-      "variants": [
-        [
-          "not_rocky", "not_rocky", "rocky",
-          {
-            "name": "oasis",
-            "biome": "#minecraft:is_desert",
-            "weight": 10000
-          },
-          {
-            "name": "frozen",
-            "biome": "#c:is_snowy",
-            "weight": 10000
-          }
-        ],
-        ["mossy_cobblestone", "no_mossy_cobblestone", "no_mossy_cobblestone"]
-      ],
-      "palette": [
-        {
-          "has_variants": ["not_rocky"],
-          "entries": {
-            "on_bed_shallow_dirt": ["small_dripleaf[waterlogged=true];*;*;*;*;*;*;*", "*", "*"],
-            "on_bed_dirt": ["seagrass;*;%?on_bed_overworld_stone", "seagrass;*;*;%?on_bed_overworld_stone", "seagrass;*;*;*;*;%?on_bed_overworld_stone", "big_dripleaf_stem[waterlogged=true];*;*;*;*;*;*;*;*;*;*;*;*;*;*;%?on_bed_overworld_stone", "seagrass;big_dripleaf_stem[waterlogged=true];*;*;*;*;*;*;*;*;*;*;*;*;*;%?on_bed_overworld_stone"],
-            "on_bank_dirt": ["tall_grass;tall_grass;*;%?on_bank;%?on_bank", "tall_grass;*;*;*;%?on_bank;%?on_bank", "short_grass;tall_grass;*;%?on_bank;%?on_bank", "short_grass;*;*;%?on_bank;%?on_bank"],
-            "bank": ["mud", "coarse_dirt", "coarse_dirt;*", "mud;coarse_dirt", "coarse_dirt;coarse_dirt;*", "*"],
-            "bed": ["mud", "coarse_dirt", "mud;coarse_dirt", "gravel;coarse_dirt", "gravel;dirt", "*", "*;coarse_dirt"],
-            "side": ["%bed", "%bed", "%bed", "coarse_dirt", "*"],
-            "on_water": ["lily_pad;air;air;air;air;air;air;air", "air"],
-            "on_bed_overworld_stone": [
-              {
-                "block": "mossy_cobblestone_slab[waterlogged=true];mossy_cobblestone_slab[waterlogged=true];cobblestone_slab[waterlogged=true];*;*;*;*;*;*",
-                "has_variants": ["mossy_cobblestone"]
-              },
-              {
-                "block": "*",
-                "has_variants": ["no_mossy_cobblestone"]
-              }
-            ],
-            "on_bank": [
-              {
-                "block": "mossy_cobblestone_slab;mossy_cobblestone_slab;mossy_cobblestone_slab;mossy_cobblestone_slab;andesite_slab;cobblestone_slab;mossy_cobblestone;*;*;*;*;*",
-                "has_variants": ["mossy_cobblestone"]
-              },
-              {
-                "block": "*",
-                "has_variants": ["no_mossy_cobblestone"]
-              }
-            ]
-          }
-        },
-        {
-          "has_variants": ["rocky"],
-          "entries": {
-            "on_bed_shallow_dirt": ["small_dripleaf[waterlogged=true];*;*;*;*;*;*;*", "*", "*"],
-            "on_bed_dirt": ["seagrass;*;%?on_bed_overworld_stone", "seagrass;*;*;%?on_bed_overworld_stone", "seagrass;*;*;*;*;%?on_bed_overworld_stone", "big_dripleaf_stem[waterlogged=true];*;*;*;*;*;*;*;*;*;*;*;*;*;*;%?on_bed_overworld_stone", "seagrass;big_dripleaf_stem[waterlogged=true];*;*;*;*;*;*;*;*;*;*;*;*;*;%?on_bed_overworld_stone"],
-            "on_bank_dirt": ["tall_grass;tall_grass;*;%?on_bank;%?on_bank", "tall_grass;*;*;*;%?on_bank;%?on_bank", "short_grass;tall_grass;*;%?on_bank;%?on_bank", "short_grass;*;*;%?on_bank;%?on_bank"],
-            "bank": ["cobblestone;stone;mossy_cobblestone;andesite;coarse_dirt", "mossy_cobblestone;mossy_cobblestone;mossy_cobblestone;cobblestone;andesite;coarse_dirt"],
-            "bed": ["%bank", "%bank;%bank;%bank;%bank;mud", "%bank;%bank;coarse_dirt", "%bank;%bank;%bank;%bank;mud;coarse_dirt", "%bank;%bank;gravel;coarse_dirt", "%bank;%bank;gravel;dirt", "%bank;%bank;*", "%bank;%bank;*;coarse_dirt"],
-            "side": ["%bed", "%bed", "%bed", "coarse_dirt"],
-            "on_water": ["lily_pad;air;air;air;air;air;air;air", "air"],
-            "on_bed_overworld_stone": "mossy_cobblestone_slab[waterlogged=true];mossy_cobblestone_slab[waterlogged=true];cobblestone_slab[waterlogged=true];*;*;*;*;*;*",
-            "on_bank": "mossy_cobblestone_slab;mossy_cobblestone_slab;mossy_cobblestone_slab;andesite_slab;cobblestone_slab;mossy_cobblestone;*;*;*;*;*"
-          }
-        },
-        {
-          "has_variants": ["frozen"],
-          "weight": 10000,
-          "entries": {
-            "on_bed_shallow_dirt": "*",
-            "on_bed_dirt": "*",
-            "on_bank_dirt": "%on_bank",
-            "bank": ["cobblestone;stone;andesite;coarse_dirt", "diorite;calcite;andesite"],
-            "bed": ["%bank", "%bank;%bank;%bank;%bank;mud", "%bank;%bank;coarse_dirt", "%bank;%bank;%bank;%bank;mud;coarse_dirt", "%bank;%bank;gravel;coarse_dirt", "%bank;%bank;gravel;dirt", "%bank;%bank;*", "%bank;%bank;*;coarse_dirt"],
-            "side": ["%bed", "%bed", "%bed", "coarse_dirt"],
-            "on_water": "air",
-            "on_bank": ["stone_slab;andesite_slab;cobblestone_slab;andesite;*;*", "diorite_slab;diorite_slab;andesite_slab;calcite;*;*"]
-          }
-        },
-        {
-          "has_variants": ["oasis"],
-          "entries": {
-            "on_bed_shallow_dirt": ["small_dripleaf[waterlogged=true];*;*;*;*;*;*;*;*;*;*", "*", "*"],
-            "on_bed_dirt": ["seagrass;*;%?on_bed_overworld_stone", "seagrass;*;*;%?on_bed_overworld_stone", "seagrass;*;*;*;*;%?on_bed_overworld_stone", "big_dripleaf_stem[waterlogged=true];*;*;*;*;*;*;*;*;*;*;*;*;*;*;*;*;*;*;*;*;%?on_bed_overworld_stone", "seagrass;big_dripleaf_stem[waterlogged=true];*;*;*;*;*;*;*;*;*;*;*;*;*;*;*;*;*;*;*;%?on_bed_overworld_stone"],
-            "on_bank_dirt": ["tall_grass;tall_grass;*;%?on_bank;%?on_bank;", "tall_grass;*;*;*;%?on_bank;%?on_bank", "short_grass;tall_grass;*;%?on_bank;%?on_bank;tall_grass;dandelion", "short_grass;*;*;%?on_bank;%?on_bank;short_grass;dandelion"],
-            "bank": ["grass_block", "grass_block;dirt_path", "coarse_dirt;grass_block", "coarse_dirt;*;grass_block;dirt_path", "dirt_path;coarse_dirt;grass_block", "moss_block"],
-            "bed": ["coarse_dirt", "mud;coarse_dirt", "*;coarse_dirt", "gravel;dirt;*", "*"],
-            "side": ["%bed", "%bed", "%bed", "coarse_dirt", "*"],
-            "on_water": ["lily_pad;air;air;air;air;air;air;air;air;air;air;air;air;air;air;air;air;air;air", "air"],
-            "on_bed_overworld_stone": [
-              {
-                "block": "mossy_cobblestone_slab[waterlogged=true];mossy_cobblestone_slab[waterlogged=true];cobblestone_slab[waterlogged=true];*;*;*;*;*;*",
-                "has_variants": ["mossy_cobblestone"]
-              },
-              {
-                "block": "*",
-                "has_variants": ["no_mossy_cobblestone"]
-              }
-            ],
-            "on_bank": [
-              {
-                "block": "mossy_cobblestone_slab;mossy_cobblestone_slab;mossy_cobblestone_slab;mossy_cobblestone_slab;andesite_slab;cobblestone_slab;mossy_cobblestone;*;*;*;*;*",
-                "has_variants": ["mossy_cobblestone"]
-              },
-              {
-                "block": "*",
-                "has_variants": ["no_mossy_cobblestone"]
-              }
-            ]
-          }
-        }
-      ],
-      "processing_sequence": [
-        {
-          "steps": [
-            {
-              "start_relative_y": 0,
-              "end_relative_y": 0,
-              "rules": [
-                {
-                  "place": "minecraft:water",
-                  "block_is": "#landmarks:ponds_replace",
-                  "density_conditions": ["water_density>=water_density_threshold", "border_distance>0.1"]
-                }
-              ]
-            },
-            {
-              "start_relative_y": -1,
-              "end_relative_y": -30,
-              "rules": [
-                {
-                  "place": "minecraft:water",
-                  "block_is": "#landmarks:ponds_replace",
-                  "density_conditions": ["water_density>=water_density_threshold"]
-                },
-                {
-                  "place": "%bed",
-                  "block_above_is": "minecraft:water",
-                  "block_is": "#landmarks:ponds_replace",
-                  "density_conditions": ["heightmap<0", "border_distance>0"]
-                },
-                {
-                  "place": "%side",
-                  "block_is": "#landmarks:ponds_replace",
-                  "density_conditions": ["heightmap<0.95", "border_distance>0.2"]
-                }
-              ]
-            },
-            {
-              "start_relative_y": 0,
-              "end_relative_y": 0,
-              "rules": [
-                {
-                  "place": "%bank",
-                  "block_is": "#landmarks:rocks_place_on",
-                  "density_conditions": ["0<heightmap<0.5 ", "border_distance>0"]
-                }
-              ]
-            },
-            {
-              "start_relative_y": 0,
-              "end_relative_y": 0,
-              "rules": [
-                {
-                  "place": "%on_bed_shallow_dirt",
-                  "block_is": "minecraft:water",
-                  "block_below_is": "#minecraft:dirt",
-                  "density_conditions": ["water_density>=water_density_threshold"],
-                  "pass_through_if_not_replaced": true
-                },
-                {
-                  "place": "%on_bed_dirt",
-                  "block_is": "minecraft:water",
-                  "block_below_is": "#minecraft:dirt",
-                  "density_conditions": ["water_density>=water_density_threshold"]
-                }
-              ]
-            },
-            {
-              "end_relative_y": 0,
-              "rules": [
-                {
-                  "place": "%on_bed_dirt",
-                  "block_is": "minecraft:water",
-                  "block_below_is": "#minecraft:dirt",
-                  "density_conditions": ["water_density>=water_density_threshold"],
-                  "pass_through_if_not_replaced": true
-                },
-                {
-                  "place": "%on_bed_overworld_stone",
-                  "block_is": "minecraft:water",
-                  "block_below_is": "#minecraft:base_stone_overworld",
-                  "density_conditions": ["water_density>=water_density_threshold"]
-                }
-              ]
-            },
-            {
-              "start_relative_y": 1,
-              "end_relative_y": 1,
-              "rules": [
-                {
-                  "place": "%on_bank_dirt",
-                  "block_is": "#minecraft:air",
-                  "block_below_is": "#minecraft:dirt",
-                  "pass_through_if_not_replaced": true,
-                  "density_conditions": ["0<heightmap<0.55", "border_distance>0"]
-                },
-                {
-                  "place": "%on_bank",
-                  "block_is": "#minecraft:air",
-                  "block_below_is": "#landmarks:rocks_place_on",
-                  "pass_through_if_not_replaced": true,
-                  "density_conditions": ["0<heightmap<0.55", "border_distance>0"]
-                },
-                {
-                  "place": "%on_water",
-                  "block_is": "#landmarks:ponds_replace",
-                  "block_below_is": "minecraft:water",
-                  "density_conditions": ["heightmap<0", "border_distance>0"]
-                }
-              ]
-            },
-
-            {
-              "start_relative_y": -30,
-              "end_relative_y": -1,
-              "rules": [
-                {
-                  "place": "big_dripleaf_stem[waterlogged=true]",
-                  "block_below_is": "big_dripleaf_stem",
-                  "density_conditions": ["heightmap<0", "border_distance>0"]
-                }
-              ]
-            },
-            {
-              "start_relative_y": 0,
-              "end_relative_y": 0,
-              "rules": [
-                {
-                  "place": "big_dripleaf[waterlogged=true]",
-                  "block_below_is": "big_dripleaf_stem",
-                  "density_conditions": ["heightmap<0", "border_distance>0"]
-                }
-              ]
-            },
-            {
-              "start_relative_y": 1,
-              "end_relative_y": 1,
-              "rules": [
-                {
-                  "place": "small_dripleaf[half=upper,waterlogged=false]",
-                  "block_below_is": "small_dripleaf",
-                  "density_conditions": ["heightmap<0", "border_distance>0"]
-                },
-                {
-                  "place": "big_dripleaf[waterlogged=false]",
-                  "block_below_is": "big_dripleaf_stem",
-                  "density_conditions": ["heightmap<0", "border_distance>0"]
-                }
-              ]
-            },
-            {
-              "start_relative_y": 2,
-              "end_relative_y": 2,
-              "rules": [
-                {
-                  "place": "tall_grass[half=upper]",
-                  "block_below_is": "tall_grass",
-                  "density_conditions": ["heightmap<0", "border_distance>0"]
-                },
-                {
-                  "place": "sugar_cane;sugar_cane;*",
-                  "block_below_is": "sugar_cane",
-                  "density_conditions": ["heightmap<0", "border_distance>0"]
-                },
-                {
-                  "place": "minecraft:air",
-                  "block_is": "#minecraft:replaceable_by_trees",
-                  "density_conditions": ["heightmap<0", "border_distance>0"]
-                }
-              ]
-            },
-            {
-              "start_relative_y": 3,
-              "end_relative_y": 5,
-              "rules": [
-                {
-                  "place": "minecraft:air",
-                  "block_is": "#minecraft:replaceable_by_trees",
-                  "density_conditions": ["heightmap<0", "border_distance>0"]
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    }
-  ]
+      "negated_radius": {
+        "type": "landmarks:negate",
+        "argument": { "type": "landmarks:feature_user_parameter", "parameter": "radius" }
+      }
+    },
+    "min_y": {
+      "type": "minecraft:add",
+      "argument1": { "type": "landmarks:feature_origin_y" },
+      "argument2": {
+        "type": "landmarks:feature_random_number",
+        "seed": "depth",
+        "min": -10,
+        "max": -5,
+        "mean": -6,
+        "std": 1.5
+      }
+    },
+    "max_y": {
+      "type": "minecraft:add",
+      "argument1": { "type": "landmarks:feature_origin_y" },
+      "argument2": {
+        "type": "landmarks:feature_random_number",
+        "seed": "height",
+        "min": 1,
+        "max": 4
+      }
+    },
+    "min_x": {
+      "type": "minecraft:add",
+      "argument1": "landmarks:feature_center_x",
+      "argument2": { "type": "landmarks:feature_user_parameter", "parameter": "negated_radius" }
+    },
+    "max_x": {
+      "type": "minecraft:add",
+      "argument1": "landmarks:feature_center_x",
+      "argument2": { "type": "landmarks:feature_user_parameter", "parameter": "radius" }
+    },
+    "min_z": {
+      "type": "minecraft:add",
+      "argument1": "landmarks:feature_center_z",
+      "argument2": { "type": "landmarks:feature_user_parameter", "parameter": "negated_radius" }
+    },
+    "max_z": {
+      "type": "minecraft:add",
+      "argument1": "landmarks:feature_center_z",
+      "argument2": { "type": "landmarks:feature_user_parameter", "parameter": "radius" }
+    },
+    "generators": [
+      "landmarks:pond"
+    ]
+  }
 }

@@ -1,0 +1,37 @@
+{
+  "has_variants": {"overgrown": "yes"},
+  "palette": {
+    "entries": {
+      "inner5": {
+        "block": "mossy_cobblestone;moss_block;grass_block;moss_block"
+      },
+      "inner4": {
+        "block": "mossy_cobblestone;cobblestone;moss_block"
+      },
+      "inner3": {
+        "block": "mossy_cobblestone;cobblestone;stone;%?extra_rocks"
+      },
+      "inner2": {
+        "block": "stone;cobblestone;andesite;%?extra_rocks"
+      },
+      "inner1": {
+        "block": "stone;stone;andesite;andesite"
+      },
+      "slab5": {
+        "block": "*"
+      },
+      "slab3": {
+        "block": "*;cobblestone_slab"
+      },
+      "slab1": {
+        "block": "stone_slab;andesite_slab;cobblestone_slab"
+      },
+      "above_surface_overworld_stone": {
+        "block": "stone_button[face=floor,facing=east];stone_button[face=floor,facing=north];*;*;*;*;*;*"
+      },
+      "above_top_sculk_replaceable": {
+        "block": "stone_button[face=floor,facing=east];stone_button[face=floor,facing=north];*;*;*;*;*;*;*;*;*;*;*;*"
+      }
+    }
+  }
+}

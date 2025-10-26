@@ -1,0 +1,40 @@
+{
+  "variants": {
+    "mossy": ["no", {
+      "variant_name": "yes",
+      "has_variants": {"overgrown": "yes"}
+    }],
+    "layered_noise": ["normal", "inverted"]
+  },
+  "palette": {
+    "entries": {
+      "inner5": {
+        "block": "tuff;tuff;tuff;stone;%?extra_rocks"
+      },
+      "inner4": {
+        "block": "andesite;tuff;stone;%?extra_rocks"
+      },
+      "inner3": {
+        "block": "andesite;andesite;stone;calcite;diorite;%?extra_rocks"
+      },
+      "inner2": {
+        "block": "calcite;diorite;diorite;diorite;andesite;%?extra_rocks"
+      },
+      "inner1": {
+        "block": "calcite;calcite;calcite;diorite;%?extra_rocks"
+      },
+      "slab5": {
+        "block": "*"
+      },
+      "slab3": {
+        "block": "*;cobblestone_slab"
+      },
+      "slab2": {
+        "block": "diorite_slab"
+      },
+      "slab1": {
+        "block": "diorite_slab;*"
+      }
+    }
+  }
+}

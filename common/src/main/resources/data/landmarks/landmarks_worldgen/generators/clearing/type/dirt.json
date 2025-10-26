@@ -1,0 +1,15 @@
+{
+  "palette": {
+      "entries": {
+        "layer1": "coarse_dirt;rooted_dirt;*;*;*;*;*",
+        "layer2": "coarse_dirt;rooted_dirt;*",
+        "layer3": "coarse_dirt;rooted_dirt;coarse_dirt;*",
+        "layer4": "coarse_dirt;coarse_dirt;dirt_path;*",
+        "layer5": "dirt_path;dirt_path;dirt_path;coarse_dirt",
+        "extra_top": "brown_mushroom;red_mushroom",
+        "on_soil": "light[level=0]",
+        "on_soil_extra": "%?on_soil;%?on_soil;%?on_soil;%?on_soil;%?on_soil;%?on_soil;%?on_soil;%?on_soil;%?extra_top",
+        "on_infertile": "*"
+      }
+  }
+}

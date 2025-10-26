@@ -1,0 +1,99 @@
+{
+  "parameters": {
+    "horizontal_scale_1": [0.025, 0.015],
+    "horizontal_scale_2": [0.04, 0.06],
+    "density": 0,
+    "free_space_above": {
+      "type": "landmarks:feature_cache",
+      "argument": {
+        "type": "landmarks:feature_block_matches",
+        "matches": ["#landmarks:rocks_replace"]
+      }
+    },
+    "free_space_below": {
+      "type": "landmarks:feature_cache",
+      "argument": {
+        "type": "landmarks:feature_block_matches",
+        "matches": ["#landmarks:rocks_place_on"]
+      }
+    },
+    "distance_to_border": "landmarks:distance_to_border_normalized",
+    "free_space": "landmarks:count_free_space",
+    "noise": "landmarks:clearing/noise_filtered"
+  },
+  "abort": [
+    {
+      "value": false,
+      "fallback": true
+    },
+    {
+      "value": true,
+      "conditions": ["free_space<750"]
+    }
+  ],
+  "processing_sequence": [
+    {
+      "mask": "landmarks:masks/surface_to_origin",
+      "rules": [
+        {
+          "place": "%?layer5",
+          "conditions": ["noise>=0.25"],
+          "pass_through_if_not_replaced": true,
+          "block_is": "#minecraft:dirt"
+        },
+        {
+          "place": "%?layer4",
+          "conditions": ["noise>=0.1"],
+          "pass_through_if_not_replaced": true,
+          "block_is": "#minecraft:dirt"
+        },
+        {
+          "place": "%?layer3",
+          "conditions": ["noise>=-0.2"],
+          "pass_through_if_not_replaced": true,
+          "block_is": "#minecraft:dirt"
+        },
+        {
+          "place": "%?layer2",
+          "conditions": ["noise>=-0.5"],
+          "pass_through_if_not_replaced": true,
+          "block_is": "#minecraft:dirt"
+        },
+        {
+          "place": "%?layer1",
+          "conditions": ["noise>=-0.85"],
+          "block_is": "#minecraft:dirt"
+        }
+      ]
+    },
+    {
+      "mask": "landmarks:masks/origin",
+      "rules": [
+        {
+          "place": "%?layer3",
+          "block_is": "#minecraft:dirt",
+          "pass_through_if_not_replaced": true,
+          "conditions": ["noise>=0.1"]
+        },
+        {
+          "place": "%?on_soil_extra",
+          "block_is": "#landmarks:clearing_replace_above",
+          "block_below_is": "#minecraft:dirt",
+          "pass_through_if_not_replaced": true,
+          "conditions": ["noise>=-0.4"]
+        },
+        {
+          "place": "%?on_soil",
+          "block_is": "#landmarks:clearing_replace_above",
+          "block_below_is": "#minecraft:dirt",
+          "conditions": ["noise>=-0.99"]
+        },
+        {
+          "place": "%?on_infertile",
+          "block_is": "#landmarks:clearing_replace_above",
+          "conditions": ["noise>=0"]
+        }
+      ]
+    }
+  ]
+}

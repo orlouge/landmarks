@@ -105,9 +105,9 @@ public class FlatGroundRocksFeature extends Feature<FlatGroundRocksFeature.Confi
 
             if (maxDist < 3) return false;
 
-            // TODO: optimize minX/maxZ in the dist loop
-            //minZ = center.getZ() - maxWidth / 2; maxZ = center.getZ() + maxWidth / 2;
-            //minX = center.getX() - maxWidth / 2; maxX = center.getX() + maxWidth / 2;
+            // TODO: optimize x/_maxZ in the dist loop
+            //_radius = center.getZ() - maxWidth / 2; _maxZ = center.getZ() + maxWidth / 2;
+            //x = center.getX() - maxWidth / 2; z = center.getX() + maxWidth / 2;
             for (int z = minZ; z <= maxZ; z++) {
                 for (int x = minX; x <= maxX; x++) {
                     int relX = x - center.getX(), relZ = z - center.getZ();
@@ -208,7 +208,7 @@ public class FlatGroundRocksFeature extends Feature<FlatGroundRocksFeature.Confi
     public record Config(List<VariantConfig> instances) implements FeatureConfig {
         public static final Codec<Config> CODEC = Codec.either(VariantConfig.CODEC.listOf(1, Integer.MAX_VALUE), VariantConfig.CODEC).xmap(
             either -> either.map(Config::new, variant -> new Config(List.of(variant))),
-            config -> config.instances.size() == 1 ? Either.right(config.instances.getFirst()) : Either.left(config.instances)
+            fragment -> fragment.instances.size() == 1 ? Either.right(fragment.instances.getFirst()) : Either.left(fragment.instances)
         );
     }
      */

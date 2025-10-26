@@ -1,0 +1,10 @@
+{
+  "type": "landmarks:chamfer_distance_transform",
+  "key": "distance_to_border_normalized",
+  "normalized": true,
+  "min_x": { "type": "add", "argument1": { "type": "landmarks:feature_min_x" }, "argument2": -1},
+  "min_z": { "type": "add", "argument1": { "type": "landmarks:feature_min_z" }, "argument2": -1},
+  "max_x": { "type": "add", "argument1": { "type": "landmarks:feature_max_x" }, "argument2": 1},
+  "max_z": { "type": "add", "argument1": { "type": "landmarks:feature_max_z" }, "argument2": 1},
+  "argument": "landmarks:free_space_2d_map"
+}

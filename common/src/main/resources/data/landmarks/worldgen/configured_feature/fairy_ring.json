@@ -1,78 +1,60 @@
 {
-  "type": "landmarks:surface_noise",
+  "type": "landmarks:noise",
   "config": {
-    "usable_space_above": "#landmarks:rocks_replace",
-    "usable_space_below": "#minecraft:dirt",
-    "search_around": true,
-    "min_width": [
-      { "input": 6, "has_variants":  ["d6"] },
-      { "input": 7, "has_variants":  ["d7"] },
-      { "input": 8, "has_variants":  ["d8"] },
-      { "input": 9, "has_variants":  ["d9"] },
-      { "input": 10, "has_variants":  ["d10"] },
-      { "input": 11, "has_variants":  ["d11"] },
-      { "input": 12, "has_variants":  ["d12"] }
-    ],
-    "max_width": 1,
-    "min_surface": [
-      { "input": 19, "has_variants":  ["d6"] },
-      { "input": 28, "has_variants":  ["d7"] },
-      { "input": 38, "has_variants":  ["d8"] },
-      { "input": 50, "has_variants":  ["d9"] },
-      { "input": 63, "has_variants":  ["d10"] },
-      { "input": 78, "has_variants":  ["d11"] },
-      { "input": 95, "has_variants":  ["d12"] }
-    ],
-    "min_height": 5,
-    "max_height": 5,
-    "min_depth": 1,
-    "max_depth": 1,
-    "circular_border": true,
-    "density_functions": {
-      "mushroom_density": "landmarks:fairy_ring/mushroom_density"
-    },
-    "user_parameters": {
-      "horizontal_scale_1": [0.05, 0.07, 0.1],
-      "horizontal_scale_2": [0.15, 0.2],
-      "density": 0,
-      "density_threshold": [0.7, 0.75, 0.8]
-    },
-    "variants": [
-      ["d6", "d6", "d7", "d7", "d7", "d8", "d9", "d10", "d11", "d12"]
-    ],
-    "palette": [
-      {
-        "entries": {
-          "mushroom": ["red_mushroom", "brown_mushroom", "red_mushroom", "brown_mushroom", "red_mushroom;brown_mushroom"]
+    "debug": false,
+    "parameters": {
+      "free_space_above": {
+        "type": "landmarks:feature_cache",
+        "argument": {
+          "type": "landmarks:feature_block_matches",
+          "matches": ["#landmarks:rocks_replace"]
+        }
+      },
+      "free_space_below": {
+        "type": "landmarks:feature_cache",
+        "argument": {
+          "type": "landmarks:feature_block_matches",
+          "matches": ["#minecraft:dirt"]
         }
       }
-    ],
-    "processing_sequence": [
-      {
-        "start_relative_y": 1,
-        "end_relative_y": 1,
-        "rules": [
-          {
-            "place": "%mushroom",
-            "density_conditions": ["mushroom_density>=density_threshold"],
-            "block_is": "#landmarks:rocks_replace",
-            "block_below_is": "#minecraft:dirt",
-            "post_processing": false
-          }
-        ]
+    },
+    "bounds": {
+      "type": "landmarks:max_density_square",
+      "min_x": { "type": "landmarks:feature_min_x" },
+      "min_y": "landmarks:feature_surface_y",
+      "min_z": { "type": "landmarks:feature_min_z" },
+      "max_x": { "type": "landmarks:feature_max_x" },
+      "max_y": "landmarks:feature_surface_y",
+      "max_z": { "type": "landmarks:feature_max_z" },
+      "argument": {
+        "type": "minecraft:min",
+        "argument2": {
+          "type": "landmarks:min_along_y",
+          "argument": { "type": "landmarks:feature_user_parameter", "parameter": "free_space_above" },
+          "min_y": { "type": "landmarks:feature_origin_y" },
+          "max_y": { "type": "add", "argument1": 4, "argument2": { "type": "landmarks:feature_origin_y" } }
+        },
+        "argument1": {
+          "type": "landmarks:min_along_y",
+          "argument": { "type": "landmarks:feature_user_parameter", "parameter": "free_space_below" },
+          "min_y": "landmarks:feature_surface_y",
+          "max_y": "landmarks:feature_surface_y"
+        }
       },
-      {
-        "start_relative_y": 0,
-        "end_relative_y": 0,
-        "rules": [
-          {
-            "place": "minecraft:grass_block",
-            "density_conditions": ["mushroom_density>=density_threshold"],
-            "block_is": "minecraft:grass_block",
-            "block_above_is": ["minecraft:red_mushroom", "minecraft:brown_mushroom"]
-          }
-        ]
+      "min_side": 6,
+      "max_side": {
+        "type": "landmarks:feature_random_number",
+        "seed": "radius",
+        "min": 6,
+        "max": 20,
+        "mean": 6,
+        "std": 4
       }
+    },
+    "min_y": "landmarks:feature_surface_y",
+    "max_y": { "type": "landmarks:feature_origin_y" },
+    "generators": [
+      "landmarks:fairy_ring"
     ]
   }
 }

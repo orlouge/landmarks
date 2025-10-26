@@ -1,7 +1,7 @@
 {
   "type": "landmarks:feature_cache",
   "key": "pond_heightmap_filtered",
-  "y2d": true,
+  "repeat_y": "landmarks:feature_surface_y",
   "argument": {
     "type": "minecraft:clamp",
     "min": -1,
@@ -16,11 +16,11 @@
           "argument1": {
             "type": "landmarks:power",
             "argument1": "landmarks:pond/border_distance",
-            "argument2": { "type": "minecraft:constant", "argument": 1 }
+            "argument2": 1
           },
-          "argument2": { "type": "minecraft:constant", "argument": -2 }
+          "argument2": -2
         },
-        "argument2": { "type": "minecraft:constant", "argument": 2 }
+        "argument2": 2
       }
     }
   }

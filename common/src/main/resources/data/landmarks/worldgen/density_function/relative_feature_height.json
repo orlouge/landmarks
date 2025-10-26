@@ -5,13 +5,8 @@
     "type": "landmarks:negate",
     "argument": {
       "type": "minecraft:add",
-      "argument1": {
-        "type": "landmarks:feature_surface_y"
-      },
-      "argument2": {
-        "type": "minecraft:constant",
-        "argument": 1
-      }
+      "argument1": "landmarks:feature_surface_y",
+      "argument2": 1
     }
   }
 }

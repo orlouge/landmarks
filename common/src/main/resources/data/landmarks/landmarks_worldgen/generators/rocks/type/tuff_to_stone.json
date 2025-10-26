@@ -1,0 +1,34 @@
+{
+  "variants": {
+    "mossy": ["no", {
+      "variant_name": "yes",
+      "has_variants": {"overgrown": "yes"}
+    }],
+    "layered_noise": ["normal", "inverted"]
+  },
+  "palette": {
+    "entries": {
+      "inner5": {
+        "block": "stone;stone;andesite;andesite;%?extra_rocks"
+      },
+      "inner4": {
+        "block": "stone;andesite;cobblestone;andesite;%?extra_rocks"
+      },
+      "inner3": {
+        "block": "stone;cobblestone;cobblestone;tuff;tuff;%?extra_rocks"
+      },
+      "inner2": {
+        "block": "tuff;tuff;tuff;cobblestone;%?extra_rocks"
+      },
+      "inner1": {
+        "block": "tuff;tuff;tuff;tuff;tuff;tuff;cobblestone;%?extra_rocks"
+      },
+      "slab5": {
+        "block": "stone_slab;andesite_slab;cobblestone_slab;%?extra_slabs"
+      },
+      "slab3": {
+        "block": "*;cobblestone_slab"
+      }
+    }
+  }
+}
