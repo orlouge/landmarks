@@ -16,14 +16,14 @@ This is an example description! Tell everyone what your mod is about!
 [[dependencies.landmarks]]
 modId = "neoforge"
 type = "required"
-versionRange = "[21.8,)"
+versionRange = "[21.10,)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.landmarks]]
 modId = "minecraft"
 type = "required"
-versionRange = "[1.21.8,)"
+versionRange = "[1.21.10,)"
 ordering = "NONE"
 side = "BOTH"
 
