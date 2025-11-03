@@ -1,6 +1,6 @@
 {
   "name": "froglight",
-  "biome": "#c:is_swamp",
+  "biome": "#minecraft:has_structure/ruined_portal_swamp",
   "origin": ["minecraft:dirt", "minecraft:clay", "minecraft:gravel"],
   "palette": {
     "entries": {

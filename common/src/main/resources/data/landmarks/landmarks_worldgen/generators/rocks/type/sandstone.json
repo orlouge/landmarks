@@ -1,5 +1,5 @@
 {
-  "biome": "#c:is_desert",
+  "biome": "#minecraft:is_desert",
   "origin": ["minecraft:sand", "minecraft:sandstone"],
   "weight": 20,
   "palette": {

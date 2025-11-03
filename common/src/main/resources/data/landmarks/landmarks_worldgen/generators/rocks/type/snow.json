@@ -1,5 +1,5 @@
 {
-  "biome": "#c:is_snowy",
+  "biome": "#minecraft:spawns_snow_foxes",
   "origin": ["minecraft:grass_block"],
   "weight": 5,
   "palette": {

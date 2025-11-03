@@ -1,6 +1,6 @@
 {
   "name": "prismarine",
-  "biome": "#c:is_deep_ocean",
+  "biome": "#minecraft:is_deep_ocean",
   "origin": ["minecraft:dirt", "minecraft:clay", "minecraft:gravel"],
   "palette": {
     "entries": {

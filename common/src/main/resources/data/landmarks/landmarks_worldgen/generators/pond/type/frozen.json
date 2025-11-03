@@ -1,5 +1,5 @@
 {
-  "biome": "#c:is_snowy",
+  "biome": "#minecraft:spawns_snow_foxes",
   "palette": {
     "entries": {
       "on_bed_shallow_dirt": "*",
