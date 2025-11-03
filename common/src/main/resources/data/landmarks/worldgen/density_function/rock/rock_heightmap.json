@@ -1,16 +1,13 @@
 {
   "type": "landmarks:feature_cache",
   "key": "rock_heightmap",
-  "y2d": true,
+  "repeat_y": "landmarks:feature_surface_y",
   "argument": {
     "type": "minecraft:mul",
     "argument1": {
       "type": "minecraft:add",
       "argument1": "landmarks:feature_max_height",
-      "argument2": {
-        "type": "minecraft:constant",
-        "argument": -1
-      }
+      "argument2": -1
     },
     "argument2": "landmarks:rock/rock_heightmap_filtered"
   }

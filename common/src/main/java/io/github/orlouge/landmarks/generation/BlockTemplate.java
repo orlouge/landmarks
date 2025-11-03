@@ -15,10 +15,12 @@ import net.minecraft.util.math.random.Random;
 import net.minecraft.world.StructureWorldAccess;
 
 import java.util.*;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public abstract class BlockTemplate {
-    public abstract BlockState getBlockState(StructureWorldAccess world, Random random, Map<String, BlockTemplate> palette);
+    public abstract BlockState getBlockState(StructureWorldAccess world, Random random, BiFunction<String, Boolean, BlockTemplate> palette);
     public abstract void process(StructureWorldAccess world, Random random, BlockPos pos, Direction direction);
     public abstract Collection<String> getReferencedPaletteEntries();
     public abstract BlockTemplate copy();
@@ -133,7 +135,7 @@ public abstract class BlockTemplate {
         }
 
         @Override
-        public BlockState getBlockState(StructureWorldAccess world, Random random, Map<String, BlockTemplate> palette) {
+        public BlockState getBlockState(StructureWorldAccess world, Random random, BiFunction<String, Boolean, BlockTemplate> palette) {
             return state;
         }
 
@@ -155,6 +157,11 @@ public abstract class BlockTemplate {
         public BlockTemplateType<?> getType() {
             return SIMPLE_TEMPLATE_TYPE;
         }
+
+        @Override
+        public String toString() {
+            return state == null ? "*" : state.toString().replaceAll("Block\\{(minecraft:)?([^{}]*)}", "$2");
+        }
     }
 
     private static class SimpleParsing extends BlockTemplate {
@@ -167,14 +174,15 @@ public abstract class BlockTemplate {
         }
 
         @Override
-        public BlockState getBlockState(StructureWorldAccess world, Random random, Map<String, BlockTemplate> palette) {
+        public BlockState getBlockState(StructureWorldAccess world, Random random, BiFunction<String, Boolean, BlockTemplate> palette) {
             if (!parseAttempt && state == null) {
                 parseAttempt = true;
                 try {
-                    if (Objects.equals(blockString, "*")) {
+                    if (blockString.startsWith("*")) {
                         state = null;
                     } else if (blockString.startsWith("%")) {
-                        state = palette.getOrDefault(blockString.substring(1), new Simple(null)).getBlockState(world, random, palette);
+                        BlockTemplate template = palette.apply(blockString.substring(1), true);
+                        state = template == null ? null : template.getBlockState(world, random, palette);
                     } else {
                         BlockArgumentParser.BlockResult result = BlockArgumentParser.block(world.createCommandRegistryWrapper(RegistryKeys.BLOCK), blockString, false);
                         state = result.blockState();
@@ -204,6 +212,11 @@ public abstract class BlockTemplate {
         public BlockTemplateType<?> getType() {
             return SIMPLE_PARSING_TEMPLATE_TYPE;
         }
+
+        @Override
+        public String toString() {
+            return parseAttempt ? (state == null ? "*" : state.toString().replaceAll("Block\\{(minecraft:)?([^{}]*)}", "$2")) : "\"" + blockString + "\"";
+        }
     }
 
     private static class RandomChoiceParsing extends BlockTemplate {
@@ -217,7 +230,7 @@ public abstract class BlockTemplate {
         }
 
         @Override
-        public BlockState getBlockState(StructureWorldAccess world, Random random, Map<String, BlockTemplate> palette) {
+        public BlockState getBlockState(StructureWorldAccess world, Random random, BiFunction<String, Boolean, BlockTemplate> palette) {
             if (!parseAttempt && template == null) {
                 parseAttempt = true;
                 parse(palette);
@@ -225,30 +238,41 @@ public abstract class BlockTemplate {
             return template == null ? null : template.getBlockState(world, random, palette);
         }
 
-        private void parse(Map<String, BlockTemplate> palette) {
+        private void parse(BiFunction<String, Boolean, BlockTemplate> palette) {
             referencedPaletteEntries = new HashSet<>();
             String[] options = blockString.split(";");
-            if (options.length == 1) {
+            if (options.length == 1 && !options[0].contains("?")) {
                 template = new SimpleParsing(blockString);
                 referencedPaletteEntries.addAll(template.getReferencedPaletteEntries());
             } else {
                 List<BlockTemplate> templates = new ArrayList<>();
                 int emptyWeight = 0;
                 for (String arg : options) {
-                    if (arg.isEmpty() || arg.equals("*")) {
-                        emptyWeight += 1;
-                    } else if (arg.startsWith("%?")) {
-                        String reference = arg.substring(2);
-                        referencedPaletteEntries.add(reference);
-                        BlockTemplate subTemplate = palette.get(reference);
-                        if (subTemplate != null) {
-                            templates.add(subTemplate);
-                            //referencedPaletteEntries.addAll(subTemplate.getReferencedPaletteEntries());
-                        }
+                    BlockTemplate subTemplate = null;
+                    int weight = 1;
+
+                    if (arg.isEmpty() || arg.startsWith("*")) {
+                        emptyWeight += arg.length() > 1 ? Integer.parseInt(arg.substring(1)) : 1;
                     } else {
-                        SimpleParsing subTemplate = new SimpleParsing(arg);
-                        templates.add(subTemplate);
-                        referencedPaletteEntries.addAll(subTemplate.getReferencedPaletteEntries());
+                        String[] weightSplit = arg.split("\\*");
+                        if (weightSplit.length == 2) {
+                            arg = weightSplit[0];
+                            weight = Integer.parseInt(weightSplit[1]);
+                        }
+
+                        if (arg.startsWith("%?") || arg.startsWith("%%?")) {
+                            String reference = arg.startsWith("%?") ? arg.substring(2) : "%" + arg.substring(3);
+                            referencedPaletteEntries.add(reference);
+                            subTemplate = palette.apply(reference, false);
+                            // if (subTemplate != null) referencedPaletteEntries.addAll(subTemplate.getReferencedPaletteEntries());
+                        } else {
+                            subTemplate = new SimpleParsing(arg);
+                            referencedPaletteEntries.addAll(subTemplate.getReferencedPaletteEntries());
+                        }
+                    }
+
+                    if (subTemplate != null) {
+                        for (int i = 0; i < weight; i++) templates.add(subTemplate);
                     }
                 }
                 template = new RandomChoice(templates, emptyWeight);
@@ -279,6 +303,11 @@ public abstract class BlockTemplate {
         public BlockTemplateType<?> getType() {
             return RANDOM_PARSING_TEMPLATE_TYPE;
         }
+
+        @Override
+        public String toString() {
+            return parseAttempt ? (template != null ? template.toString() : "*") : "\"" + blockString + "\"";
+        }
     }
 
     private static class RandomChoice extends BlockTemplate {
@@ -291,7 +320,7 @@ public abstract class BlockTemplate {
         }
 
         @Override
-        public BlockState getBlockState(StructureWorldAccess world, Random random, Map<String, BlockTemplate> palette) {
+        public BlockState getBlockState(StructureWorldAccess world, Random random, BiFunction<String, Boolean, BlockTemplate> palette) {
             int choice = random.nextInt(this.choices.size() + emptyWeight);
             return choice < this.choices.size() ? this.choices.get(choice).getBlockState(world, random, palette) : null;
         }
@@ -313,6 +342,19 @@ public abstract class BlockTemplate {
         @Override
         public BlockTemplateType<?> getType() {
             return RANDOM_CHOICE_TEMPLATE_TYPE;
+        }
+
+        @Override
+        public String toString() {
+            Map<String, Integer> cnt = new HashMap<>();
+            for (BlockTemplate template : this.choices) {
+                cnt.merge(template.toString(), 1, Integer::sum);
+            }
+            if (emptyWeight > 0) cnt.merge("*", emptyWeight, Integer::sum);
+            cnt.merge("", cnt.getOrDefault("*", 0), Integer::sum);
+            cnt.remove("*");
+            if (cnt.get("") == 0) cnt.remove("");
+            return "(" + String.join(";", cnt.entrySet().stream().map(e -> e.getKey() + (e.getValue() == 1 && !e.getKey().isEmpty() ? "" : "*" + e.getValue())).toList()) + ")";
         }
     }
 

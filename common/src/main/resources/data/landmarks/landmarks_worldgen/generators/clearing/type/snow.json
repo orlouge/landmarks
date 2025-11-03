@@ -1,0 +1,17 @@
+{
+  "biome": "#c:is_snowy",
+  "weight": 10000,
+  "palette": {
+    "entries": {
+      "layer1": "coarse_dirt;rooted_dirt;snow_block;snow_block;snow_block",
+      "layer2": "coarse_dirt;snow_block;snow_block;snow_block;snow_block;snow_block;snow_block",
+      "layer3": "gravel;andesite;snow_block;snow_block;snow_block",
+      "layer4": "stone;andesite;cobblestone;andesite;clay;stone;andesite;cobblestone",
+      "layer5": "gravel;andesite;snow_block",
+      "extra_top": "*",
+      "on_soil": "snow[layers=1];snow[layers=1];snow[layers=2];snow[layers=2];snow[layers=2];snow[layers=2]",
+      "on_soil_extra": "%?on_soil;%?extra_top",
+      "on_infertile": "snow[layers=2];snow[layers=3];snow[layers=3];snow[layers=4]"
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "fallback": true,
+  "palette": {
+    "entries": {
+      "on_bed_shallow_dirt": ["small_dripleaf[waterlogged=true];*;*;*;*;*;*;*", "*", "*"],
+      "on_bed_dirt": ["seagrass;*;%?on_bed_overworld_stone", "seagrass;*;*;%?on_bed_overworld_stone", "seagrass;*;*;*;*;%?on_bed_overworld_stone", "big_dripleaf_stem[waterlogged=true];*;*;*;*;*;*;*;*;*;*;*;*;*;*;%?on_bed_overworld_stone", "seagrass;big_dripleaf_stem[waterlogged=true];*;*;*;*;*;*;*;*;*;*;*;*;*;%?on_bed_overworld_stone"],
+      "on_bank_dirt": ["tall_grass;tall_grass;*;%?on_bank;%?on_bank", "tall_grass;*;*;*;%?on_bank;%?on_bank", "short_grass;tall_grass;*;%?on_bank;%?on_bank", "short_grass;*;*;%?on_bank;%?on_bank"],
+      "bank": ["cobblestone;stone;mossy_cobblestone;andesite;coarse_dirt", "mossy_cobblestone;mossy_cobblestone;mossy_cobblestone;cobblestone;andesite;coarse_dirt"],
+      "bed": ["%bank", "%bank;%bank;%bank;%bank;mud", "%bank;%bank;coarse_dirt", "%bank;%bank;%bank;%bank;mud;coarse_dirt", "%bank;%bank;gravel;coarse_dirt", "%bank;%bank;gravel;dirt", "%bank;%bank;*", "%bank;%bank;*;coarse_dirt"],
+      "side": ["%bed", "%bed", "%bed", "coarse_dirt"],
+      "on_water": ["lily_pad;air;air;air;air;air;air;air", "air"],
+      "on_bed_overworld_stone": "mossy_cobblestone_slab[waterlogged=true];mossy_cobblestone_slab[waterlogged=true];cobblestone_slab[waterlogged=true];*;*;*;*;*;*",
+      "on_bank": "mossy_cobblestone_slab;mossy_cobblestone_slab;mossy_cobblestone_slab;andesite_slab;cobblestone_slab;mossy_cobblestone;*;*;*;*;*"
+    }
+  }
+}

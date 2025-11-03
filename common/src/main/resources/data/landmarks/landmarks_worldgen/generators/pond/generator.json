@@ -1,0 +1,230 @@
+{
+  "variants": { "mossy_cobblestone": { "variant_name": "no", "fallback": true } },
+  "parameters": {
+    "horizontal_scale_1": [0.04, 0.03, 0.02, 0.01, 0.005, 0.0025],
+    "horizontal_scale_2": [0.02, 0.04, 0.05, 0.07],
+    "density": -0.6,
+    "water_density_threshold": 0.1,
+    "free_space_above": [
+      {
+        "weight": 3,
+        "value": {
+          "type": "landmarks:feature_cache",
+          "argument": {
+            "type": "landmarks:feature_block_matches",
+            "matches": ["#minecraft:replaceable_by_trees"]
+          }
+        }
+      },
+      {
+        "value": {
+          "type": "landmarks:feature_cache",
+          "argument": {
+            "type": "landmarks:feature_block_matches",
+            "matches": ["#landmarks:ponds_replace"]
+          }
+        }
+      }
+    ],
+    "free_space_below": {
+      "type": "landmarks:feature_cache",
+      "argument": {
+        "type": "landmarks:feature_block_matches",
+        "matches": ["#landmarks:rocks_place_on"]
+      }
+    },
+    "free_space": "landmarks:count_free_space",
+    "water_density": "landmarks:pond/pond_water_density",
+    "heightmap": "landmarks:pond/heightmap_filtered",
+    "border_distance": "landmarks:pond/border_distance"
+  },
+  "abort": [
+    {
+      "value": false,
+      "fallback": true
+    },
+    {
+      "value": true,
+      "conditions": ["free_space<150"]
+    }
+  ],
+  "processing_sequence": [
+    {
+      "mask": "landmarks:masks/surface",
+      "rules": [
+        {
+          "place": "minecraft:water",
+          "block_is": "#landmarks:ponds_replace",
+          "conditions": ["water_density>=water_density_threshold", "border_distance>0.1"]
+        }
+      ]
+    },
+    {
+      "mask": "landmarks:masks/buried",
+      "y_ascending": false,
+      "rules": [
+        {
+          "place": "minecraft:water",
+          "block_is": "#landmarks:ponds_replace",
+          "conditions": ["water_density>=water_density_threshold"]
+        },
+        {
+          "place": "%?bed",
+          "block_above_is": "minecraft:water",
+          "block_is": "#landmarks:ponds_replace",
+          "conditions": ["heightmap<0", "border_distance>0"]
+        },
+        {
+          "place": "%?side",
+          "block_is": "#landmarks:ponds_replace",
+          "conditions": ["heightmap<0.95", "border_distance>0.2"]
+        }
+      ]
+    },
+    {
+      "mask": "landmarks:masks/surface",
+      "rules": [
+        {
+          "place": "%?bank",
+          "block_is": "#landmarks:rocks_place_on",
+          "conditions": ["0<heightmap<0.5 ", "border_distance>0"]
+        }
+      ]
+    },
+    {
+      "mask": "landmarks:masks/surface",
+      "rules": [
+        {
+          "place": "%?on_bed_shallow_dirt",
+          "block_is": "minecraft:water",
+          "block_below_is": "#minecraft:dirt",
+          "conditions": ["water_density>=water_density_threshold"],
+          "pass_through_if_not_replaced": true
+        },
+        {
+          "place": "%?on_bed_dirt",
+          "block_is": "minecraft:water",
+          "block_below_is": "#minecraft:dirt",
+          "conditions": ["water_density>=water_density_threshold"]
+        }
+      ]
+    },
+    {
+      "mask": "landmarks:masks/min_y_to_surface",
+      "rules": [
+        {
+          "place": "%?on_bed_dirt",
+          "block_is": "minecraft:water",
+          "block_below_is": "#minecraft:dirt",
+          "conditions": ["water_density>=water_density_threshold"],
+          "pass_through_if_not_replaced": true
+        },
+        {
+          "place": "%?on_bed_overworld_stone",
+          "block_is": "minecraft:water",
+          "block_below_is": "#minecraft:base_stone_overworld",
+          "conditions": ["water_density>=water_density_threshold"]
+        }
+      ]
+    },
+    {
+      "mask": "landmarks:masks/origin",
+      "rules": [
+        {
+          "place": "%?on_bank_dirt",
+          "block_is": "#minecraft:air",
+          "block_below_is": "#minecraft:dirt",
+          "pass_through_if_not_replaced": true,
+          "conditions": ["0<heightmap<0.55", "border_distance>0"]
+        },
+        {
+          "place": "%?on_bank",
+          "block_is": "#minecraft:air",
+          "block_below_is": "#landmarks:rocks_place_on",
+          "pass_through_if_not_replaced": true,
+          "conditions": ["0<heightmap<0.55", "border_distance>0"]
+        },
+        {
+          "place": "%?on_water",
+          "block_is": "#landmarks:ponds_replace",
+          "block_below_is": "minecraft:water",
+          "conditions": ["heightmap<0", "border_distance>0"]
+        }
+      ]
+    },
+    {
+      "mask": "landmarks:masks/buried",
+      "rules": [
+        {
+          "place": "big_dripleaf_stem[waterlogged=true]",
+          "block_below_is": "big_dripleaf_stem",
+          "conditions": ["heightmap<0", "border_distance>0"]
+        }
+      ]
+    },
+    {
+      "mask": "landmarks:masks/surface",
+      "rules": [
+        {
+          "place": "big_dripleaf[waterlogged=true]",
+          "block_below_is": "big_dripleaf_stem",
+          "conditions": ["heightmap<0", "border_distance>0"]
+        }
+      ]
+    },
+    {
+      "mask": "landmarks:masks/origin",
+      "rules": [
+        {
+          "place": "small_dripleaf[half=upper,waterlogged=false]",
+          "block_below_is": "small_dripleaf",
+          "conditions": ["heightmap<0", "border_distance>0"]
+        },
+        {
+          "place": "big_dripleaf[waterlogged=false]",
+          "block_below_is": "big_dripleaf_stem",
+          "conditions": ["heightmap<0", "border_distance>0"]
+        }
+      ]
+    },
+    {
+      "mask": "landmarks:masks/origin_plus_one",
+      "rules": [
+        {
+          "place": "tall_grass[half=upper]",
+          "block_below_is": "tall_grass",
+          "conditions": ["heightmap<0", "border_distance>0"]
+        },
+        {
+          "place": "sugar_cane;sugar_cane;*",
+          "block_below_is": "sugar_cane",
+          "conditions": ["heightmap<0", "border_distance>0"]
+        },
+        {
+          "place": "minecraft:air",
+          "block_is": "#minecraft:replaceable_by_trees",
+          "conditions": ["heightmap<0", "border_distance>0"]
+        }
+      ]
+    },
+    {
+      "mask": {
+        "type": "landmarks:cuboid",
+        "inside": "landmarks:free_space_2d_map",
+        "min_x": { "type": "landmarks:feature_min_x" },
+        "min_y": { "type": "minecraft:add", "argument1": { "type": "landmarks:feature_origin_y" }, "argument2": 2},
+        "min_z": { "type": "landmarks:feature_min_z" },
+        "max_x": { "type": "landmarks:feature_max_x" },
+        "max_y": { "type": "landmarks:feature_max_y" },
+        "max_z": { "type": "landmarks:feature_max_z" }
+      },
+      "rules": [
+        {
+          "place": "minecraft:air",
+          "block_is": "#minecraft:replaceable_by_trees",
+          "conditions": ["heightmap<0", "border_distance>0"]
+        }
+      ]
+    }
+  ]
+}

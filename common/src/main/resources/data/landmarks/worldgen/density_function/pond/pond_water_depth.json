@@ -1,7 +1,7 @@
 {
   "type": "landmarks:feature_cache",
   "key": "pond_water_depth",
-  "y2d": true,
+  "repeat_y": "landmarks:feature_surface_y",
   "argument": {
     "type": "minecraft:mul",
     "argument1": {

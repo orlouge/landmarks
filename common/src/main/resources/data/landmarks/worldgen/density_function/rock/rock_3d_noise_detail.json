@@ -9,7 +9,7 @@
         "type": "landmarks:feature_user_parameter",
         "parameter": "horizontal_scale_3d"
       },
-      "argument2": { "type":  "minecraft:constant", "argument": 2 }
+      "argument2": 2
     },
     "y_scale": {
       "type": "minecraft:mul",
@@ -17,7 +17,7 @@
         "type": "landmarks:feature_user_parameter",
         "parameter": "vertical_scale"
       },
-      "argument2": { "type":  "minecraft:constant", "argument": 2 }
+      "argument2": 2
     },
     "seed": 3
   }

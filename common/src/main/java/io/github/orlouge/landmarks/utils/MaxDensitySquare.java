@@ -6,16 +6,16 @@ import java.util.function.Function;
 
 public class MaxDensitySquare {
 
-    public record Result(int x, int y, int size, int count) {}
+    public record Result(int x, int y, int size, double density) {}
 
-    public static Result findDenseSquare(boolean[][] zero, int iterations, Random rnd, Function<Random, Integer> side, Function<Result, Double> scoreFun) {
-        int n = zero.length;
-        int m = zero[0].length;
+    public static Result findDenseSquare(double[][] density, int iterations, Random rnd, Function<Random, Integer> side, Function<Result, Double> scoreFun) {
+        int n = density.length;
+        int m = density[0].length;
 
-        int[][] prefixSum = new int[n + 1][m + 1];
+        double[][] prefixSum = new double[n + 1][m + 1];
         for (int i = 1; i <= n; i++) {
             for (int j = 1; j <= m; j++) {
-                prefixSum[i][j] = (zero[i - 1][j - 1] ? 0 : 1)
+                prefixSum[i][j] = (density[i - 1][j - 1])
                         + prefixSum[i - 1][j]
                         + prefixSum[i][j - 1]
                         - prefixSum[i - 1][j - 1];
@@ -31,7 +31,7 @@ public class MaxDensitySquare {
             int x = rnd.nextInt(n - k + 1);
             int y = rnd.nextInt(m - k + 1);
 
-            int sum = squareSum(prefixSum, x, y, k);
+            double sum = squareSum(prefixSum, x, y, k);
             Result result = new Result(x, y, k, sum);
             double score = scoreFun.apply(result);
 
@@ -44,7 +44,7 @@ public class MaxDensitySquare {
         return bestResult;
     }
 
-    private static int squareSum(int[][] ps, int x, int y, int k) {
+    private static double squareSum(double[][] ps, int x, int y, int k) {
         int x2 = x + k;
         int y2 = y + k;
         return ps[x2][y2] - ps[x][y2] - ps[x2][y] + ps[x][y];

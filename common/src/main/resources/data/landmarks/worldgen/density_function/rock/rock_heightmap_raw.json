@@ -11,10 +11,7 @@
         "argument2": {
           "type": "minecraft:mul",
           "argument1": "landmarks:rock/rock_heightmap_noise_detail",
-          "argument2": {
-            "type": "minecraft:constant",
-            "argument": 0.5
-          }
+          "argument2": 0.5
         }
       },
       "argument2": {
@@ -23,7 +20,7 @@
         "argument2": {
           "type": "landmarks:power",
           "argument1": "landmarks:rock/rock_heightmap_noise_detail",
-          "argument2": {"type": "minecraft:constant", "argument": 2}
+          "argument2": 2
         }
       }
     },
@@ -36,7 +33,7 @@
     "type": "landmarks:invert",
     "argument": {
       "type": "minecraft:add",
-      "argument1": {"type": "minecraft:constant", "argument": 1},
+      "argument1": 1,
       "argument2": {
         "type": "landmarks:feature_user_parameter",
         "parameter": "density"

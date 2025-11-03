@@ -1,0 +1,17 @@
+{
+  "biome": "#landmarks:has_overgrown_rocks",
+  "weight": 2,
+  "palette": {
+    "entries": {
+      "top_full": {
+        "block": "%%surface_reset_state;%%surface_reset_state;*"
+      },
+      "above_surface_dirt": {
+        "block": "short_grass;tall_grass;%?flowers;*;*;*"
+      },
+      "above_top_dirt": {
+        "block": "short_grass;tall_grass;%?flowers;%?flowers;*"
+      }
+    }
+  }
+}

@@ -3,14 +3,7 @@
   "argument1": {
     "type": "landmarks:negate",
     "argument": {
-      "type": "minecraft:add",
-      "argument1": {
-        "type": "landmarks:feature_surface_y"
-      },
-      "argument2": {
-        "type": "minecraft:constant",
-        "argument": 1
-      }
+      "type": "landmarks:feature_origin_y"
     }
   },
   "argument2": {
