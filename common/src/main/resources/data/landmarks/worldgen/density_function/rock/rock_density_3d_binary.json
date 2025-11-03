@@ -7,10 +7,7 @@
     "argument2": -1,
     "condition": {
       "type": "minecraft:add",
-      "argument1": {
-        "type": "minecraft:constant",
-        "argument": -0.6
-      },
+      "argument1": -0.6,
       "argument2": "landmarks:rock/rock_density_3d"
     }
   }

@@ -1,0 +1,7 @@
+{
+  "type": "add",
+  "argument1": -1,
+  "argument2": {
+    "type": "landmarks:feature_origin_y"
+  }
+}

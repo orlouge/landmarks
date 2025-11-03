@@ -1,0 +1,15 @@
+{
+  "biome": "#c:is_snowy",
+  "palette": {
+    "entries": {
+      "on_bed_shallow_dirt": "*",
+      "on_bed_dirt": "*",
+      "on_bank_dirt": "%on_bank",
+      "bank": ["cobblestone;stone;andesite;coarse_dirt", "diorite;calcite;andesite"],
+      "bed": ["%bank", "%bank;%bank;%bank;%bank;mud", "%bank;%bank;coarse_dirt", "%bank;%bank;%bank;%bank;mud;coarse_dirt", "%bank;%bank;gravel;coarse_dirt", "%bank;%bank;gravel;dirt", "%bank;%bank;*", "%bank;%bank;*;coarse_dirt"],
+      "side": ["%bed", "%bed", "%bed", "coarse_dirt"],
+      "on_water": "air",
+      "on_bank": ["stone_slab;andesite_slab;cobblestone_slab;andesite;*;*", "diorite_slab;diorite_slab;andesite_slab;calcite;*;*"]
+    }
+  }
+}

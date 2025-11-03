@@ -1,7 +1,7 @@
 {
   "type": "landmarks:feature_cache",
   "key": "rock_heightmap_filtered",
-  "y2d": true,
+  "repeat_y": "landmarks:feature_surface_y",
   "argument": {
     "type": "landmarks:power",
     "argument1": {

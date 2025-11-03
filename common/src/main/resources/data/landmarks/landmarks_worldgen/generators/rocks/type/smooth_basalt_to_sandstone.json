@@ -1,0 +1,36 @@
+{
+  "biome": "#c:is_sandy",
+  "origin": ["minecraft:sand", "minecraft:sandstone"],
+  "weight": 10,
+  "variants": {
+    "layered_noise": ["normal", "inverted"]
+  },
+  "palette": {
+    "entries": {
+      "inner5": {
+        "block": "sandstone;sandstone;sandstone;sandstone;sandstone;smooth_sandstone;smooth_sandstone;bone_block[axis=x];bone_block[axis=y];bone_block[axis=z];%?extra_rocks"
+      },
+      "inner4": {
+        "block": "sandstone;sandstone;sandstone;diorite;diorite;bone_block[axis=x];bone_block[axis=y];bone_block[axis=z];%?extra_rocks"
+      },
+      "inner3": {
+        "block": "andesite;diorite;diorite;%?extra_rocks"
+      },
+      "inner2": {
+        "block": "andesite;tuff;tuff;deepslate;cobbled_deepslate;%?extra_rocks"
+      },
+      "inner1": {
+        "block": "smooth_basalt;tuff;deepslate;smooth_basalt;%?extra_rocks"
+      },
+      "slab5": {
+        "block": "sandstone_slab;smooth_sandstone_slab;%?extra_slabs"
+      },
+      "slab3": {
+        "block": "diorite_slab;andesite_slab;*"
+      },
+      "slab2": {
+        "block": "cobbled_deepslate_slab;*;%?extra_rocks"
+      }
+    }
+  }
+}

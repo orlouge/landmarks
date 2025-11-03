@@ -1,0 +1,28 @@
+{
+  "type": "landmarks:feature_cache",
+  "key": "free_space_2d_map",
+  "precomputed": true,
+  "repeat_y": "landmarks:feature_surface_y",
+  "argument": {
+    "type": "landmarks:sphere",
+    "x": "landmarks:feature_center_x",
+    "y": "landmarks:feature_surface_y",
+    "z": "landmarks:feature_center_z",
+    "radius": "landmarks:feature_radius",
+    "inside": {
+      "type": "minecraft:min",
+      "argument2": {
+        "type": "landmarks:min_along_y",
+        "argument": { "type": "landmarks:feature_user_parameter", "parameter": "free_space_above" },
+        "min_y": { "type": "landmarks:feature_origin_y" },
+        "max_y": { "type": "landmarks:feature_max_y" }
+      },
+      "argument1": {
+        "type": "landmarks:min_along_y",
+        "argument": { "type": "landmarks:feature_user_parameter", "parameter": "free_space_below" },
+        "min_y": { "type": "landmarks:feature_min_y" },
+        "max_y": "landmarks:feature_surface_y"
+      }
+    }
+  }
+}

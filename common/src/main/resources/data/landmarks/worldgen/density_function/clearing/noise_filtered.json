@@ -1,0 +1,22 @@
+{
+  "type": "landmarks:feature_cache",
+  "key": "clearing_noise_filtered",
+  "repeat_y": 0,
+  "argument": {
+    "type": "minecraft:add",
+    "argument1": "landmarks:clearing/noise",
+    "argument2": {
+      "type": "minecraft:add",
+      "argument1": {
+        "type": "minecraft:mul",
+        "argument1": {
+          "type": "landmarks:power",
+          "argument1": { "type": "landmarks:feature_user_parameter", "parameter": "distance_to_border" },
+          "argument2": 0.5
+        },
+        "argument2": 2
+      },
+      "argument2": -2
+    }
+  }
+}

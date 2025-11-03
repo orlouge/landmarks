@@ -1,0 +1,17 @@
+{
+  "palette": {
+    "entries": {
+      "extra_rocks": {
+        "block": "mossy_cobblestone"
+      },
+      "extra_slabs": {
+        "block": "mossy_cobblestone_slab"
+      },
+      "top_full": {
+        "block": "%%surface_reset_state;*;moss_block"
+      }
+    }
+  },
+  "weight": 0,
+  "fallback": true
+}

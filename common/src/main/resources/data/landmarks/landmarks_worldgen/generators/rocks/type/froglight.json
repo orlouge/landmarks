@@ -1,0 +1,21 @@
+{
+  "name": "froglight",
+  "biome": "#c:is_swamp",
+  "origin": ["minecraft:dirt", "minecraft:clay", "minecraft:gravel"],
+  "palette": {
+    "entries": {
+      "inner5": {
+        "block": "mud"
+      },
+      "inner4": {
+        "block": "ochre_froglight"
+      },
+      "top_full": {
+        "block": "mud"
+      },
+      "slab5": {
+        "block": "mud"
+      }
+    }
+  }
+}

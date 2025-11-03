@@ -1,7 +1,5 @@
 {
   "type": "minecraft:add",
   "argument1": "landmarks:negated_y",
-  "argument2": {
-    "type": "landmarks:feature_surface_y"
-  }
+  "argument2": "landmarks:feature_surface_y"
 }

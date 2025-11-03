@@ -13,10 +13,10 @@
         "argument1": "landmarks:rock/rock_3d_noise_raw",
         "argument2": {
           "type": "landmarks:power",
-          "argument2": { "type": "minecraft:constant", "argument": 0.5},
+          "argument2": 0.5,
           "argument1": {
             "type": "minecraft:add",
-            "argument1": { "type": "minecraft:constant", "argument": 1},
+            "argument1": 1,
             "argument2": {
               "type": "landmarks:negate",
               "argument": {
@@ -24,7 +24,7 @@
                 "argument": {
                   "type": "minecraft:add",
                   "argument1": "landmarks:relative_feature_height_normalized",
-                  "argument2": {"type": "minecraft:constant", "argument": -0.6}
+                  "argument2": -0.6
                 }
               }
             }

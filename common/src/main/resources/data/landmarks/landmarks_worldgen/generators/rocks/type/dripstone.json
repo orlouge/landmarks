@@ -1,0 +1,18 @@
+{
+  "variants": {
+    "layered_noise": ["normal", "inverted"]
+  },
+  "palette": {
+    "entries": {
+      "inner2": {
+        "block": "packed_mud;dripstone_block;%?extra_rocks"
+      },
+      "slab5": {
+        "block": "*"
+      },
+      "slab1": {
+        "block": "*"
+      }
+    }
+  }
+}

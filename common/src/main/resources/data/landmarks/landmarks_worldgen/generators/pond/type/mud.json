@@ -1,0 +1,35 @@
+{
+  "fallback": true,
+  "variants": { "mossy_cobblestone": ["yes", "no", "no"] },
+  "palette": {
+    "entries": {
+      "on_bed_shallow_dirt": ["small_dripleaf[waterlogged=true];*;*;*;*;*;*;*", "*", "*"],
+      "on_bed_dirt": ["seagrass;*;%?on_bed_overworld_stone", "seagrass;*;*;%?on_bed_overworld_stone", "seagrass;*;*;*;*;%?on_bed_overworld_stone", "big_dripleaf_stem[waterlogged=true];*;*;*;*;*;*;*;*;*;*;*;*;*;*;%?on_bed_overworld_stone", "seagrass;big_dripleaf_stem[waterlogged=true];*;*;*;*;*;*;*;*;*;*;*;*;*;%?on_bed_overworld_stone"],
+      "on_bank_dirt": ["tall_grass;tall_grass;*;%?on_bank;%?on_bank", "tall_grass;*;*;*;%?on_bank;%?on_bank", "short_grass;tall_grass;*;%?on_bank;%?on_bank", "short_grass;*;*;%?on_bank;%?on_bank"],
+      "bank": ["mud", "coarse_dirt", "coarse_dirt;*", "mud;coarse_dirt", "coarse_dirt;coarse_dirt;*", "*"],
+      "bed": ["mud", "coarse_dirt", "mud;coarse_dirt", "gravel;coarse_dirt", "gravel;dirt", "*", "*;coarse_dirt"],
+      "side": ["%bed", "%bed", "%bed", "coarse_dirt", "*"],
+      "on_water": ["lily_pad;air;air;air;air;air;air;air", "air"],
+      "on_bed_overworld_stone": [
+        {
+          "block": "mossy_cobblestone_slab[waterlogged=true];mossy_cobblestone_slab[waterlogged=true];cobblestone_slab[waterlogged=true];*;*;*;*;*;*",
+          "has_variants": { "mossy_cobblestone": "yes" }
+        },
+        {
+          "block": "*",
+          "has_variants": { "mossy_cobblestone": "no" }
+        }
+      ],
+      "on_bank": [
+        {
+          "block": "mossy_cobblestone_slab;mossy_cobblestone_slab;mossy_cobblestone_slab;mossy_cobblestone_slab;andesite_slab;cobblestone_slab;mossy_cobblestone;*;*;*;*;*",
+          "has_variants": { "mossy_cobblestone": "yes" }
+        },
+        {
+          "block": "*",
+          "has_variants": { "mossy_cobblestone": "no" }
+        }
+      ]
+    }
+  }
+}
