@@ -175,7 +175,7 @@ public record ProcessingStep(
 
             Either<BlockTemplate, Palette.ResolvedCopiedEntry> template = null;
             try {
-                template = rule.template.sample(random, context).referenceOrTemplate().map(context.palette()::get, Either::left);
+                template = rule.template.sample(random, context).referenceOrTemplate().map(context.palette()::get, t -> Either.left(t.copy()));
             } catch (RandomProperty.NoRandomMatchException ignored) {}
 
             return new Rule(

@@ -19,6 +19,11 @@
     },
     "free_space": "landmarks:count_free_space",
     "rock_density": "landmarks:rock/rock_density",
+    "rock_density_at_origin_y": {
+      "type": "landmarks:map",
+      "input": "landmarks:rock/rock_density",
+      "y": { "type": "landmarks:feature_origin_y" }
+    },
     "rock_heightmap": "landmarks:rock/rock_heightmap",
     "layered_noise": [
       { "value": "landmarks:rock/noisy_relative_height", "fallback": true },
@@ -44,7 +49,7 @@
     {
       "value": true,
       "fallback": true,
-      "weight": 3,
+      "weight": 1,
       "has_variants": {"type": "prismarine"}
     }
   ],
@@ -95,7 +100,7 @@
       "y_ascending": false,
       "rules": [
         {
-          "place": "%top_full",
+          "place": "%?top_full",
           "block_above_is": ["minecraft:air", "minecraft:cave_air", "minecraft:void_air", "minecraft:water"],
           "pass_through_if_not_replaced": true,
           "auto_waterlog": true,
@@ -139,22 +144,46 @@
       ]
     },
     {
-      "mask": "landmarks:masks/surface",
+      "mask": "landmarks:masks/min_y_to_surface",
       "rules": [
         {
-          "place": "dirt;dirt;coarse_dirt",
-          "block_is": "minecraft:grass_block",
-          "conditions": ["rock_heightmap>=slab_threshold"]
+          "place": "%?buried_surface5",
+          "block_is": "#landmarks:rocks_ground_replace",
+          "pass_through_if_not_replaced": true,
+          "conditions": ["rock_density_at_origin_y>=slab_threshold", "layered_noise>=0.8"]
         },
         {
-          "place": "%?buried_surface",
-          "block_is": "#landmarks:rocks_replace",
+          "place": "%?buried_surface4",
+          "block_is": "#landmarks:rocks_ground_replace",
           "pass_through_if_not_replaced": true,
-          "conditions": ["rock_heightmap>=slab_threshold"]
+          "conditions": ["rock_density_at_origin_y>=slab_threshold", "layered_noise>=0.6"]
+        },
+        {
+          "place": "%?buried_surface3",
+          "block_is": "#landmarks:rocks_ground_replace",
+          "pass_through_if_not_replaced": true,
+          "conditions": ["rock_density_at_origin_y>=slab_threshold", "layered_noise>=0.4"]
+        },
+        {
+          "place": "%?buried_surface2",
+          "block_is": "#landmarks:rocks_ground_replace",
+          "pass_through_if_not_replaced": true,
+          "conditions": ["rock_density_at_origin_y>=slab_threshold", "layered_noise>=0.2"]
+        },
+        {
+          "place": "%?buried_surface1",
+          "block_is": "#landmarks:rocks_ground_replace",
+          "pass_through_if_not_replaced": true,
+          "conditions": ["rock_density_at_origin_y>=slab_threshold"]
+        },
+        {
+          "place": "%?exposed_surface_dirt",
+          "block_is": "#minecraft:dirt",
+          "conditions": ["rock_heightmap>=0.005"]
         },
         {
           "place": "%?exposed_surface",
-          "block_is": "#landmarks:rocks_replace",
+          "block_is": "#landmarks:rocks_ground_replace",
           "conditions": ["rock_heightmap>=0.005"]
         }
       ]
