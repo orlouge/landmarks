@@ -2,7 +2,39 @@
   "palette": [
     {
       "entries": {
-        "top_full": {
+        "buried_surface1": {
+          "block": "%inner1"
+        }
+      },
+      "fallback": true
+    },
+    {
+      "entries": {
+        "buried_surface2": {
+          "block": "%inner2"
+        }
+      },
+      "fallback": true
+    },
+    {
+      "entries": {
+        "buried_surface3": {
+          "block": "%inner3"
+        }
+      },
+      "fallback": true
+    },
+    {
+      "entries": {
+        "buried_surface4": {
+          "block": "%inner4"
+        }
+      },
+      "fallback": true
+    },
+    {
+      "entries": {
+        "buried_surface5": {
           "block": "%inner5"
         }
       },

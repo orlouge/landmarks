@@ -11,6 +11,9 @@
       },
       "above_top_dirt": {
         "block": "short_grass;tall_grass;%?flowers;%?flowers;*"
+      },
+      "exposed_surface_dirt": {
+        "block": "coarse_dirt"
       }
     }
   }

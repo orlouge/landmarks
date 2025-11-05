@@ -4,13 +4,10 @@
   },
   "palette": {
     "entries": {
-      "inner2": {
+      "inner5": {
         "block": "packed_mud;dripstone_block;%?extra_rocks"
       },
       "slab5": {
-        "block": "*"
-      },
-      "slab1": {
         "block": "*"
       }
     }

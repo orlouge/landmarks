@@ -58,6 +58,7 @@ public final class LandmarksModNeoForge {
                 registry.register(Identifier.of(LandmarksMod.MOD_ID, "swap_xy"), SwapXY.CODEC_HOLDER.codec());
                 registry.register(Identifier.of(LandmarksMod.MOD_ID, "swap_yz"), SwapYZ.CODEC_HOLDER.codec());
                 registry.register(Identifier.of(LandmarksMod.MOD_ID, "shift"), Shift.CODEC_HOLDER.codec());
+                registry.register(Identifier.of(LandmarksMod.MOD_ID, "map"), Map.CODEC_HOLDER.codec());
                 registry.register(Identifier.of(LandmarksMod.MOD_ID, "convolution"), Convolution.CODEC_HOLDER.codec());
                 registry.register(Identifier.of(LandmarksMod.MOD_ID, "power"), Power.CODEC_HOLDER.codec());
                 registry.register(Identifier.of(LandmarksMod.MOD_ID, "negate"), Negate.CODEC_HOLDER.codec());
