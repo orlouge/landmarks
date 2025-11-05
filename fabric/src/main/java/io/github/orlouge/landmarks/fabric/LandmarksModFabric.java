@@ -98,6 +98,10 @@ public final class LandmarksModFabric implements ModInitializer {
             RegistryKey.of(RegistryKeys.PLACED_FEATURE, Identifier.of(LandmarksMod.MOD_ID, "pond"))
         );
         BiomeModifications.addFeature(
+            BiomeSelectors.tag(TagKey.of(RegistryKeys.BIOME, Identifier.of(LandmarksMod.MOD_ID, "has_sinkholes"))), GenerationStep.Feature.LAKES,
+            RegistryKey.of(RegistryKeys.PLACED_FEATURE, Identifier.of(LandmarksMod.MOD_ID, "sinkhole"))
+        );
+        BiomeModifications.addFeature(
             BiomeSelectors.tag(TagKey.of(RegistryKeys.BIOME, Identifier.of(LandmarksMod.MOD_ID, "has_fairy_rings"))), GenerationStep.Feature.TOP_LAYER_MODIFICATION,
             RegistryKey.of(RegistryKeys.PLACED_FEATURE, Identifier.of(LandmarksMod.MOD_ID, "fairy_ring"))
         );

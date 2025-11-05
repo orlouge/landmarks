@@ -1,0 +1,12 @@
+{
+  "fallback": true,
+  "has_variants": {"surface": "sand"},
+  "palette": {
+    "entries": {
+      "fluid": "minecraft:air",
+      "bank": "%side",
+      "bottom": ["sand;sandstone;sandstone", "sand;*"],
+      "side": ["%bottom;%bottom;%bottom;*", "sandstone*2;*"]
+    }
+  }
+}

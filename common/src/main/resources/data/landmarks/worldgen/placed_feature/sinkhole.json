@@ -1,9 +1,9 @@
 {
-  "feature": "landmarks:pond",
+  "feature": "landmarks:sinkhole",
   "placement": [
     {
       "type": "minecraft:rarity_filter",
-      "chance": 400
+      "chance": 200
     },
     {
       "type": "minecraft:in_square"

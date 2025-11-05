@@ -138,7 +138,7 @@ public record Generator(
 
             boolean skip = this.skip.isPresent() ? this.skip.get().sample(random, context) : false;
             boolean abort = this.abort.isPresent() ? this.abort.get().sample(random, context): false;
-            if (skip || abort) return new Generator(skip, abort, new HashMap<>(), new Palette(), List.of());
+            if (skip || abort) return new Generator(skip, abort, parameters, new Palette(), List.of());
 
             Palette palette = new Palette();
             if (this.palette.isPresent()) {

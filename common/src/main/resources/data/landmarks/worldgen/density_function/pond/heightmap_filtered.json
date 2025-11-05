@@ -16,7 +16,7 @@
           "argument1": {
             "type": "landmarks:power",
             "argument1": "landmarks:pond/border_distance",
-            "argument2": 1
+            "argument2": { "type": "landmarks:feature_user_parameter", "parameter": "border_distance_exponent" }
           },
           "argument2": -2
         },
