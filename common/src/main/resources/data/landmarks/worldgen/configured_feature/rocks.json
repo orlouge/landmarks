@@ -45,7 +45,7 @@
     "min_y": {
       "type": "minecraft:add",
       "argument1": { "type": "landmarks:feature_origin_y" },
-      "argument2": -1
+      "argument2": -3
     },
     "max_y": {
       "type": "minecraft:add",

@@ -216,7 +216,9 @@ public record VariantContext(
                     }
                     return true;
                 }).orElse(true) &&
-                originIs.map(o -> o.contains(context.world.getBlockState(context.origin).getRegistryEntry())).orElse(true) &&
+                originIs.map(o ->
+                    o.contains(context.world.getBlockState(context.origin.add(0, -1, 0)).getRegistryEntry())
+                ).orElse(true) &&
                 conditions.map(c -> c.stream().allMatch(s ->
                         Parameter.Condition.parse(s, context.userParameters).test(new DensityFunction.UnblendedNoisePos(0, 0, 0)))
                     ).orElse(true);
