@@ -29,6 +29,8 @@ public abstract class BlockTemplate {
         return new Simple(null);
     }
 
+    public boolean isEmpty() { return false; }
+
     public static BlockTemplate block(BlockState state) {
         return new Simple(state);
     }
@@ -141,6 +143,11 @@ public abstract class BlockTemplate {
 
         @Override
         public void process(StructureWorldAccess world, Random random, BlockPos pos, Direction direction) {
+        }
+
+        @Override
+        public boolean isEmpty() {
+            return state == null;
         }
 
         @Override
@@ -264,6 +271,7 @@ public abstract class BlockTemplate {
                             String reference = arg.startsWith("%?") ? arg.substring(2) : "%" + arg.substring(3);
                             referencedPaletteEntries.add(reference);
                             subTemplate = palette.apply(reference, false);
+                            if (subTemplate.isEmpty()) subTemplate = null;
                             // if (subTemplate != null) referencedPaletteEntries.addAll(subTemplate.getReferencedPaletteEntries());
                         } else {
                             subTemplate = new SimpleParsing(arg);
@@ -321,7 +329,8 @@ public abstract class BlockTemplate {
 
         @Override
         public BlockState getBlockState(StructureWorldAccess world, Random random, BiFunction<String, Boolean, BlockTemplate> palette) {
-            int choice = random.nextInt(this.choices.size() + emptyWeight);
+            int maxChoice = this.choices.size() + emptyWeight;
+            int choice = maxChoice > 0 ? random.nextInt(maxChoice) : 0;
             return choice < this.choices.size() ? this.choices.get(choice).getBlockState(world, random, palette) : null;
         }
 
