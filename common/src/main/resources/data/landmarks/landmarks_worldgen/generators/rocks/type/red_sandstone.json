@@ -4,12 +4,8 @@
   "weight": 40,
   "palette": {
     "entries": {
-      "inner5": {
-        "block": "red_sandstone;smooth_red_sandstone;terracotta;%?extra_rocks"
-      },
-      "slab5": {
-        "block": "sandstone_red_slab;smooth_red_sandstone_slab;%?extra_slabs"
-      }
+      "inner5": "red_sandstone;smooth_red_sandstone;terracotta;%?extra_rocks",
+      "slab5": "sandstone_red_slab;smooth_red_sandstone_slab;%?extra_slabs"
     }
   }
 }

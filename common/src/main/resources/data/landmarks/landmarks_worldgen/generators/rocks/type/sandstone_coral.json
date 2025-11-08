@@ -4,21 +4,11 @@
   "weight": 20,
   "palette": {
     "entries": {
-      "inner5": {
-        "block": "sandstone;sandstone;sandstone;sand;sandstone;smooth_sandstone;sand;sandstone;smooth_sandstone;sand;sandstone;smooth_sandstone;sand;sandstone;smooth_sandstone;dead_brain_coral_block;dead_fire_coral_block;dead_bubble_coral_block;dead_horn_coral_block;dead_tube_coral_block"
-      },
-      "slab5": {
-        "block": "sandstone_slab;smooth_sandstone_slab;%?extra_slabs"
-      },
-      "above_surface_sand": {
-        "block": "dead_bush;dead_bush;dead_bush;sea_pickle[waterlogged=false];sea_pickle[waterlogged=false,pickles=2];sea_pickle[waterlogged=false,pickles=3];sea_pickle[waterlogged=false,pickles=4];dead_brain_coral_fan[waterlogged=false];dead_fire_coral_fan[waterlogged=false];dead_bubble_coral_fan[waterlogged=false];dead_horn_coral_fan[waterlogged=false];dead_tube_coral_fan[waterlogged=false];*;*;*;*;*;*;*;*;*;*;*;*"
-      },
-      "above_surface_overworld_stone": {
-        "block": "dead_bush;dead_bush;dead_bush;sea_pickle[waterlogged=false];sea_pickle[waterlogged=false,pickles=2];sea_pickle[waterlogged=false,pickles=3];sea_pickle[waterlogged=false,pickles=4];dead_brain_coral_fan[waterlogged=false];dead_fire_coral_fan[waterlogged=false];dead_bubble_coral_fan[waterlogged=false];dead_horn_coral_fan[waterlogged=false];dead_tube_coral_fan[waterlogged=false];*;*;*;*;*;*;*;*;*;*;*;*"
-      },
-      "above_top_sculk_replaceable": {
-        "block": "dead_bush;dead_bush;dead_bush;sea_pickle[waterlogged=false];sea_pickle[waterlogged=false,pickles=2];sea_pickle[waterlogged=false,pickles=3];sea_pickle[waterlogged=false,pickles=4];dead_brain_coral_fan[waterlogged=false];dead_fire_coral_fan[waterlogged=false];dead_bubble_coral_fan[waterlogged=false];dead_horn_coral_fan[waterlogged=false];dead_tube_coral_fan[waterlogged=false];*;*;*;*;*;*;*;*;*;*;*;*"
-      }
+      "inner5": "sandstone;sandstone;sandstone;sand;sandstone;smooth_sandstone;sand;sandstone;smooth_sandstone;sand;sandstone;smooth_sandstone;sand;sandstone;smooth_sandstone;dead_brain_coral_block;dead_fire_coral_block;dead_bubble_coral_block;dead_horn_coral_block;dead_tube_coral_block",
+      "slab5": "sandstone_slab;smooth_sandstone_slab;%?extra_slabs",
+      "above_surface_sand": "dead_bush;dead_bush;dead_bush;sea_pickle[waterlogged=false];sea_pickle[waterlogged=false,pickles=2];sea_pickle[waterlogged=false,pickles=3];sea_pickle[waterlogged=false,pickles=4];dead_brain_coral_fan[waterlogged=false];dead_fire_coral_fan[waterlogged=false];dead_bubble_coral_fan[waterlogged=false];dead_horn_coral_fan[waterlogged=false];dead_tube_coral_fan[waterlogged=false];*;*;*;*;*;*;*;*;*;*;*;*",
+      "above_surface_overworld_stone": "dead_bush;dead_bush;dead_bush;sea_pickle[waterlogged=false];sea_pickle[waterlogged=false,pickles=2];sea_pickle[waterlogged=false,pickles=3];sea_pickle[waterlogged=false,pickles=4];dead_brain_coral_fan[waterlogged=false];dead_fire_coral_fan[waterlogged=false];dead_bubble_coral_fan[waterlogged=false];dead_horn_coral_fan[waterlogged=false];dead_tube_coral_fan[waterlogged=false];*;*;*;*;*;*;*;*;*;*;*;*",
+      "above_top_sculk_replaceable": "dead_bush;dead_bush;dead_bush;sea_pickle[waterlogged=false];sea_pickle[waterlogged=false,pickles=2];sea_pickle[waterlogged=false,pickles=3];sea_pickle[waterlogged=false,pickles=4];dead_brain_coral_fan[waterlogged=false];dead_fire_coral_fan[waterlogged=false];dead_bubble_coral_fan[waterlogged=false];dead_horn_coral_fan[waterlogged=false];dead_tube_coral_fan[waterlogged=false];*;*;*;*;*;*;*;*;*;*;*;*"
     }
   }
 }

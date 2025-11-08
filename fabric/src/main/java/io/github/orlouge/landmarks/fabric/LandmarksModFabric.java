@@ -86,7 +86,7 @@ public final class LandmarksModFabric implements ModInitializer {
             RegistryKey.of(RegistryKeys.PLACED_FEATURE, Identifier.of(LandmarksMod.MOD_ID, "underwater_rocks"))
         );
         BiomeModifications.addFeature(
-            BiomeSelectors.tag(TagKey.of(RegistryKeys.BIOME, Identifier.of(LandmarksMod.MOD_ID, "has_underwater_rocks"))), GenerationStep.Feature.TOP_LAYER_MODIFICATION,
+            BiomeSelectors.tag(TagKey.of(RegistryKeys.BIOME, Identifier.of(LandmarksMod.MOD_ID, "has_ocean_rocks_deep"))), GenerationStep.Feature.TOP_LAYER_MODIFICATION,
             RegistryKey.of(RegistryKeys.PLACED_FEATURE, Identifier.of(LandmarksMod.MOD_ID, "thermal_vent"))
         );
         BiomeModifications.addFeature(

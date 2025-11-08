@@ -1,9 +1,7 @@
 {
   "palette": {
     "entries": {
-      "flowers": {
-        "block": "red_tulip;orange_tulip;white_tulip;pink_tulip"
-      }
+      "flowers": "red_tulip;orange_tulip;white_tulip;pink_tulip"
     }
   }
 }

@@ -1,7 +1,7 @@
 {
   "type": "landmarks:noise",
   "config": {
-    "debug": true,
+    "debug": false,
     "parameters": {
       "free_space_above": {
         "type": "landmarks:feature_cache",

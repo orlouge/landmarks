@@ -3,13 +3,6 @@
     "layered_noise": { "variant_name": "normal", "fallback": true }
   },
   "parameters": {
-    "free_space_above": {
-        "type": "landmarks:feature_cache",
-        "argument": {
-          "type": "landmarks:feature_block_matches",
-          "matches": ["#landmarks:rocks_replace"]
-        }
-    },
     "free_space_below": {
       "type": "landmarks:feature_cache",
       "argument": {
@@ -23,6 +16,11 @@
       "type": "landmarks:map",
       "input": "landmarks:rock/rock_density",
       "y": { "type": "landmarks:feature_origin_y" }
+    },
+    "rock_density_above": {
+      "type": "landmarks:shift",
+      "input": "landmarks:rock/rock_density",
+      "y_shift": 1
     },
     "rock_heightmap": "landmarks:rock/rock_heightmap",
     "layered_noise": [
@@ -67,7 +65,50 @@
   "processing_sequence":  [
     {
       "mask": "landmarks:masks/above_surface",
+      "y_ascending": false,
       "rules": [
+        {
+          "place": "%?top_full",
+          "block_above_is": ["minecraft:air", "minecraft:cave_air", "minecraft:void_air", "minecraft:water"],
+          "pass_through_if_not_replaced": true,
+          "auto_waterlog": true,
+          "conditions": ["0.6<rock_density<=1", "rock_density_above<slab_threshold"]
+        },
+        {
+          "place": "%slab5",
+          "block_above_is": ["minecraft:air", "minecraft:cave_air", "minecraft:void_air", "minecraft:water"],
+          "pass_through_if_not_replaced": true,
+          "auto_waterlog": true,
+          "conditions": ["slab_threshold<=rock_density<0.6", "rock_density_above<slab_threshold", "layered_noise>=0.8"]
+        },
+        {
+          "place": "%slab4",
+          "block_above_is": ["minecraft:air", "minecraft:cave_air", "minecraft:void_air", "minecraft:water"],
+          "pass_through_if_not_replaced": true,
+          "auto_waterlog": true,
+          "conditions": ["slab_threshold<=rock_density<0.6", "rock_density_above<slab_threshold", "layered_noise>=0.6"]
+        },
+        {
+          "place": "%slab3",
+          "block_above_is": ["minecraft:air", "minecraft:cave_air", "minecraft:void_air", "minecraft:water"],
+          "pass_through_if_not_replaced": true,
+          "auto_waterlog": true,
+          "conditions": ["slab_threshold<=rock_density<0.6", "rock_density_above<slab_threshold", "layered_noise>=0.4"]
+        },
+        {
+          "place": "%slab2",
+          "block_above_is": ["minecraft:air", "minecraft:cave_air", "minecraft:void_air", "minecraft:water"],
+          "pass_through_if_not_replaced": true,
+          "auto_waterlog": true,
+          "conditions": ["slab_threshold<=rock_density<0.6", "rock_density_above<slab_threshold", "layered_noise>=0.2"]
+        },
+        {
+          "place": "%slab1",
+          "block_above_is": ["minecraft:air", "minecraft:cave_air", "minecraft:void_air", "minecraft:water"],
+          "pass_through_if_not_replaced": true,
+          "auto_waterlog": true,
+          "conditions": ["slab_threshold<=rock_density<0.6", "rock_density_above<slab_threshold"]
+        },
         {
           "place": "%inner5",
           "pass_through_if_not_replaced": true,
@@ -92,54 +133,6 @@
           "place": "%inner1",
           "pass_through_if_not_replaced": true,
           "conditions": ["rock_density>=slab_threshold"]
-        }
-      ]
-    },
-    {
-      "mask": "landmarks:masks/above_surface",
-      "y_ascending": false,
-      "rules": [
-        {
-          "place": "%?top_full",
-          "block_above_is": ["minecraft:air", "minecraft:cave_air", "minecraft:void_air", "minecraft:water"],
-          "pass_through_if_not_replaced": true,
-          "auto_waterlog": true,
-          "conditions": ["0.6<rock_density<=1"]
-        },
-        {
-          "place": "%slab5",
-          "block_above_is": ["minecraft:air", "minecraft:cave_air", "minecraft:void_air", "minecraft:water"],
-          "pass_through_if_not_replaced": true,
-          "auto_waterlog": true,
-          "conditions": ["slab_threshold<=rock_density<0.6", "layered_noise>=0.8"]
-        },
-        {
-          "place": "%slab4",
-          "block_above_is": ["minecraft:air", "minecraft:cave_air", "minecraft:void_air", "minecraft:water"],
-          "pass_through_if_not_replaced": true,
-          "auto_waterlog": true,
-          "conditions": ["slab_threshold<=rock_density<0.6", "layered_noise>=0.6"]
-        },
-        {
-          "place": "%slab3",
-          "block_above_is": ["minecraft:air", "minecraft:cave_air", "minecraft:void_air", "minecraft:water"],
-          "pass_through_if_not_replaced": true,
-          "auto_waterlog": true,
-          "conditions": ["slab_threshold<=rock_density<0.6", "layered_noise>=0.4"]
-        },
-        {
-          "place": "%slab2",
-          "block_above_is": ["minecraft:air", "minecraft:cave_air", "minecraft:void_air", "minecraft:water"],
-          "pass_through_if_not_replaced": true,
-          "auto_waterlog": true,
-          "conditions": ["slab_threshold<=rock_density<0.6", "layered_noise>=0.2"]
-        },
-        {
-          "place": "%slab1",
-          "block_above_is": ["minecraft:air", "minecraft:cave_air", "minecraft:void_air", "minecraft:water"],
-          "pass_through_if_not_replaced": true,
-          "auto_waterlog": true,
-          "conditions": ["slab_threshold<=rock_density<0.6"]
         }
       ]
     },

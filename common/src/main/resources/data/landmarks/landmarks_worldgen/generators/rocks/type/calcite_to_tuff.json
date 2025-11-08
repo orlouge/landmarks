@@ -8,33 +8,15 @@
   },
   "palette": {
     "entries": {
-      "inner5": {
-        "block": "tuff;tuff;tuff;stone;%?extra_rocks"
-      },
-      "inner4": {
-        "block": "andesite;tuff;stone;%?extra_rocks"
-      },
-      "inner3": {
-        "block": "andesite;andesite;stone;calcite;diorite;%?extra_rocks"
-      },
-      "inner2": {
-        "block": "calcite;diorite;diorite;diorite;andesite;%?extra_rocks"
-      },
-      "inner1": {
-        "block": "calcite;calcite;calcite;diorite;%?extra_rocks"
-      },
-      "slab5": {
-        "block": "*"
-      },
-      "slab3": {
-        "block": "*;cobblestone_slab"
-      },
-      "slab2": {
-        "block": "diorite_slab"
-      },
-      "slab1": {
-        "block": "diorite_slab;*"
-      }
+      "inner5": "tuff;tuff;tuff;stone;%?extra_rocks",
+      "inner4": "andesite;tuff;stone;%?extra_rocks",
+      "inner3": "andesite;andesite;stone;calcite;diorite;%?extra_rocks",
+      "inner2": "calcite;diorite;diorite;diorite;andesite;%?extra_rocks",
+      "inner1": "calcite;calcite;calcite;diorite;%?extra_rocks",
+      "slab5": "*",
+      "slab3": "*;cobblestone_slab",
+      "slab2": "diorite_slab",
+      "slab1": "diorite_slab;*"
     }
   }
 }

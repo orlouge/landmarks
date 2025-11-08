@@ -4,30 +4,14 @@
   },
   "palette": {
     "entries": {
-      "inner5": {
-        "block": "stone;stone;andesite;andesite;%?extra_rocks"
-      },
-      "inner4": {
-        "block": "tuff;tuff;cobblestone;stone;%?extra_rocks"
-      },
-      "inner3": {
-        "block": "granite;dripstone_block;tuff;tuff;%?extra_rocks"
-      },
-      "inner2": {
-        "block": "granite;granite;dripstone_block;tuff;%?extra_rocks"
-      },
-      "inner1": {
-        "block": "granite;granite;granite;dripstone_block;%?extra_rocks"
-      },
-      "slab5": {
-        "block": "stone_slab;andesite_slab;cobblestone_slab;%?extra_slabs"
-      },
-      "slab3": {
-        "block": "granite_slab;*"
-      },
-      "slab1": {
-        "block": "granite_slab;granite_slab;*"
-      }
+      "inner5": "stone;stone;andesite;andesite;%?extra_rocks",
+      "inner4": "tuff;tuff;cobblestone;stone;%?extra_rocks",
+      "inner3": "granite;dripstone_block;tuff;tuff;%?extra_rocks",
+      "inner2": "granite;granite;dripstone_block;tuff;%?extra_rocks",
+      "inner1": "granite;granite;granite;dripstone_block;%?extra_rocks",
+      "slab5": "stone_slab;andesite_slab;cobblestone_slab;%?extra_slabs",
+      "slab3": "granite_slab;*",
+      "slab1": "granite_slab;granite_slab;*"
     }
   }
 }

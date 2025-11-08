@@ -220,7 +220,7 @@ public record VariantContext(
                     o.contains(context.world.getBlockState(context.origin.add(0, -1, 0)).getRegistryEntry())
                 ).orElse(true) &&
                 conditions.map(c -> c.stream().allMatch(s ->
-                        Parameter.Condition.parse(s, context.userParameters).test(new DensityFunction.UnblendedNoisePos(0, 0, 0)))
+                        Parameter.Condition.parse(s, context.userParameters).test(new DensityFunction.UnblendedNoisePos(context.origin.getX(), context.origin.getY(), context.origin.getZ())))
                     ).orElse(true);
         }
     }

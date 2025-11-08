@@ -143,13 +143,18 @@ public record Generator(
             Palette palette = new Palette();
             if (this.palette.isPresent()) {
                 RandomProperty.Sampler<Palette.RandomizedPalette> sampler = this.palette.get().withoutReplacement(context, false, true).sampler(random);
-                Palette.RandomizedPalette randomPalette = sampler.sample();
+                Palette.RandomizedPalette randomPalette = new Palette.RandomizedPalette(), fallbackPalette = new Palette.RandomizedPalette();
                 for (;;) {
                     Palette.RandomizedPalette palette2 = sampler.sample();
                     if (palette2 == null) break;
-                    if (randomPalette.canCombineWithoutReplacement(palette2)) randomPalette = randomPalette.merge(palette2);
+                    if (palette2.overwritable()) {
+                        fallbackPalette = fallbackPalette.merge(palette2);
+                    }
+                    else if (randomPalette.canCombine(palette2)) {
+                        randomPalette = randomPalette.merge(palette2);
+                    }
                 }
-                palette = randomPalette.sample(random, context);
+                palette = fallbackPalette.merge(randomPalette).sample(random, context);
             }
             context = context.withPalette(palette);
 

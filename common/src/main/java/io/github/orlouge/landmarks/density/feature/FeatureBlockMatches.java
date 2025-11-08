@@ -84,15 +84,16 @@ public record FeatureBlockMatches(
         for (Either<BlockArgumentParser.BlockResult, RegistryEntryList<Block>> filter : this.negativeFilterCache) {
             if (filter.left().isPresent()) {
                 BlockState requiredState = filter.left().get().blockState();
-                if (state.isOf(requiredState.getBlock())) return 0;
-                boolean containsAll = true;
-                for (Map.Entry<Property<?>, Comparable<?>> property : filter.left().get().properties().entrySet()) {
-                    if (!state.contains(property.getKey()) || !state.get(property.getKey()).equals(property.getValue())) {
-                        containsAll = false;
-                        break;
+                if (state.isOf(requiredState.getBlock())) {
+                    boolean containsAll = true;
+                    for (Map.Entry<Property<?>, Comparable<?>> property : filter.left().get().properties().entrySet()) {
+                        if (!state.contains(property.getKey()) || !state.get(property.getKey()).equals(property.getValue())) {
+                            containsAll = false;
+                            break;
+                        }
                     }
+                    if (containsAll) return 0;
                 }
-                if (containsAll) return 0;
             } else if (filter.right().isPresent()) {
                 if (filter.right().get().contains(state.getRegistryEntry())) return 0;
             }
