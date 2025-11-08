@@ -15,6 +15,8 @@ public class GaussianBlur implements DensityFunction, FunctionWithCache.Simple {
         Codec.INT.optionalFieldOf("kernel_radius", 3).forGetter(d -> d.kernelRadius),
         Codec.DOUBLE.optionalFieldOf("sigma", 2.0).forGetter(d -> d.sigma),
         Codec.BOOL.optionalFieldOf("normalize", true).forGetter(d -> d.normalize),
+        Codec.BOOL.optionalFieldOf("rescale", false).forGetter(d -> d.rescale),
+        Codec.BOOL.optionalFieldOf("ignore_zeros", true).forGetter(d -> d.ignoreZeros),
         Codec.STRING.optionalFieldOf("key", "").forGetter(d -> d.key),
         DensityFunction.FUNCTION_CODEC.fieldOf("argument").forGetter(d -> d.argument),
         DensityFunction.FUNCTION_CODEC.fieldOf("min_x").forGetter(d -> d.minX),
@@ -27,16 +29,18 @@ public class GaussianBlur implements DensityFunction, FunctionWithCache.Simple {
 
     public final int kernelRadius;
     public final double sigma;
-    public final boolean normalize;
+    public final boolean normalize, rescale, ignoreZeros;
     public final String key;
     public final DensityFunction argument, minX, minZ, maxX, maxZ;
     public final Optional<DensityFunction> y;
     private final Cache cache;
 
-    private GaussianBlur(int kernelRadius, double sigma, boolean normalize, String key, DensityFunction argument, DensityFunction minX, DensityFunction minZ, DensityFunction maxX, DensityFunction maxZ, Optional<DensityFunction> y, Cache cache) {
+    private GaussianBlur(int kernelRadius, double sigma, boolean normalize, boolean rescale, boolean ignoreZeros, String key, DensityFunction argument, DensityFunction minX, DensityFunction minZ, DensityFunction maxX, DensityFunction maxZ, Optional<DensityFunction> y, Cache cache) {
         this.kernelRadius = kernelRadius;
         this.sigma = sigma;
         this.normalize = normalize;
+        this.rescale = rescale;
+        this.ignoreZeros = ignoreZeros;
         this.key = key;
         this.argument = argument;
         this.minX = minX;
@@ -47,10 +51,12 @@ public class GaussianBlur implements DensityFunction, FunctionWithCache.Simple {
         this.cache = cache;
     }
 
-    public GaussianBlur(int kernelRadius, double sigma, boolean normalize, String key, DensityFunction argument, DensityFunction minX, DensityFunction minZ, DensityFunction maxX, DensityFunction maxZ, Optional<DensityFunction> y) {
+    public GaussianBlur(int kernelRadius, double sigma, boolean normalize, boolean rescale, boolean ignoreZeros, String key, DensityFunction argument, DensityFunction minX, DensityFunction minZ, DensityFunction maxX, DensityFunction maxZ, Optional<DensityFunction> y) {
         this.kernelRadius = kernelRadius;
         this.sigma = sigma;
         this.normalize = normalize;
+        this.ignoreZeros = ignoreZeros;
+        this.rescale = rescale;
         this.key = key.isEmpty() ? null : key;
         this.argument = argument;
         this.minX = minX;
@@ -65,7 +71,7 @@ public class GaussianBlur implements DensityFunction, FunctionWithCache.Simple {
     public double sample(NoisePos pos) {
         if (pos.blockX() < cache.minX || pos.blockX() > cache.maxX || pos.blockZ() < cache.minZ || pos.blockZ() > cache.maxZ) return 0;
         double val = cache.blur[pos.blockX() - cache.minX][pos.blockZ() - cache.minZ];
-        return normalize ? (val - cache.minValue) / (cache.maxValue - cache.minValue) : val;
+        return rescale ? val * cache.scaleFactor : normalize ? (val - cache.minValue) / (cache.maxValue - cache.minValue) : val;
     }
 
     @Override
@@ -75,17 +81,17 @@ public class GaussianBlur implements DensityFunction, FunctionWithCache.Simple {
 
     @Override
     public DensityFunction apply(DensityFunctionVisitor visitor) {
-        return visitor.apply(new GaussianBlur(kernelRadius, sigma, normalize, key, argument.apply(visitor), minX.apply(visitor), minZ.apply(visitor), maxX.apply(visitor), maxZ.apply(visitor), y, cache));
+        return visitor.apply(new GaussianBlur(kernelRadius, sigma, normalize, rescale, ignoreZeros, key, argument.apply(visitor), minX.apply(visitor), minZ.apply(visitor), maxX.apply(visitor), maxZ.apply(visitor), y, cache));
     }
 
     @Override
     public double minValue() {
-        return normalize || cache == null ? 0 : cache.minValue;
+        return (normalize && !rescale) || cache == null ? 0 : cache.minValue;
     }
 
     @Override
     public double maxValue() {
-        return normalize || cache == null ? 1 : cache.maxValue;
+        return (normalize && !rescale) || cache == null ? 1 : cache.maxValue;
     }
 
     @Override
@@ -116,10 +122,12 @@ public class GaussianBlur implements DensityFunction, FunctionWithCache.Simple {
             maxX = Math.min(maxX, maskBounds.maxX());
         }
 
+        double originalAbsMax = 0;
         for (int x = minX; x <= maxX; x++) {
             for (int z = minZ; z <= maxZ; z++) {
                 value[x - minX][z - minZ] = this.argument.sample(new UnblendedNoisePos(x, y, z));
-                isZero[x - minX][z - minZ] = value[x - minX][z - minZ] == 0;
+                if (ignoreZeros) isZero[x - minX][z - minZ] = value[x - minX][z - minZ] == 0;
+                originalAbsMax = Math.max(Math.abs(value[x - minX][z - minZ]), originalAbsMax);
             }
         }
 
@@ -133,13 +141,18 @@ public class GaussianBlur implements DensityFunction, FunctionWithCache.Simple {
             }
         }
 
-        return new Cache(blur, minValue, maxValue, minX, minZ, maxX, maxZ);
+        double scaleFactor = originalAbsMax / Math.max(Math.abs(maxValue), Math.abs(minValue));
+        if (rescale) {
+            maxValue *= scaleFactor;
+            minValue *= scaleFactor;
+        }
+        return new Cache(blur, minValue, maxValue, scaleFactor, minX, minZ, maxX, maxZ);
     }
 
     @Override
     public FunctionWithCache.Simple setCache(Object cache) {
-        return new GaussianBlur(kernelRadius, sigma ,normalize, key, argument, minX, minZ, maxX, maxZ, y, (Cache) cache);
+        return new GaussianBlur(kernelRadius, sigma ,normalize, rescale, ignoreZeros, key, argument, minX, minZ, maxX, maxZ, y, (Cache) cache);
     }
 
-    private record Cache(double[][] blur, double minValue, double maxValue, int minX, int minZ, int maxX, int maxZ) {}
+    private record Cache(double[][] blur, double minValue, double maxValue, double scaleFactor, int minX, int minZ, int maxX, int maxZ) {}
 }

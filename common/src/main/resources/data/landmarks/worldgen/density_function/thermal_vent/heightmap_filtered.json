@@ -1,0 +1,18 @@
+{
+  "type": "landmarks:feature_cache",
+  "key": "vent_heightmap_filtered",
+  "repeat_y": "landmarks:feature_surface_y",
+  "argument": {
+    "type": "min",
+    "argument1": { "type": "add", "argument1": "landmarks:distance_to_border", "argument2": -1 },
+    "argument2": {
+      "type": "min",
+      "argument1": {
+        "type": "add",
+        "argument1": { "type": "landmarks:negate", "argument": "landmarks:thermal_vent/distance_to_holes" },
+        "argument2": 15
+      },
+      "argument2": "landmarks:thermal_vent/heightmap_noisy"
+    }
+  }
+}

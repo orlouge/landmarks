@@ -5,17 +5,20 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.dynamic.CodecHolder;
 import net.minecraft.world.gen.densityfunction.DensityFunction;
 
-public record Select(DensityFunction condition, DensityFunction argument1, DensityFunction argument2) implements DensityFunction {
+import java.util.Optional;
+
+public record Select(DensityFunction condition, DensityFunction argument1, DensityFunction argument2, Optional<DensityFunction> target) implements DensityFunction {
     public static final MapCodec<Select> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
         DensityFunction.FUNCTION_CODEC.fieldOf("condition").forGetter(Select::condition),
         DensityFunction.FUNCTION_CODEC.fieldOf("argument1").forGetter(Select::argument1),
-        DensityFunction.FUNCTION_CODEC.fieldOf("argument2").forGetter(Select::argument2)
+        DensityFunction.FUNCTION_CODEC.fieldOf("argument2").forGetter(Select::argument2),
+        DensityFunction.FUNCTION_CODEC.optionalFieldOf("target").forGetter(Select::target)
     ).apply(instance, Select::new));
     public static final CodecHolder<Select> CODEC_HOLDER = CodecHolder.of(CODEC);
 
     @Override
     public double sample(NoisePos pos) {
-        return condition.sample(pos) >= 0 ? argument1.sample(pos) : argument2.sample(pos);
+        return target.map(t -> condition.sample(pos) == t.sample(pos)).orElse(condition.sample(pos) >= 0) ? argument1.sample(pos) : argument2.sample(pos);
     }
 
     @Override
@@ -25,7 +28,7 @@ public record Select(DensityFunction condition, DensityFunction argument1, Densi
 
     @Override
     public DensityFunction apply(DensityFunctionVisitor visitor) {
-        return visitor.apply(new Select(this.condition.apply(visitor), this.argument1.apply(visitor), this.argument2.apply(visitor)));
+        return visitor.apply(new Select(this.condition.apply(visitor), this.argument1.apply(visitor), this.argument2.apply(visitor), this.target.map(d -> d.apply(visitor))));
     }
 
     @Override

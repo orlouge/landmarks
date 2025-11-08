@@ -1,0 +1,25 @@
+{
+  "feature": "landmarks:thermal_vent",
+  "placement": [
+    {
+      "type": "minecraft:rarity_filter",
+      "chance": 150
+    },
+    {
+      "type": "minecraft:in_square"
+    },
+    {
+      "type": "minecraft:heightmap",
+      "heightmap": "OCEAN_FLOOR"
+    },
+    {
+      "type": "minecraft:surface_relative_threshold_filter",
+      "heightmap": "WORLD_SURFACE",
+      "min_inclusive": -63,
+      "max_inclusive": -22
+    },
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}

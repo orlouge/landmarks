@@ -1,0 +1,49 @@
+{
+  "type": "landmarks:select",
+  "target": {
+    "type": "add",
+    "argument1": {
+      "type": "mul",
+      "argument1": {
+        "type": "landmarks:feature_random_number",
+        "seed": "vent_x_1",
+        "min": 0,
+        "max": 3,
+        "integer": true
+      },
+      "argument2": 15
+    },
+    "argument2": 0
+  },
+  "condition": "landmarks:relative_x",
+  "argument1": {
+    "type": "landmarks:select",
+    "target": {
+      "type": "add",
+      "argument1": {
+        "type": "mul",
+        "argument1": {
+          "type": "landmarks:feature_random_number",
+          "seed": "vent_z_1",
+          "min": 0,
+          "max": 3,
+          "integer": true
+        },
+        "argument2": 15
+      },
+      "argument2": 0
+    },
+    "condition": "landmarks:relative_z",
+    "argument1": {
+      "type": "landmarks:feature_random_number",
+      "seed": "vent_height_1",
+      "min": 1,
+      "max": { "type": "add", "argument1": "landmarks:feature_max_height", "argument2": -1 },
+      "mean": 10,
+      "std": 3,
+      "integer": true
+    },
+    "argument2": 0
+  },
+  "argument2": 0
+}

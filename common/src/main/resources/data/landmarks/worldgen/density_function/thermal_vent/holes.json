@@ -1,0 +1,34 @@
+{
+  "type": "landmarks:feature_cache",
+  "key": "vent_holes",
+  "repeat_y": "landmarks:feature_surface_y",
+  "argument": {
+    "type": "max",
+    "argument1": {
+      "type": "max",
+      "argument1": {
+        "type": "max",
+        "argument1": "landmarks:thermal_vent/hole_1",
+        "argument2": "landmarks:thermal_vent/hole_2"
+      },
+      "argument2": {
+        "type": "max",
+        "argument1": "landmarks:thermal_vent/hole_3",
+        "argument2": "landmarks:thermal_vent/hole_4"
+      }
+    },
+    "argument2": {
+      "type": "max",
+      "argument1": {
+        "type": "max",
+        "argument1": "landmarks:thermal_vent/hole_5",
+        "argument2": "landmarks:thermal_vent/hole_6"
+      },
+      "argument2": {
+        "type": "max",
+        "argument1": "landmarks:thermal_vent/hole_7",
+        "argument2": "landmarks:thermal_vent/hole_8"
+      }
+    }
+  }
+}

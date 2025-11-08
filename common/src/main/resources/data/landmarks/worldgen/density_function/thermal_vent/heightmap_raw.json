@@ -1,0 +1,25 @@
+{
+  "type": "landmarks:feature_cache",
+  "key": "vent_heightmap_raw",
+  "repeat_y": "landmarks:feature_surface_y",
+  "argument": {
+    "type": "mul",
+    "argument1": {
+      "type": "landmarks:power",
+      "argument1": {
+        "type": "landmarks:gaussian_blur_2d",
+        "argument": "landmarks:thermal_vent/holes_filtered",
+        "rescale": true,
+        "ignore_zeros": false,
+        "kernel_radius": 10,
+        "sigma": 2,
+        "min_x": { "type": "add", "argument1": { "type": "landmarks:feature_min_x" }, "argument2": -1},
+        "min_z": { "type": "add", "argument1": { "type": "landmarks:feature_min_z" }, "argument2": -1},
+        "max_x": { "type": "add", "argument1": { "type": "landmarks:feature_max_x" }, "argument2": 1},
+        "max_z": { "type": "add", "argument1": { "type": "landmarks:feature_max_z" }, "argument2": 1}
+      },
+      "argument2": 1.3
+    },
+    "argument2": 0.7
+  }
+}
