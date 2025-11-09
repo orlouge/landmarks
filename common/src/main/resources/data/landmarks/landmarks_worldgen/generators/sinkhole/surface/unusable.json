@@ -1,0 +1,4 @@
+{
+  "fallback": true,
+  "parameters": {"free_space_above": 0, "free_space_below": 0}
+}

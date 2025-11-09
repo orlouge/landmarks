@@ -12,11 +12,13 @@ import io.github.orlouge.landmarks.utils.RandomWrapper;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.fluid.Fluids;
 import net.minecraft.registry.RegistryCodecs;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.entry.RegistryEntryList;
 import net.minecraft.registry.tag.BlockTags;
+import net.minecraft.registry.tag.FluidTags;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.math.BlockPos;
@@ -69,7 +71,7 @@ public record ProcessingStep(
                         resolved -> copiedEntries.computeIfAbsent(entry, entry2 -> copyBlock(world, resolved, noisePos))
                     );
                     for (Rule rule : rules) {
-                        if (rule.process(pos, world.getBlockState(pos).getRegistryEntry(), palette, world, random, localContext)) break;
+                        if (rule.process(pos, world.getBlockState(pos), palette, world, random, localContext)) break;
                     }
                 }
             }
@@ -192,9 +194,10 @@ public record ProcessingStep(
             );
         }
 
-        public boolean process(BlockPos pos, RegistryEntry<Block> currentBlock, BiFunction<String, Boolean, BlockTemplate> palette, StructureWorldAccess world, Random random, VariantContext context) {
+        public boolean process(BlockPos pos, BlockState currentBlockState, BiFunction<String, Boolean, BlockTemplate> palette, StructureWorldAccess world, Random random, VariantContext context) {
             if (impossible) return false;
 
+            RegistryEntry<Block> currentBlock = currentBlockState.getRegistryEntry();
             if (blockAbove.isPresent() && !blockAbove.get().contains(world.getBlockState(pos.add(0, 1, 0)).getRegistryEntry()))
                 return false;
             if (blockBelow.isPresent() && !blockBelow.get().contains(world.getBlockState(pos.add(0, -1, 0)).getRegistryEntry()))
@@ -215,7 +218,7 @@ public record ProcessingStep(
                 resolved -> copyBlock(world, resolved, noisePos).getBlockState(world, random, palette)
             );
             if (blockToPlace != null) {
-                if (autoWaterlog && currentBlock.value() == Blocks.WATER && blockToPlace.contains(net.minecraft.state.property.Properties.WATERLOGGED)) {
+                if (autoWaterlog && currentBlockState.getFluidState().isIn(FluidTags.WATER) && blockToPlace.contains(Properties.WATERLOGGED)) {
                     blockToPlace = blockToPlace.with(Properties.WATERLOGGED, true);
                 }
 

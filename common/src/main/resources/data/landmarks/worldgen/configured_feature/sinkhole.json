@@ -1,0 +1,67 @@
+{
+  "type": "landmarks:noise",
+  "config": {
+    "debug": false,
+    "parameters": {
+      "origin_y": { "type": "landmarks:feature_origin_y" },
+      "surface_y": { "type": "add", "argument1": -1, "argument2": { "type": "landmarks:feature_origin_y" } },
+      "radius": {
+        "type": "landmarks:feature_random_number",
+        "seed": "radius",
+        "min": 7,
+        "max": "landmarks:feature_radius",
+        "mean": 5,
+        "std": 3
+      },
+      "negated_radius": {
+        "type": "landmarks:negate",
+        "argument": { "type": "landmarks:feature_user_parameter", "parameter": "radius" }
+      }
+    },
+    "min_y": {
+      "type": "minecraft:add",
+      "argument1": { "type": "landmarks:feature_origin_y" },
+      "argument2": {
+        "type": "landmarks:feature_random_number",
+        "seed": "depth",
+        "min": -15,
+        "max": -5,
+        "mean": -7,
+        "std": 1.5
+      }
+    },
+    "max_y": {
+      "type": "minecraft:add",
+      "argument1": { "type": "landmarks:feature_origin_y" },
+      "argument2": {
+        "type": "landmarks:feature_random_number",
+        "seed": "height",
+        "min": 1,
+        "max": 4
+      }
+    },
+    "min_x": {
+      "type": "minecraft:add",
+      "argument1": "landmarks:feature_center_x",
+      "argument2": { "type": "landmarks:feature_user_parameter", "parameter": "negated_radius" }
+    },
+    "max_x": {
+      "type": "minecraft:add",
+      "argument1": "landmarks:feature_center_x",
+      "argument2": { "type": "landmarks:feature_user_parameter", "parameter": "radius" }
+    },
+    "min_z": {
+      "type": "minecraft:add",
+      "argument1": "landmarks:feature_center_z",
+      "argument2": { "type": "landmarks:feature_user_parameter", "parameter": "negated_radius" }
+    },
+    "max_z": {
+      "type": "minecraft:add",
+      "argument1": "landmarks:feature_center_z",
+      "argument2": { "type": "landmarks:feature_user_parameter", "parameter": "radius" }
+    },
+    "generators": [
+      "landmarks:sinkhole"
+    ]
+  }
+}

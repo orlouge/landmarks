@@ -12,6 +12,33 @@
     "density": [-0.4, -0.2, 0, 0.2, 0.4],
     "density3d": [0, -0.3, -0.8, -0.9, -0.9, -0.9, -0.9, -0.9, -0.9, -0.9, -0.9, -0.9, -0.9, -0.9, -0.9, -0.9, -0.9, -0.9, -0.95, -0.95, -0.95, -0.95, -0.95, -0.95, -0.99, -0.99],
     "layered_noise_min": [0, 0, 0, 0, 0.2, 0.5, 0.8],
-    "layered_noise_range": [1, 1, 1, 1, 0.8, 0.4, 0.05]
+    "layered_noise_range": [1, 1, 1, 1, 0.8, 0.4, 0.05],
+    "free_space_above": {
+      "type": "landmarks:feature_cache",
+      "argument": {
+        "type": "landmarks:select",
+        "condition": "landmarks:y",
+        "target": { "type": "add", "argument1": "landmarks:feature_surface_y", "argument2": 2},
+        "argument1": {
+          "type": "landmarks:feature_block_matches",
+          "matches": ["#landmarks:rocks_replace"],
+          "matches_not": ["minecraft:air"]
+        },
+        "argument2": {
+          "type": "landmarks:select",
+          "condition": "landmarks:y",
+          "target": { "type": "landmarks:feature_max_y" },
+          "argument1": {
+            "type": "landmarks:feature_block_matches",
+            "matches": ["#landmarks:rocks_replace"],
+            "matches_not": ["minecraft:water"]
+          },
+          "argument2": {
+            "type": "landmarks:feature_block_matches",
+            "matches": ["#landmarks:rocks_replace"]
+          }
+        }
+      }
+    }
   }
 }

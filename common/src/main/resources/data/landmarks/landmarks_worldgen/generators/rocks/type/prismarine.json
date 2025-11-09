@@ -2,20 +2,16 @@
   "name": "prismarine",
   "biome": "#c:is_deep_ocean",
   "origin": ["minecraft:dirt", "minecraft:clay", "minecraft:gravel"],
+  "weight": 10,
+  "has_variants": {
+    "noise_parameters": ["submerged"]
+  },
   "palette": {
     "entries": {
-      "inner5": {
-        "block": "prismarine"
-      },
-      "inner4": {
-        "block": "prismarine;prismarine;prismarine;prismarine;prismarine;prismarine;sea_lantern"
-      },
-      "top_full": {
-        "block": "prismarine"
-      },
-      "slab5": {
-        "block": "prismarine_slab"
-      }
+      "inner5": "prismarine",
+      "inner4": "prismarine;prismarine;prismarine;prismarine;prismarine;prismarine;sea_lantern",
+      "top_full": "prismarine",
+      "slab5": "prismarine_slab"
     }
   }
 }

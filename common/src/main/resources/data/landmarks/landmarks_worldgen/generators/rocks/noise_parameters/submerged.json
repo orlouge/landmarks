@@ -1,0 +1,34 @@
+{
+  "fallback": true,
+  "conditions": ["water_above_surface>0"],
+  "weight": 100,
+  "parameters": {
+    "horizontal_scale": [0.05, 0.06, 0.07, 0.08, 0.09, 0.1],
+    "horizontal_scale_detail": [0.05, 0.08, 0.12, 0.15, 0.2],
+    "horizontal_scale_3d": [0.05, 0.08, 0.1, 0.12, 0.15, 0.2],
+    "vertical_scale": [0.06, 0.08, 0.1, 0.12],
+    "spikiness": [0.5, 0.7, 0.8, 0.9, 1, 1.1, 1.3],
+    "slab_threshold": 0.2,
+    "density": [-0.3, -0.4, -0.5, -0.6, -0.7, -0.8],
+    "density3d": [0.3, 0.2, 0, -0.1, -0.2, -0.3, -0.4, -0.6, -0.7, -0.8, -0.9, -0.9, -0.9, -0.9],
+    "layered_noise_min": [0, 0, 0, 0, 0.2, 0.4, 0.6, 0.8],
+    "layered_noise_range": [1, 1, 1, 1, 0.8, 0.6, 0.4, 0.2, 0.05],
+    "free_space_above": {
+      "type": "landmarks:feature_cache",
+      "argument": {
+        "type": "landmarks:select",
+        "condition": "landmarks:y",
+        "target": { "type": "add", "argument1": "landmarks:feature_surface_y", "argument2": 1},
+        "argument1": {
+          "type": "landmarks:feature_block_matches",
+          "matches": ["#landmarks:rocks_replace"],
+          "matches_not": ["minecraft:air"]
+        },
+        "argument2": {
+          "type": "landmarks:feature_block_matches",
+          "matches": ["#landmarks:rocks_replace"]
+        }
+      }
+    }
+  }
+}

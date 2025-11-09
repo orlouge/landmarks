@@ -1,0 +1,34 @@
+{
+  "type": "landmarks:feature_cache",
+  "key": "vent_heightmap_noisy",
+  "repeat_y": "landmarks:feature_surface_y",
+  "argument": {
+    "type": "add",
+    "argument1": {
+      "type": "mul",
+      "argument1": {
+        "type": "add",
+        "argument1": 1,
+        "argument2": {
+          "type": "mul",
+          "argument1": "landmarks:thermal_vent/noise_heightmap",
+          "argument2": {
+            "type": "mul",
+            "argument1": 0.3,
+            "argument2": "landmarks:thermal_vent/noise_mask"
+          }
+        }
+      },
+      "argument2": "landmarks:thermal_vent/heightmap_raw"
+    },
+    "argument2": {
+      "type": "mul",
+      "argument1": "landmarks:thermal_vent/noise_heightmap",
+      "argument2": {
+        "type": "mul",
+        "argument1": 0.5,
+        "argument2": "landmarks:thermal_vent/noise_mask"
+      }
+    }
+  }
+}

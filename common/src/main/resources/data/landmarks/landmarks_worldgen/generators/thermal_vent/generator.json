@@ -1,0 +1,88 @@
+{
+  "parameters": {
+    "horizontal_scale_1": [0.05, 0.1, 0.15],
+    "horizontal_scale_2": [0.2, 0.3, 0.4],
+    "density": 0.0,
+    "horizontal_scale_detail": [0.05, 0.08, 0.12, 0.15, 0.2],
+    "horizontal_scale_3d": [0.05, 0.08, 0.1, 0.12, 0.15, 0.2],
+    "vertical_scale": [0.06, 0.08, 0.1, 0.12],
+    "density3d": [0.3, 0.2, 0, -0.1, -0.2, -0.3],
+    "floor_replace_threshold": [0.2, 0.4, 0.6],
+    "holes": "landmarks:thermal_vent/holes_filtered",
+    "hole_count": {
+      "type": "landmarks:feature_mass",
+      "key": "count_holes",
+      "argument": {
+        "type": "landmarks:cuboid",
+        "inside": { "type": "landmarks:feature_user_parameter", "parameter": "holes" },
+        "min_x": { "type": "landmarks:feature_min_x" },
+        "min_y": "landmarks:feature_surface_y",
+        "min_z": { "type": "landmarks:feature_min_z" },
+        "max_x": { "type": "landmarks:feature_max_x" },
+        "max_y": "landmarks:feature_surface_y",
+        "max_z": { "type": "landmarks:feature_max_z" }
+      }
+    },
+    "heightmap": "landmarks:thermal_vent/heightmap_filtered",
+    "height": "landmarks:relative_feature_height",
+    "rock_density": "landmarks:thermal_vent/density_3d"
+  },
+  "abort": [
+    {
+      "value": false,
+      "fallback": true
+    },
+    {
+      "value": true,
+      "conditions": ["hole_count<=0"]
+    }
+  ],
+  "processing_sequence": [
+    {
+      "mask": 1,
+      "rules": [
+        {
+          "place": "air",
+          "block_is": "air",
+          "conditions": ["holes>0", "holes>=height"]
+        },
+        {
+          "place": "water",
+          "conditions": ["holes>0", "holes>=height"]
+        },
+        {
+          "place": "%rock",
+          "conditions": ["rock_density>0"]
+        }
+      ]
+    },
+    {
+      "mask": "landmarks:masks/min_y",
+      "rules": [
+        {
+          "place": "%?smoker",
+          "conditions": ["holes>0", "holes>=height"],
+          "post_processing": false
+        }
+      ]
+    },
+    {
+      "mask": "landmarks:masks/min_y_plus_one",
+      "rules": [
+        {
+          "place": "%?above_smoker",
+          "conditions": ["holes>0", "holes>=height"]
+        }
+      ]
+    },
+    {
+      "mask": "landmarks:masks/min_y_plus_two",
+      "rules": [
+        {
+          "place": "%?above_above_smoker",
+          "conditions": ["holes>0", "holes>=height"]
+        }
+      ]
+    }
+  ]
+}

@@ -2,19 +2,12 @@
   "biome": "#landmarks:has_overgrown_rocks",
   "weight": 2,
   "palette": {
+    "overwritable": true,
     "entries": {
-      "top_full": {
-        "block": "%%surface_reset_state;%%surface_reset_state;*"
-      },
-      "above_surface_dirt": {
-        "block": "short_grass;tall_grass;%?flowers;*;*;*"
-      },
-      "above_top_dirt": {
-        "block": "short_grass;tall_grass;%?flowers;%?flowers;*"
-      },
-      "exposed_surface_dirt": {
-        "block": "coarse_dirt"
-      }
+      "top_full": "%%surface_reset_state;%%surface_reset_state;*",
+      "above_surface_dirt": "short_grass;tall_grass;%?flowers;*;*;*",
+      "above_top_dirt": "short_grass;tall_grass;%?flowers;%?flowers;*",
+      "exposed_surface_dirt": "coarse_dirt"
     }
   }
 }
