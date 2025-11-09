@@ -7,21 +7,11 @@
   },
   "palette": {
     "entries": {
-      "inner5": {
-        "block": "stone;stone;andesite;andesite;%?extra_rocks"
-      },
-      "inner4": {
-        "block": "stone;andesite;cobblestone;andesite;%?extra_rocks"
-      },
-      "slab5": {
-        "block": "stone_slab;andesite_slab;cobblestone_slab;%?extra_slabs"
-      },
-      "above_surface_overworld_stone": {
-        "block": "stone_button[face=floor,facing=east];stone_button[face=floor,facing=north];*;*;*;*;*;*"
-      },
-      "above_top_sculk_replaceable": {
-        "block": "stone_button[face=floor,facing=east];stone_button[face=floor,facing=north];*;*;*;*;*;*;*;*;*;*;*;*"
-      }
+      "inner5": "stone;stone;andesite;andesite;%?extra_rocks",
+      "inner4": "stone;andesite;cobblestone;andesite;%?extra_rocks",
+      "slab5": "stone_slab;andesite_slab;cobblestone_slab;%?extra_slabs",
+      "above_surface_overworld_stone": "stone_button[face=floor,facing=east];stone_button[face=floor,facing=north];*;*;*;*;*;*",
+      "above_top_sculk_replaceable": "stone_button[face=floor,facing=east];stone_button[face=floor,facing=north];*;*;*;*;*;*;*;*;*;*;*;*"
     }
   }
 }

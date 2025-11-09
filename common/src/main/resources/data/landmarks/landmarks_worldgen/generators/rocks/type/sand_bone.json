@@ -4,12 +4,8 @@
   "weight": 10,
   "palette": {
     "entries": {
-      "inner5": {
-        "block": "sandstone;sandstone;sandstone;diorite;diorite;bone_block[axis=x];bone_block[axis=y];bone_block[axis=z];%?extra_rocks"
-      },
-      "slab5": {
-        "block": "sandstone_slab;smooth_sandstone_slab;%?extra_slabs"
-      }
+      "inner5": "sandstone;sandstone;sandstone;diorite;diorite;bone_block[axis=x];bone_block[axis=y];bone_block[axis=z];%?extra_rocks",
+      "slab5": "sandstone_slab;smooth_sandstone_slab;%?extra_slabs"
     }
   }
 }

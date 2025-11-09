@@ -1,0 +1,14 @@
+{
+  "fallback": true,
+  "has_variants": {"surface": "dirt"},
+  "palette": {
+    "entries": {
+      "fluid": "minecraft:water",
+      "on_bottom_dirt_water": ["seagrass;*;%?on_bottom_overworld_stone", "*", "*", "*", "*"],
+      "on_bank_dirt": ["*", "*", "*", "*", "coarse_dirt;*", "tall_grass;tall_grass;*;%?on_bank;%?on_bank", "tall_grass;*;*;*;%?on_bank;%?on_bank", "short_grass;tall_grass;*;%?on_bank;%?on_bank", "short_grass;*;*;%?on_bank;%?on_bank"],
+      "bank": ["coarse_dirt;coarse_dirt;rooted_dirt;*", "coarse_dirt;*", "coarse_dirt;coarse_dirt;*"],
+      "bottom": ["coarse_dirt;coarse_dirt;rooted_dirt", "coarse_dirt;coarse_dirt;dirt", "coarse_dirt;coarse_dirt;rooted_dirt;rooted_dirt;gravel"],
+      "side": ["%bottom;%bottom;%bottom;*", "coarse_dirt*2;*"]
+    }
+  }
+}

@@ -4,12 +4,8 @@
   "weight": 20,
   "palette": {
     "entries": {
-      "inner5": {
-        "block": "sandstone;smooth_sandstone;%?extra_rocks"
-      },
-      "slab5": {
-        "block": "sandstone_slab;smooth_sandstone_slab;%?extra_slabs"
-      }
+      "inner5": "sandstone;smooth_sandstone;%?extra_rocks",
+      "slab5": "sandstone_slab;smooth_sandstone_slab;%?extra_slabs"
     }
   }
 }

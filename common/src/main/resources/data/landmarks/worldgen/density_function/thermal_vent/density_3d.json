@@ -1,0 +1,20 @@
+{
+  "type": "landmarks:feature_cache",
+  "key": "thermal_vent_density_3d",
+  "argument": {
+    "type": "minecraft:clamp",
+    "min": 0,
+    "max": 1,
+    "input": {
+      "type": "minecraft:min",
+      "argument1": "landmarks:thermal_vent/density_simple",
+      "argument2": {
+        "type": "landmarks:select",
+        "condition": "landmarks:thermal_vent/noise_mask",
+        "target": 1,
+        "argument1": "landmarks:rock/rock_3d_noise_detail",
+        "argument2": 1
+      }
+    }
+  }
+}

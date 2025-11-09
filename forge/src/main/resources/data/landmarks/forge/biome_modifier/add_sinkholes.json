@@ -1,0 +1,6 @@
+{
+  "type": "forge:add_features",
+  "biomes": "#landmarks:has_sinkholes",
+  "features": "landmarks:sinkhole",
+  "step": "lakes"
+}

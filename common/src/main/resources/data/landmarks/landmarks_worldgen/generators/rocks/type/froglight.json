@@ -2,20 +2,16 @@
   "name": "froglight",
   "biome": "#minecraft:has_structure/ruined_portal_swamp",
   "origin": ["minecraft:dirt", "minecraft:clay", "minecraft:gravel"],
+  "has_variants": {
+    "noise_parameters": ["submerged"]
+  },
+  "weight": 1000,
   "palette": {
     "entries": {
-      "inner5": {
-        "block": "mud"
-      },
-      "inner4": {
-        "block": "ochre_froglight"
-      },
-      "top_full": {
-        "block": "mud"
-      },
-      "slab5": {
-        "block": "mud"
-      }
+      "inner5": "mud",
+      "inner4": "ochre_froglight",
+      "top_full": "mud",
+      "slab5": "mud"
     }
   }
 }

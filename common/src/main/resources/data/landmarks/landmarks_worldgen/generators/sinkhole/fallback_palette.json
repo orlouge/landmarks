@@ -1,0 +1,12 @@
+{
+  "palette": [
+    {
+      "entries": {
+        "void": {
+          "block": "minecraft:air"
+        }
+      },
+      "fallback": true
+    }
+  ]
+}

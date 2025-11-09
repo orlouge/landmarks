@@ -16,6 +16,7 @@ import net.minecraft.util.math.random.Random;
 import net.minecraft.world.gen.densityfunction.DensityFunction;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public record Palette(
     Map<String, BlockTemplate> entries,
@@ -88,26 +89,28 @@ public record Palette(
 
     public record RandomizedPalette(
         Map<String, RandomProperty<PalettedBlockTemplate, VariantContext, VariantContext.Predicate>> entries,
-        Map<String, RandomProperty<CopiedEntry, VariantContext, VariantContext.Predicate>> copyEntries
+        Map<String, RandomProperty<CopiedEntry, VariantContext, VariantContext.Predicate>> copyEntries,
+        boolean overwritable
     ) implements RandomWrapper<Palette, VariantContext> {
         public static final MapCodec<RandomizedPalette> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             Codec.unboundedMap(Codec.STRING, VariantContext.wrappedRandomCodec(PalettedBlockTemplate.CODEC, "block")).optionalFieldOf("entries", Collections.emptyMap()).forGetter(RandomizedPalette::entries),
-            Codec.unboundedMap(Codec.STRING, VariantContext.extendRandomCodec(CopiedEntry.MAP_CODEC)).optionalFieldOf("copy_entries", Collections.emptyMap()).forGetter(RandomizedPalette::copyEntries)
+            Codec.unboundedMap(Codec.STRING, VariantContext.extendRandomCodec(CopiedEntry.MAP_CODEC)).optionalFieldOf("copy_entries", Collections.emptyMap()).forGetter(RandomizedPalette::copyEntries),
+            Codec.BOOL.optionalFieldOf("overwritable", false).forGetter(RandomizedPalette::overwritable)
             ).apply(instance, RandomizedPalette::new)
         );
 
-        public RandomizedPalette() { this(new HashMap<>(), new HashMap<>()); }
+        public RandomizedPalette() { this(new HashMap<>(), new HashMap<>(), true); }
 
         public RandomizedPalette merge(RandomizedPalette other) {
             HashMap<String, RandomProperty<PalettedBlockTemplate, VariantContext, VariantContext.Predicate>> entries = new HashMap<>(this.entries);
             HashMap<String, RandomProperty<CopiedEntry, VariantContext, VariantContext.Predicate>> copiedEntries = new HashMap<>(this.copyEntries);
-            entries.putAll(other.entries);
-            copiedEntries.putAll(other.copyEntries);
-            return new RandomizedPalette(entries, copiedEntries);
+            entries.putAll(overwritable ? other.entries : other.entries.entrySet().stream().filter(e -> !entries.containsKey(e.getKey())).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
+            copiedEntries.putAll(overwritable ? other.copyEntries : other.copyEntries.entrySet().stream().filter(e -> !copyEntries.containsKey(e.getKey())).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
+            return new RandomizedPalette(entries, copiedEntries, overwritable && other.overwritable);
         }
 
-        public boolean canCombineWithoutReplacement(RandomizedPalette other) {
-            return other.entries.keySet().stream().noneMatch(entries.keySet()::contains) && other.copyEntries.keySet().stream().noneMatch(copyEntries.keySet()::contains);
+        public boolean canCombine(RandomizedPalette other) {
+            return (overwritable || other.overwritable) || (other.entries.keySet().stream().noneMatch(entries.keySet()::contains) && other.copyEntries.keySet().stream().noneMatch(copyEntries.keySet()::contains));
         }
 
         @Override

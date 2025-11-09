@@ -4,33 +4,15 @@
   },
   "palette": {
     "entries": {
-      "inner5": {
-        "block": "stone;stone;andesite;andesite;%?extra_rocks"
-      },
-      "inner4": {
-        "block": "stone;stone;cobblestone;tuff;%?extra_rocks"
-      },
-      "inner3": {
-        "block": "cobblestone;tuff;tuff;deepslate;cobbled_deepslate;%?extra_rocks"
-      },
-      "inner2": {
-        "block": "smooth_basalt;cobblestone;tuff;tuff;deepslate;cobbled_deepslate;%?extra_rocks"
-      },
-      "inner1": {
-        "block": "smooth_basalt;tuff;deepslate;smooth_basalt;%?extra_rocks"
-      },
-      "slab5": {
-        "block": "stone_slab;andesite_slab;cobblestone_slab;%?extra_slabs"
-      },
-      "slab3": {
-        "block": "*;cobblestone_slab"
-      },
-      "slab2": {
-        "block": "cobbled_deepslate_slab;*;%?extra_rocks"
-      },
-      "slab1": {
-        "block": "cobbled_deepslate_slab;*"
-      }
+      "inner5": "stone;stone;andesite;andesite;%?extra_rocks",
+      "inner4": "stone;stone;cobblestone;tuff;%?extra_rocks",
+      "inner3": "cobblestone;tuff;tuff;deepslate;cobbled_deepslate;%?extra_rocks",
+      "inner2": "smooth_basalt;cobblestone;tuff;tuff;deepslate;cobbled_deepslate;%?extra_rocks",
+      "inner1": "smooth_basalt;tuff;deepslate;smooth_basalt;%?extra_rocks",
+      "slab5": "stone_slab;andesite_slab;cobblestone_slab;%?extra_slabs",
+      "slab3": "*;cobblestone_slab",
+      "slab2": "cobbled_deepslate_slab;*;%?extra_rocks",
+      "slab1": "cobbled_deepslate_slab;*"
     }
   }
 }

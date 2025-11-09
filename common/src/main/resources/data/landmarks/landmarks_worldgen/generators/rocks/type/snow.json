@@ -4,30 +4,14 @@
   "weight": 5,
   "palette": {
     "entries": {
-      "inner5": {
-        "block": "snow_block"
-      },
-      "inner4": {
-        "block": "packed_ice;snow_block;snow_block"
-      },
-      "inner3": {
-        "block": "packed_ice;snow_block"
-      },
-      "inner2": {
-        "block": "packed_ice"
-      },
-      "inner1": {
-        "block": "blue_ice;packed_ice"
-      },
-      "slab5": {
-        "block": "snow[layers=4];snow[layers=5];snow[layers=6]"
-      },
-      "slab1": {
-        "block": "snow[layers=1];snow[layers=2];snow[layers=3]"
-      },
-      "above_top_dirt": {
-        "block": "snow[layers=1];snow[layers=2];snow[layers=3]"
-      }
+      "inner5": "snow_block",
+      "inner4": "packed_ice;snow_block;snow_block",
+      "inner3": "packed_ice;snow_block",
+      "inner2": "packed_ice",
+      "inner1": "blue_ice;packed_ice",
+      "slab5": "snow[layers=4];snow[layers=5];snow[layers=6]",
+      "slab1": "snow[layers=1];snow[layers=2];snow[layers=3]",
+      "above_top_dirt": "snow[layers=1];snow[layers=2];snow[layers=3]"
     }
   }
 }

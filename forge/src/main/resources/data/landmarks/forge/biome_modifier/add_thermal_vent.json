@@ -1,0 +1,6 @@
+{
+  "type": "forge:add_features",
+  "biomes": "#landmarks:has_ocean_rocks_deep",
+  "features": "landmarks:thermal_vent",
+  "step": "top_layer_modification"
+}

@@ -1,0 +1,10 @@
+{
+  "type": "landmarks:select",
+  "condition": {
+    "type": "add",
+    "argument1": "landmarks:thermal_vent/distance_to_holes",
+    "argument2": -1.1
+  },
+  "argument1": 1,
+  "argument2": 0
+}
