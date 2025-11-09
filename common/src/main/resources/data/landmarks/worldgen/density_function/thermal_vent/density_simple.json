@@ -1,0 +1,33 @@
+{
+  "type": "landmarks:feature_cache",
+  "key": "thermal_vent_density_simple",
+  "argument": {
+    "type": "landmarks:select",
+    "argument1": {
+      "type": "minecraft:clamp",
+      "min": 0,
+      "max": 1,
+      "input": {
+        "type": "minecraft:add",
+        "argument1": "landmarks:thermal_vent/heightmap_filtered",
+        "argument2": {
+          "type": "landmarks:negate",
+          "argument": {
+            "type": "add",
+            "argument1": "landmarks:relative_feature_height",
+            "argument2": 1
+          }
+        }
+      }
+    },
+    "argument2": 0,
+    "condition": {
+      "type": "add",
+      "argument1": "landmarks:thermal_vent/heightmap_filtered",
+      "argument2": {
+        "type": "landmarks:negate",
+        "argument": { "type": "landmarks:feature_user_parameter", "parameter": "floor_replace_threshold"}
+      }
+    }
+  }
+}

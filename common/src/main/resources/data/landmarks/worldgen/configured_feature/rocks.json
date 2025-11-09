@@ -4,10 +4,10 @@
     "debug": false,
     "variants": {
       "size": [
-        { "variant_name": "ocean_rocks_deep", "biome": "#landmarks:has_ocean_rocks_deep" },
-        { "variant_name": "ocean_rocks_shallow", "biome": "#landmarks:has_ocean_rocks_shallow" },
-        { "variant_name": "huge", "weight": 0.005, "fallback": true },
-        { "variant_name": "normal", "fallback": true }
+        { "variant_name": "ocean_rocks_deep", "biome": "#landmarks:has_ocean_rocks_deep", "weight": 5 },
+        { "variant_name": "ocean_rocks_shallow", "biome": "#landmarks:has_ocean_rocks_shallow", "weight": 5 },
+        { "variant_name": "huge", "weight": 0.005 },
+        { "variant_name": "normal" }
       ]
     },
     "parameters": {
@@ -40,12 +40,20 @@
       "negated_radius": {
         "type": "landmarks:negate",
         "argument": { "type": "landmarks:feature_user_parameter", "parameter": "radius" }
+      },
+      "water_above_surface": {
+        "type": "landmarks:map",
+        "y": { "type": "add", "argument1": "landmarks:feature_surface_y", "argument2": 1},
+        "input": {
+          "type": "landmarks:feature_block_matches",
+          "matches": ["minecraft:water"]
+        }
       }
     },
     "min_y": {
       "type": "minecraft:add",
       "argument1": { "type": "landmarks:feature_origin_y" },
-      "argument2": -3
+      "argument2": -4
     },
     "max_y": {
       "type": "minecraft:add",

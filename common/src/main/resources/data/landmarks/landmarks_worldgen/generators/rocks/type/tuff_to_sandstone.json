@@ -7,27 +7,13 @@
   },
   "palette": {
     "entries": {
-      "inner5": {
-        "block": "sandstone;smooth_sandstone;%?extra_rocks"
-      },
-      "inner4": {
-        "block": "smooth_sandstone;white_terracotta;%?extra_rocks"
-      },
-      "inner3": {
-        "block": "packed_mud;white_terracotta;%?extra_rocks"
-      },
-      "inner2": {
-        "block": "packed_mud;dripstone_block;%?extra_rocks"
-      },
-      "inner1": {
-        "block": "dripstone_block;dripstone_block;dripstone_block;tuff;%?extra_rocks"
-      },
-      "slab5": {
-        "block": "sandstone_slab;smooth_sandstone_slab;%?extra_slabs"
-      },
-      "slab3": {
-        "block": "*"
-      }
+      "inner5": "sandstone;smooth_sandstone;%?extra_rocks",
+      "inner4": "smooth_sandstone;white_terracotta;%?extra_rocks",
+      "inner3": "packed_mud;white_terracotta;%?extra_rocks",
+      "inner2": "packed_mud;dripstone_block;%?extra_rocks",
+      "inner1": "dripstone_block;dripstone_block;dripstone_block;tuff;%?extra_rocks",
+      "slab5": "sandstone_slab;smooth_sandstone_slab;%?extra_slabs",
+      "slab3": "*"
     }
   }
 }

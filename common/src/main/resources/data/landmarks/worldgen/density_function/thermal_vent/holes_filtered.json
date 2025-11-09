@@ -1,0 +1,15 @@
+{
+  "type": "landmarks:feature_cache",
+  "key": "vent_holes_filter",
+  "repeat_y": "landmarks:feature_surface_y",
+  "argument": {
+    "type": "landmarks:select",
+    "condition": {
+      "type": "add",
+      "argument1": "landmarks:distance_to_border",
+      "argument2": -3
+    },
+    "argument1": "landmarks:thermal_vent/holes",
+    "argument2": 0
+  }
+}

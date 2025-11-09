@@ -1,0 +1,45 @@
+{
+  "origin": "#minecraft:dirt",
+  "parameters": {
+    "free_space_above": [
+      {
+        "weight": 5,
+        "value": {
+          "type": "landmarks:feature_cache",
+          "argument": {
+            "type": "landmarks:feature_block_matches",
+            "matches": ["#minecraft:replaceable_by_trees", "minecraft:air"]
+          }
+        }
+      },
+      {
+        "value": {
+          "type": "landmarks:feature_cache",
+          "argument": {
+            "type": "landmarks:feature_block_matches",
+            "matches": ["#landmarks:sinkholes_replace"]
+          }
+        }
+      }
+    ],
+    "free_space_below": {
+      "type": "landmarks:feature_cache",
+      "argument": {
+        "type": "landmarks:select",
+        "condition": {
+          "type": "minecraft:add",
+          "argument1": "landmarks:y",
+          "argument2": { "type": "landmarks:negate", "argument": "landmarks:feature_surface_y"}
+        },
+        "argument1": {
+          "type": "landmarks:feature_block_matches",
+          "matches": ["minecraft:sand", "minecraft:sandstone"]
+        },
+        "argument2": {
+          "type": "landmarks:feature_block_matches",
+          "matches": ["#landmarks:sinkholes_replace"]
+        }
+      }
+    }
+  }
+}

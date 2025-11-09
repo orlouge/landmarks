@@ -1,0 +1,11 @@
+{
+  "fallback": true,
+  "palette": {
+    "entries": {
+      "smoker": "campfire[signal_fire=true]",
+      "above_smoker":  "cobbled_deepslate_slab",
+      "above_above_smoker": "minecraft:light[level=13,waterlogged=true]",
+      "rock": "smooth_basalt*2;basalt"
+    }
+  }
+}

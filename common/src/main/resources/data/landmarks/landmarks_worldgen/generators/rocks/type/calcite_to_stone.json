@@ -8,33 +8,15 @@
   },
   "palette": {
     "entries": {
-      "inner5": {
-        "block": "stone;stone;andesite;andesite;%?extra_rocks"
-      },
-      "inner4": {
-        "block": "andesite;andesite;diorite;stone;%?extra_rocks"
-      },
-      "inner3": {
-        "block": "andesite;diorite;diorite;%?extra_rocks"
-      },
-      "inner2": {
-        "block": "calcite;diorite;diorite;diorite;andesite;%?extra_rocks"
-      },
-      "inner1": {
-        "block": "calcite;calcite;calcite;diorite;%?extra_rocks"
-      },
-      "slab5": {
-        "block": "stone_slab;andesite_slab;cobblestone_slab;%?extra_slabs"
-      },
-      "slab3": {
-        "block": "diorite_slab;*"
-      },
-      "slab2": {
-        "block": "diorite_slab"
-      },
-      "slab1": {
-        "block": "diorite_slab;*"
-      }
+      "inner5": "stone;stone;andesite;andesite;%?extra_rocks",
+      "inner4": "andesite;andesite;diorite;stone;%?extra_rocks",
+      "inner3": "andesite;diorite;diorite;%?extra_rocks",
+      "inner2": "calcite;diorite;diorite;diorite;andesite;%?extra_rocks",
+      "inner1": "calcite;calcite;calcite;diorite;%?extra_rocks",
+      "slab5": "stone_slab;andesite_slab;cobblestone_slab;%?extra_slabs",
+      "slab3": "diorite_slab;*",
+      "slab2": "diorite_slab",
+      "slab1": "diorite_slab;*"
     }
   }
 }

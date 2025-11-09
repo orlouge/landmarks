@@ -8,27 +8,13 @@
   },
   "palette": {
     "entries": {
-      "inner5": {
-        "block": "stone;stone;andesite;andesite;%?extra_rocks"
-      },
-      "inner4": {
-        "block": "stone;andesite;cobblestone;andesite;%?extra_rocks"
-      },
-      "inner3": {
-        "block": "stone;cobblestone;cobblestone;tuff;tuff;%?extra_rocks"
-      },
-      "inner2": {
-        "block": "tuff;tuff;tuff;cobblestone;%?extra_rocks"
-      },
-      "inner1": {
-        "block": "tuff;tuff;tuff;tuff;tuff;tuff;cobblestone;%?extra_rocks"
-      },
-      "slab5": {
-        "block": "stone_slab;andesite_slab;cobblestone_slab;%?extra_slabs"
-      },
-      "slab3": {
-        "block": "*;cobblestone_slab"
-      }
+      "inner5": "stone;stone;andesite;andesite;%?extra_rocks",
+      "inner4": "stone;andesite;cobblestone;andesite;%?extra_rocks",
+      "inner3": "stone;cobblestone;cobblestone;tuff;tuff;%?extra_rocks",
+      "inner2": "tuff;tuff;tuff;cobblestone;%?extra_rocks",
+      "inner1": "tuff;tuff;tuff;tuff;tuff;tuff;cobblestone;%?extra_rocks",
+      "slab5": "stone_slab;andesite_slab;cobblestone_slab;%?extra_slabs",
+      "slab3": "*;cobblestone_slab"
     }
   }
 }

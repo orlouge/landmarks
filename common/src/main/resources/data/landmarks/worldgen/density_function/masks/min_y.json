@@ -1,0 +1,10 @@
+{
+  "type": "landmarks:cuboid",
+  "inside": "landmarks:free_space_2d_map",
+  "min_x": { "type": "landmarks:feature_min_x" },
+  "min_y": { "type": "landmarks:feature_min_y" },
+  "min_z": { "type": "landmarks:feature_min_z" },
+  "max_x": { "type": "landmarks:feature_max_x" },
+  "max_y": { "type": "landmarks:feature_min_y" },
+  "max_z": { "type": "landmarks:feature_max_z" }
+}

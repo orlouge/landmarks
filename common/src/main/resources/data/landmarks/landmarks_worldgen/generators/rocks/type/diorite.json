@@ -1,12 +1,8 @@
 {
   "palette": {
     "entries": {
-      "inner5": {
-        "block": "calcite;diorite;diorite;diorite;andesite;%?extra_rocks"
-      },
-      "slab5": {
-        "block": "diorite_slab"
-      }
+      "inner5": "calcite;diorite;diorite;diorite;andesite;%?extra_rocks",
+      "slab5": "diorite_slab"
     }
   }
 }

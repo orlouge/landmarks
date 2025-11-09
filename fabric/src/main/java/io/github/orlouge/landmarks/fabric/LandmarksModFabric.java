@@ -86,6 +86,10 @@ public final class LandmarksModFabric implements ModInitializer {
             RegistryKey.of(RegistryKeys.PLACED_FEATURE, Identifier.of(LandmarksMod.MOD_ID, "underwater_rocks"))
         );
         BiomeModifications.addFeature(
+            BiomeSelectors.tag(TagKey.of(RegistryKeys.BIOME, Identifier.of(LandmarksMod.MOD_ID, "has_ocean_rocks_deep"))), GenerationStep.Feature.TOP_LAYER_MODIFICATION,
+            RegistryKey.of(RegistryKeys.PLACED_FEATURE, Identifier.of(LandmarksMod.MOD_ID, "thermal_vent"))
+        );
+        BiomeModifications.addFeature(
             BiomeSelectors.tag(TagKey.of(RegistryKeys.BIOME, Identifier.of(LandmarksMod.MOD_ID, "has_forest_clearing"))), GenerationStep.Feature.LAKES,
             RegistryKey.of(RegistryKeys.PLACED_FEATURE, Identifier.of(LandmarksMod.MOD_ID, "forest_clearing"))
         );
@@ -96,6 +100,10 @@ public final class LandmarksModFabric implements ModInitializer {
         BiomeModifications.addFeature(
             BiomeSelectors.tag(TagKey.of(RegistryKeys.BIOME, Identifier.of(LandmarksMod.MOD_ID, "has_ponds"))), GenerationStep.Feature.LAKES,
             RegistryKey.of(RegistryKeys.PLACED_FEATURE, Identifier.of(LandmarksMod.MOD_ID, "pond"))
+        );
+        BiomeModifications.addFeature(
+            BiomeSelectors.tag(TagKey.of(RegistryKeys.BIOME, Identifier.of(LandmarksMod.MOD_ID, "has_sinkholes"))), GenerationStep.Feature.LAKES,
+            RegistryKey.of(RegistryKeys.PLACED_FEATURE, Identifier.of(LandmarksMod.MOD_ID, "sinkhole"))
         );
         BiomeModifications.addFeature(
             BiomeSelectors.tag(TagKey.of(RegistryKeys.BIOME, Identifier.of(LandmarksMod.MOD_ID, "has_fairy_rings"))), GenerationStep.Feature.TOP_LAYER_MODIFICATION,

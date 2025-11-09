@@ -35,6 +35,7 @@ public class SurfaceNoiseFeature extends Feature<SurfaceNoiseFeature.Config> {
         RegistryEntry<Biome> biome = context.getWorld().getBiome(origin);
         ChunkPos originChunk = new ChunkPos(origin);
         long seed = random.nextLong();
+        random = Random.create(seed);
         long startTime = System.currentTimeMillis();
 
         int minZ = (originChunk.z - 1) * 16, maxZ = (originChunk.z + 2) * 16 - 1;
@@ -66,7 +67,7 @@ public class SurfaceNoiseFeature extends Feature<SurfaceNoiseFeature.Config> {
 
             Generator baseGenerator = config.baseGenerator.fragment().sample(random, variantContext);
             if (baseGenerator.abort()) {
-                if (debug) System.out.println("Aborted");
+                if (debug) printContext("(Aborted)", variantContext.withParameters(baseGenerator.parameters()));
                 return false;
             }
             if (!baseGenerator.skip()) variantContext = baseGenerator.generate(world, random, variantContext);
@@ -130,7 +131,7 @@ public class SurfaceNoiseFeature extends Feature<SurfaceNoiseFeature.Config> {
                     generator = randomGen.fragment().sample(random, variantContext);
                 }
                 if (generator.abort()) {
-                    if (debug) System.out.println("Aborted");
+                    if (debug) printContext("(Aborted)", variantContext.withParameters(generator.parameters()));
                     return false;
                 }
                 if (generator.skip()) {
