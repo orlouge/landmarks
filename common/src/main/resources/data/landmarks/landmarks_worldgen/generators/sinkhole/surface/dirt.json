@@ -1,5 +1,5 @@
 {
-  "origin": "#minecraft:dirt",
+  "origin": "#minecraft:substrate_overworld",
   "parameters": {
     "free_space_above": [
       {
@@ -33,7 +33,7 @@
         },
         "argument1": {
           "type": "landmarks:feature_block_matches",
-          "matches": ["#minecraft:dirt"]
+          "matches": ["#minecraft:substrate_overworld"]
         },
         "argument2": {
           "type": "landmarks:feature_block_matches",

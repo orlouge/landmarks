@@ -4,20 +4,20 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.github.orlouge.landmarks.density.FunctionWithCache;
-import net.minecraft.util.dynamic.CodecHolder;
-import net.minecraft.world.gen.densityfunction.DensityFunction;
+import net.minecraft.util.KeyDispatchDataCodec;
+import net.minecraft.world.level.levelgen.DensityFunction;
 
 import java.util.Arrays;
 import java.util.Optional;
 
 public class FeatureCache implements DensityFunction, FunctionWithCache.Simple {
     public static final MapCodec<FeatureCache> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-        DensityFunction.FUNCTION_CODEC.fieldOf("argument").forGetter(d -> d.argument),
-        DensityFunction.FUNCTION_CODEC.optionalFieldOf("repeat_y").forGetter(d -> d.repeatY),
+        DensityFunction.CODEC.fieldOf("argument").forGetter(d -> d.argument),
+        DensityFunction.CODEC.optionalFieldOf("repeat_y").forGetter(d -> d.repeatY),
         Codec.STRING.optionalFieldOf("key", "").forGetter(d -> d.key),
         Codec.BOOL.optionalFieldOf("precomputed", false).forGetter(d -> d.precomputed)
     ).apply(instance, FeatureCache::new));
-    public static final CodecHolder<FeatureCache> CODEC_HOLDER = CodecHolder.of(CODEC);
+    public static final KeyDispatchDataCodec<FeatureCache> CODEC_HOLDER = KeyDispatchDataCodec.of(CODEC);
 
     public final DensityFunction argument;
     public final Optional<DensityFunction> repeatY;
@@ -42,7 +42,7 @@ public class FeatureCache implements DensityFunction, FunctionWithCache.Simple {
     }
 
     @Override
-    public double sample(NoisePos pos) {
+    public double compute(DensityFunction.FunctionContext pos) {
         boolean y2d = repeatY.isPresent();
         if (cache == null || pos.blockX() < cache.minX || pos.blockX() > cache.maxX || (!y2d && (pos.blockY() < cache.minY || pos.blockY() > cache.maxY)) || pos.blockZ() < cache.minZ || pos.blockZ() > cache.maxZ) {
             return sampleWithoutCache(pos);
@@ -58,8 +58,8 @@ public class FeatureCache implements DensityFunction, FunctionWithCache.Simple {
         }
     }
 
-    private double sampleWithoutCache(NoisePos pos) {
-        return argument.sample(pos);
+    private double sampleWithoutCache(DensityFunction.FunctionContext pos) {
+        return argument.compute(pos);
     }
 
     @Override
@@ -73,17 +73,17 @@ public class FeatureCache implements DensityFunction, FunctionWithCache.Simple {
     }
 
     @Override
-    public void fill(double[] densities, EachApplier applier) {
-        applier.fill(densities, this);
+    public void fillArray(double[] densities, DensityFunction.ContextProvider applier) {
+        applier.fillAllDirectly(densities, this);
     }
 
     @Override
-    public DensityFunction apply(DensityFunctionVisitor visitor) {
-        return visitor.apply(new FeatureCache(this.argument.apply(visitor), this.repeatY.map(d -> d.apply(visitor)), key, precomputed, cache));
+    public DensityFunction mapChildren(DensityFunction.Visitor visitor) {
+        return new FeatureCache(visitor.apply(this.argument), this.repeatY.map(visitor::apply), key, precomputed, cache);
     }
 
     @Override
-    public CodecHolder<? extends DensityFunction> getCodecHolder() {
+    public KeyDispatchDataCodec<? extends DensityFunction> codec() {
         return CODEC_HOLDER;
     }
 
@@ -96,16 +96,16 @@ public class FeatureCache implements DensityFunction, FunctionWithCache.Simple {
     public Object createCache(int minX, int maxX, int minY, int maxY, int minZ, int maxZ) {
         int xExt = maxX - minX + 1, yExt = maxY - minY + 1, zExt = maxZ - minZ + 1;
         boolean y2d = this.repeatY.isPresent();
-        int fixedY = y2d ? (int) this.repeatY.get().sample(new UnblendedNoisePos(0, 0, 0)) : 0;
+        int fixedY = y2d ? (int) this.repeatY.get().compute(new DensityFunction.SinglePointContext(0, 0, 0)) : 0;
         double[] cache = y2d ? new double[(xExt + 2) * (zExt + 2)] : new double[(xExt + 2) * (yExt + 2) * (zExt + 2)];
         if (precomputed) {
             for (int x = minX; x <= maxX; x++) {
                 for (int z = minZ; z <= maxZ; z++) {
                     if (y2d) {
-                        cache[zExt * (x - minX) + z - minZ] = sampleWithoutCache(new UnblendedNoisePos(x, fixedY, z));
+                        cache[zExt * (x - minX) + z - minZ] = sampleWithoutCache(new DensityFunction.SinglePointContext(x, fixedY, z));
                     } else {
                         for (int y = minY; y <= maxY; y++) {
-                            cache[(xExt * (y - minY) + x - minX) * zExt + z - minZ] = sampleWithoutCache(new UnblendedNoisePos(x, y, z));
+                            cache[(xExt * (y - minY) + x - minX) * zExt + z - minZ] = sampleWithoutCache(new DensityFunction.SinglePointContext(x, y, z));
                         }
                     }
                 }

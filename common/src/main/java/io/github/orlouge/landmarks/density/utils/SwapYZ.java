@@ -2,18 +2,18 @@ package io.github.orlouge.landmarks.density.utils;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.util.dynamic.CodecHolder;
-import net.minecraft.world.gen.densityfunction.DensityFunction;
+import net.minecraft.util.KeyDispatchDataCodec;
+import net.minecraft.world.level.levelgen.DensityFunction;
 
 public record SwapYZ(DensityFunction argument) implements DensityFunction {
     public static final MapCodec<SwapYZ> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-        DensityFunction.FUNCTION_CODEC.fieldOf("argument").forGetter(SwapYZ::argument)
+        DensityFunction.CODEC.fieldOf("argument").forGetter(SwapYZ::argument)
     ).apply(instance, SwapYZ::new));
-    public static final CodecHolder<SwapYZ> CODEC_HOLDER = CodecHolder.of(CODEC);
+    public static final KeyDispatchDataCodec<SwapYZ> CODEC_HOLDER = KeyDispatchDataCodec.of(CODEC);
 
     @Override
-    public double sample(NoisePos pos) {
-        return argument.sample(new UnblendedNoisePos(pos.blockX(), pos.blockZ(), pos.blockY()));
+    public double compute(DensityFunction.FunctionContext pos) {
+        return argument.compute(new DensityFunction.SinglePointContext(pos.blockX(), pos.blockZ(), pos.blockY()));
     }
 
     @Override
@@ -27,17 +27,17 @@ public record SwapYZ(DensityFunction argument) implements DensityFunction {
     }
 
     @Override
-    public void fill(double[] densities, EachApplier applier) {
-        applier.fill(densities, this);
+    public void fillArray(double[] densities, DensityFunction.ContextProvider applier) {
+        applier.fillAllDirectly(densities, this);
     }
 
     @Override
-    public DensityFunction apply(DensityFunctionVisitor visitor) {
-        return visitor.apply(new SwapYZ(this.argument.apply(visitor)));
+    public DensityFunction mapChildren(DensityFunction.Visitor visitor) {
+        return new SwapYZ(visitor.apply(this.argument));
     }
 
     @Override
-    public CodecHolder<? extends DensityFunction> getCodecHolder() {
+    public KeyDispatchDataCodec<? extends DensityFunction> codec() {
         return CODEC_HOLDER;
     }
 }

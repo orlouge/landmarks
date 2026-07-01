@@ -9,23 +9,23 @@ import io.github.orlouge.landmarks.density.algorithms.*;
 import io.github.orlouge.landmarks.density.feature.*;
 import io.github.orlouge.landmarks.density.feature.constants.*;
 import io.github.orlouge.landmarks.utils.RandomProperty;
-import net.minecraft.block.Block;
-import net.minecraft.registry.RegistryCodecs;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.registry.entry.RegistryEntryList;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.StructureWorldAccess;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.gen.densityfunction.DensityFunction;
-import net.minecraft.world.gen.densityfunction.DensityFunctionTypes;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderSet;
+import net.minecraft.core.RegistryCodecs;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.world.level.WorldGenLevel;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.levelgen.DensityFunction;
+import net.minecraft.world.level.levelgen.DensityFunctions;
 
 import java.util.*;
 
 public record VariantContext(
-    StructureWorldAccess world,
+    WorldGenLevel world,
     long seed,
-    RegistryEntry<Biome> biome,
+    Holder<Biome> biome,
     Map<String, String> variant,
     BlockPos origin,
     BlockPos minPos,
@@ -80,9 +80,9 @@ public record VariantContext(
         return new VariantContext(world, seed, biome, variant, origin, new BlockPos(minX, minY, minZ), new BlockPos(maxX, maxY, maxZ), userParameters, functionCache, palette);
     }
 
-    public DensityFunction.DensityFunctionVisitor getVisitor() {
+    public DensityFunction.Visitor getVisitor() {
         int minX = minPos.getX(), maxX = maxPos.getX(), minY = minPos.getY(), maxY = maxPos.getY(), minZ = minPos.getZ(), maxZ = maxPos.getZ();
-        DensityFunction.DensityFunctionVisitor visitor = function -> {
+        DensityFunction.Visitor visitor = function -> {
             switch (function) {
                 case Noise2D noise when noise.key() != null -> {
                     if (functionCache.containsKey(noise.key())) {
@@ -163,7 +163,7 @@ public record VariantContext(
             }
         };
         return function -> {
-            if (function instanceof DensityFunctionTypes.RegistryEntryHolder(RegistryEntry<DensityFunction> function2)) {
+            if (function instanceof DensityFunctions.HolderHolder(Holder<DensityFunction> function2)) {
                 return visitor.apply(function2.value());
             } else {
                 return visitor.apply(function);
@@ -171,16 +171,16 @@ public record VariantContext(
         };
     }
 
-    public record Predicate(Optional<RegistryEntryList<Biome>> biomes,
+    public record Predicate(Optional<HolderSet<Biome>> biomes,
                             Optional<Map<String, HashSet<String>>> variantsAny,
                             Optional<Map<String, HashSet<String>>> variantsNone,
-                            Optional<RegistryEntryList<Block>> originIs,
+                            Optional<HolderSet<Block>> originIs,
                             Optional<List<String>> conditions) implements RandomProperty.ContextPredicate<VariantContext> {
         public static final MapCodec<Predicate> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-            RegistryCodecs.entryList(RegistryKeys.BIOME).optionalFieldOf("biome").forGetter(Predicate::biomes),
+            RegistryCodecs.homogeneousList(Registries.BIOME).optionalFieldOf("biome").forGetter(Predicate::biomes),
             Codec.unboundedMap(Codec.STRING, Codec.either(Codec.STRING, Codec.STRING.listOf()).xmap(e -> new HashSet<>(e.map(List::of, s -> s)), set -> Either.right(set.stream().toList()))).optionalFieldOf("has_variants").forGetter(Predicate::variantsAny),
             Codec.unboundedMap(Codec.STRING, Codec.either(Codec.STRING, Codec.STRING.listOf()).xmap(e -> new HashSet<>(e.map(List::of, s -> s)), set -> Either.right(set.stream().toList()))).optionalFieldOf("hasnt_variants").forGetter(Predicate::variantsAny),
-            RegistryCodecs.entryList(RegistryKeys.BLOCK).optionalFieldOf("origin").forGetter(Predicate::originIs),
+            RegistryCodecs.homogeneousList(Registries.BLOCK).optionalFieldOf("origin").forGetter(Predicate::originIs),
             Codec.STRING.listOf().optionalFieldOf("conditions").forGetter(Predicate::conditions)
         ).apply(instance, Predicate::new));
 
@@ -217,10 +217,10 @@ public record VariantContext(
                     return true;
                 }).orElse(true) &&
                 originIs.map(o ->
-                    o.contains(context.world.getBlockState(context.origin.add(0, -1, 0)).getRegistryEntry())
+                    o.contains(context.world.getBlockState(context.origin.below()).typeHolder())
                 ).orElse(true) &&
                 conditions.map(c -> c.stream().allMatch(s ->
-                        Parameter.Condition.parse(s, context.userParameters).test(new DensityFunction.UnblendedNoisePos(context.origin.getX(), context.origin.getY(), context.origin.getZ())))
+                        Parameter.Condition.parse(s, context.userParameters).test(new DensityFunction.SinglePointContext(context.origin.getX(), context.origin.getY(), context.origin.getZ())))
                     ).orElse(true);
         }
     }

@@ -6,18 +6,18 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.github.orlouge.landmarks.density.FunctionWithCache;
 import io.github.orlouge.landmarks.utils.OpenSimplex2;
-import net.minecraft.util.dynamic.CodecHolder;
-import net.minecraft.world.gen.densityfunction.DensityFunction;
+import net.minecraft.util.KeyDispatchDataCodec;
+import net.minecraft.world.level.levelgen.DensityFunction;
 
 import java.util.Arrays;
 
 public class Noise2D implements DensityFunction, FunctionWithCache {
     public static final MapCodec<Noise2D> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-        Codec.either(Codec.DOUBLE, DensityFunction.FUNCTION_CODEC).fieldOf("xz_scale").forGetter(d -> d.xzScale),
+        Codec.either(Codec.DOUBLE, DensityFunction.CODEC).fieldOf("xz_scale").forGetter(d -> d.xzScale),
         Codec.BOOL.optionalFieldOf("global", false).forGetter(d -> d.global),
         Codec.either(Codec.LONG, Codec.STRING).xmap(e -> e.map(l -> l, s -> (long) s.hashCode()), Either::left).optionalFieldOf("seed", 0L).forGetter(d -> d.seed)
     ).apply(instance, Noise2D::new));
-    public static final CodecHolder<Noise2D> CODEC_HOLDER = CodecHolder.of(CODEC);
+    public static final KeyDispatchDataCodec<Noise2D> CODEC_HOLDER = KeyDispatchDataCodec.of(CODEC);
 
     public final Either<Double, DensityFunction> xzScale;
     public final boolean global;
@@ -43,7 +43,7 @@ public class Noise2D implements DensityFunction, FunctionWithCache {
     }
 
     @Override
-    public double sample(NoisePos pos) {
+    public double compute(DensityFunction.FunctionContext pos) {
         if (cache == null || pos.blockX() < cache.minX || pos.blockX() > cache.maxX || pos.blockZ() < cache.minZ || pos.blockZ() > cache.maxZ) {
             return sampleWithoutCache(pos, seed);
         } else {
@@ -57,8 +57,8 @@ public class Noise2D implements DensityFunction, FunctionWithCache {
         }
     }
 
-    private float sampleWithoutCache(NoisePos pos, long seed) {
-        double xzScale = this.xzScale.map(x -> x, d -> d.sample(pos));
+    private float sampleWithoutCache(DensityFunction.FunctionContext pos, long seed) {
+        double xzScale = this.xzScale.map(x -> x, d -> d.compute(pos));
         double x = (pos.blockX() + (seed & 0xFFFF)) * xzScale, z = (pos.blockZ() + (seed & 0xFFFF)) * xzScale;
         return OpenSimplex2.noise2(seed, x, z);
     }
@@ -74,17 +74,17 @@ public class Noise2D implements DensityFunction, FunctionWithCache {
     }
 
     @Override
-    public void fill(double[] densities, EachApplier applier) {
-        applier.fill(densities, this);
+    public void fillArray(double[] densities, DensityFunction.ContextProvider applier) {
+        applier.fillAllDirectly(densities, this);
     }
 
     @Override
-    public DensityFunction apply(DensityFunctionVisitor visitor) {
-        return visitor.apply(new Noise2D(this.xzScale.mapRight(d -> d.apply(visitor)), global, seed, cache));
+    public DensityFunction mapChildren(DensityFunction.Visitor visitor) {
+        return new Noise2D(this.xzScale.mapRight(visitor::apply), global, seed, cache);
     }
 
     @Override
-    public CodecHolder<? extends DensityFunction> getCodecHolder() {
+    public KeyDispatchDataCodec<? extends DensityFunction> codec() {
         return CODEC_HOLDER;
     }
 

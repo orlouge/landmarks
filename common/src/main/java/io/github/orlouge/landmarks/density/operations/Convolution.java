@@ -4,14 +4,14 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.util.dynamic.CodecHolder;
-import net.minecraft.world.gen.densityfunction.DensityFunction;
+import net.minecraft.util.KeyDispatchDataCodec;
+import net.minecraft.world.level.levelgen.DensityFunction;
 
 import java.util.List;
 
 public record Convolution(DensityFunction input, List<Double> kernel, Double factor) implements DensityFunction {
     public static final MapCodec<Convolution> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-        DensityFunction.FUNCTION_CODEC.fieldOf("input").forGetter(Convolution::input),
+        DensityFunction.CODEC.fieldOf("input").forGetter(Convolution::input),
         Codec.DOUBLE.listOf().validate(
             k -> {
                 int sk = (int) Math.cbrt(k.size());
@@ -20,10 +20,10 @@ public record Convolution(DensityFunction input, List<Double> kernel, Double fac
         ).fieldOf("kernel").forGetter(Convolution::kernel),
         Codec.DOUBLE.fieldOf("factor").forGetter(Convolution::factor)
     ).apply(instance, Convolution::new));
-    public static final CodecHolder<Convolution> CODEC_HOLDER = CodecHolder.of(CODEC);
+    public static final KeyDispatchDataCodec<Convolution> CODEC_HOLDER = KeyDispatchDataCodec.of(CODEC);
 
     @Override
-    public double sample(NoisePos pos) {
+    public double compute(DensityFunction.FunctionContext pos) {
         int k = ((int) Math.cbrt(kernel.size())), off = k / 2;
         double acc = 0;
         for (int y = -off; y <= off; y++) {
@@ -31,7 +31,7 @@ public record Convolution(DensityFunction input, List<Double> kernel, Double fac
                 for (int x = -off; x <= off; x++) {
                     double f = kernel.get(k * k * (y + off) + k * (z + off) + x + off);
                     if (f == 0) continue;
-                    acc += f * input.sample(new UnblendedNoisePos(
+                    acc += f * input.compute(new DensityFunction.SinglePointContext(
                         pos.blockX() + x,
                         pos.blockY() + y,
                         pos.blockZ() + z
@@ -43,13 +43,13 @@ public record Convolution(DensityFunction input, List<Double> kernel, Double fac
     }
 
     @Override
-    public void fill(double[] densities, EachApplier applier) {
-        applier.fill(densities, this);
+    public void fillArray(double[] densities, DensityFunction.ContextProvider applier) {
+        applier.fillAllDirectly(densities, this);
     }
 
     @Override
-    public DensityFunction apply(DensityFunctionVisitor visitor) {
-        return visitor.apply(new Convolution(this.input.apply(visitor), kernel, factor));
+    public DensityFunction mapChildren(DensityFunction.Visitor visitor) {
+        return new Convolution(visitor.apply(this.input), kernel, factor);
     }
 
     @Override
@@ -63,7 +63,7 @@ public record Convolution(DensityFunction input, List<Double> kernel, Double fac
     }
 
     @Override
-    public CodecHolder<? extends DensityFunction> getCodecHolder() {
+    public KeyDispatchDataCodec<? extends DensityFunction> codec() {
         return CODEC_HOLDER;
     }
 }

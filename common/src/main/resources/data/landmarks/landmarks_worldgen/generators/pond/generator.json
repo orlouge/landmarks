@@ -98,14 +98,14 @@
         {
           "place": "%?on_bed_shallow_dirt",
           "block_is": "minecraft:water",
-          "block_below_is": "#minecraft:dirt",
+          "block_below_is": "#minecraft:substrate_overworld",
           "conditions": ["water_density>=water_density_threshold"],
           "pass_through_if_not_replaced": true
         },
         {
           "place": "%?on_bed_dirt",
           "block_is": "minecraft:water",
-          "block_below_is": "#minecraft:dirt",
+          "block_below_is": "#minecraft:substrate_overworld",
           "conditions": ["water_density>=water_density_threshold"]
         }
       ]
@@ -116,7 +116,7 @@
         {
           "place": "%?on_bed_dirt",
           "block_is": "minecraft:water",
-          "block_below_is": "#minecraft:dirt",
+          "block_below_is": "#minecraft:substrate_overworld",
           "conditions": ["water_density>=water_density_threshold"],
           "pass_through_if_not_replaced": true
         },
@@ -134,7 +134,7 @@
         {
           "place": "%?on_bank_dirt",
           "block_is": "#minecraft:air",
-          "block_below_is": "#minecraft:dirt",
+          "block_below_is": "#minecraft:substrate_overworld",
           "pass_through_if_not_replaced": true,
           "conditions": ["0<heightmap<0.55", "border_distance>0"]
         },

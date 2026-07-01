@@ -1,5 +1,5 @@
 {
-  "origin": "#minecraft:dirt",
+  "origin": "#minecraft:substrate_overworld",
   "parameters": {
     "free_space_above": [
       {

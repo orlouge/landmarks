@@ -5,8 +5,8 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.github.orlouge.landmarks.density.BoundedFunction;
 import io.github.orlouge.landmarks.density.FunctionWithCache;
-import net.minecraft.util.dynamic.CodecHolder;
-import net.minecraft.world.gen.densityfunction.DensityFunction;
+import net.minecraft.util.KeyDispatchDataCodec;
+import net.minecraft.world.level.levelgen.DensityFunction;
 
 import java.util.Optional;
 
@@ -18,14 +18,14 @@ public class GaussianBlur implements DensityFunction, FunctionWithCache.Simple {
         Codec.BOOL.optionalFieldOf("rescale", false).forGetter(d -> d.rescale),
         Codec.BOOL.optionalFieldOf("ignore_zeros", true).forGetter(d -> d.ignoreZeros),
         Codec.STRING.optionalFieldOf("key", "").forGetter(d -> d.key),
-        DensityFunction.FUNCTION_CODEC.fieldOf("argument").forGetter(d -> d.argument),
-        DensityFunction.FUNCTION_CODEC.fieldOf("min_x").forGetter(d -> d.minX),
-        DensityFunction.FUNCTION_CODEC.fieldOf("min_z").forGetter(d -> d.minZ),
-        DensityFunction.FUNCTION_CODEC.fieldOf("max_x").forGetter(d -> d.maxX),
-        DensityFunction.FUNCTION_CODEC.fieldOf("max_z").forGetter(d -> d.maxZ),
-        DensityFunction.FUNCTION_CODEC.optionalFieldOf("y").forGetter(d -> d.y)
+        DensityFunction.CODEC.fieldOf("argument").forGetter(d -> d.argument),
+        DensityFunction.CODEC.fieldOf("min_x").forGetter(d -> d.minX),
+        DensityFunction.CODEC.fieldOf("min_z").forGetter(d -> d.minZ),
+        DensityFunction.CODEC.fieldOf("max_x").forGetter(d -> d.maxX),
+        DensityFunction.CODEC.fieldOf("max_z").forGetter(d -> d.maxZ),
+        DensityFunction.CODEC.optionalFieldOf("y").forGetter(d -> d.y)
     ).apply(instance, GaussianBlur::new));
-    public static final CodecHolder<GaussianBlur> CODEC_HOLDER = CodecHolder.of(CODEC);
+    public static final KeyDispatchDataCodec<GaussianBlur> CODEC_HOLDER = KeyDispatchDataCodec.of(CODEC);
 
     public final int kernelRadius;
     public final double sigma;
@@ -68,20 +68,20 @@ public class GaussianBlur implements DensityFunction, FunctionWithCache.Simple {
     }
 
     @Override
-    public double sample(NoisePos pos) {
+    public double compute(DensityFunction.FunctionContext pos) {
         if (pos.blockX() < cache.minX || pos.blockX() > cache.maxX || pos.blockZ() < cache.minZ || pos.blockZ() > cache.maxZ) return 0;
         double val = cache.blur[pos.blockX() - cache.minX][pos.blockZ() - cache.minZ];
         return rescale ? val * cache.scaleFactor : normalize ? (val - cache.minValue) / (cache.maxValue - cache.minValue) : val;
     }
 
     @Override
-    public void fill(double[] densities, EachApplier applier) {
-        applier.fill(densities, this);
+    public void fillArray(double[] densities, DensityFunction.ContextProvider applier) {
+        applier.fillAllDirectly(densities, this);
     }
 
     @Override
-    public DensityFunction apply(DensityFunctionVisitor visitor) {
-        return visitor.apply(new GaussianBlur(kernelRadius, sigma, normalize, rescale, ignoreZeros, key, argument.apply(visitor), minX.apply(visitor), minZ.apply(visitor), maxX.apply(visitor), maxZ.apply(visitor), y, cache));
+    public DensityFunction mapChildren(DensityFunction.Visitor visitor) {
+        return new GaussianBlur(kernelRadius, sigma, normalize, rescale, ignoreZeros, key, visitor.apply(argument), visitor.apply(minX), visitor.apply(minZ), visitor.apply(maxX), visitor.apply(maxZ), y, cache);
     }
 
     @Override
@@ -95,7 +95,7 @@ public class GaussianBlur implements DensityFunction, FunctionWithCache.Simple {
     }
 
     @Override
-    public CodecHolder<? extends DensityFunction> getCodecHolder() {
+    public KeyDispatchDataCodec<? extends DensityFunction> codec() {
         return CODEC_HOLDER;
     }
 
@@ -106,11 +106,11 @@ public class GaussianBlur implements DensityFunction, FunctionWithCache.Simple {
 
     @Override
     public Object createCache(int _minX, int _maxX, int _minY, int _maxY, int _minZ, int _maxZ) {
-        int y = (int) (double) this.y.map(d -> d.sample(new UnblendedNoisePos(0, 0, 0))).orElse(0.0);
-        int minX = (int) this.minX.sample(new UnblendedNoisePos(0, y, 0));
-        int maxX = (int) this.maxX.sample(new UnblendedNoisePos(0, y, 0));
-        int minZ = (int) this.minZ.sample(new UnblendedNoisePos(0, y, 0));
-        int maxZ = (int) this.maxZ.sample(new UnblendedNoisePos(0, y, 0));
+        int y = (int) (double) this.y.map(d -> d.compute(new DensityFunction.SinglePointContext(0, 0, 0))).orElse(0.0);
+        int minX = (int) this.minX.compute(new DensityFunction.SinglePointContext(0, y, 0));
+        int maxX = (int) this.maxX.compute(new DensityFunction.SinglePointContext(0, y, 0));
+        int minZ = (int) this.minZ.compute(new DensityFunction.SinglePointContext(0, y, 0));
+        int maxZ = (int) this.maxZ.compute(new DensityFunction.SinglePointContext(0, y, 0));
         int extX = maxX - minX + 1, extZ = maxZ - minZ + 1;
         double[][] value = new double[extX][extZ];
         boolean[][] isZero = new boolean[extX][extZ];
@@ -125,7 +125,7 @@ public class GaussianBlur implements DensityFunction, FunctionWithCache.Simple {
         double originalAbsMax = 0;
         for (int x = minX; x <= maxX; x++) {
             for (int z = minZ; z <= maxZ; z++) {
-                value[x - minX][z - minZ] = this.argument.sample(new UnblendedNoisePos(x, y, z));
+                value[x - minX][z - minZ] = this.argument.compute(new DensityFunction.SinglePointContext(x, y, z));
                 if (ignoreZeros) isZero[x - minX][z - minZ] = value[x - minX][z - minZ] == 0;
                 originalAbsMax = Math.max(Math.abs(value[x - minX][z - minZ]), originalAbsMax);
             }

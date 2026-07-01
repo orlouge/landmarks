@@ -12,15 +12,15 @@ import net.fabricmc.api.ModInitializer;
 import io.github.orlouge.landmarks.LandmarksMod;
 import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
 import net.fabricmc.fabric.api.biome.v1.BiomeSelectors;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.registry.DynamicRegistries;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.tag.TagKey;
-import net.minecraft.util.Identifier;
-import net.minecraft.world.gen.GenerationStep;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.level.levelgen.GenerationStep;
 
 public final class LandmarksModFabric implements ModInitializer {
     @Override
@@ -28,86 +28,90 @@ public final class LandmarksModFabric implements ModInitializer {
         LandmarksMod.init();
 
         DynamicRegistries.register(Generator.RandomizedGeneratorConfig.REGISTRY_KEY, Generator.RandomizedGeneratorConfig.RANDOM_ENTRY_CODEC);
-        ServerWorldEvents.UNLOAD.register((s, w) -> { Generator.RandomizedGeneratorConfig.childVariants = null; });
+        ServerLifecycleEvents.SERVER_STOPPED.register(s -> { Generator.RandomizedGeneratorConfig.childVariants = null; });
 
-        Registry.register(Registries.FEATURE, Identifier.of(LandmarksMod.MOD_ID, "noise"), LandmarksMod.SURFACE_NOISE_FEATURE.get());
+        Registry.register(BuiltInRegistries.FEATURE, id("noise"), LandmarksMod.SURFACE_NOISE_FEATURE.get());
 
-        Registry.register(Registries.DENSITY_FUNCTION_TYPE, Identifier.of(LandmarksMod.MOD_ID, "chamfer_distance_transform"), ChamferDistanceTransform.CODEC_HOLDER.codec());
-        Registry.register(Registries.DENSITY_FUNCTION_TYPE, Identifier.of(LandmarksMod.MOD_ID, "gaussian_blur_2d"), GaussianBlur.CODEC_HOLDER.codec());
-        Registry.register(Registries.DENSITY_FUNCTION_TYPE, Identifier.of(LandmarksMod.MOD_ID, "noise2d"), Noise2D.CODEC_HOLDER.codec());
-        Registry.register(Registries.DENSITY_FUNCTION_TYPE, Identifier.of(LandmarksMod.MOD_ID, "noise3d"), Noise3D.CODEC_HOLDER.codec());
-        Registry.register(Registries.DENSITY_FUNCTION_TYPE, Identifier.of(LandmarksMod.MOD_ID, "x"), X.CODEC_HOLDER.codec());
-        Registry.register(Registries.DENSITY_FUNCTION_TYPE, Identifier.of(LandmarksMod.MOD_ID, "y"), Y.CODEC_HOLDER.codec());
-        Registry.register(Registries.DENSITY_FUNCTION_TYPE, Identifier.of(LandmarksMod.MOD_ID, "z"), Z.CODEC_HOLDER.codec());
-        Registry.register(Registries.DENSITY_FUNCTION_TYPE, Identifier.of(LandmarksMod.MOD_ID, "swap_xy"), SwapXY.CODEC_HOLDER.codec());
-        Registry.register(Registries.DENSITY_FUNCTION_TYPE, Identifier.of(LandmarksMod.MOD_ID, "swap_yz"), SwapYZ.CODEC_HOLDER.codec());
-        Registry.register(Registries.DENSITY_FUNCTION_TYPE, Identifier.of(LandmarksMod.MOD_ID, "shift"), Shift.CODEC_HOLDER.codec());
-        Registry.register(Registries.DENSITY_FUNCTION_TYPE, Identifier.of(LandmarksMod.MOD_ID, "map"), Map.CODEC_HOLDER.codec());
-        Registry.register(Registries.DENSITY_FUNCTION_TYPE, Identifier.of(LandmarksMod.MOD_ID, "convolution"), Convolution.CODEC_HOLDER.codec());
-        Registry.register(Registries.DENSITY_FUNCTION_TYPE, Identifier.of(LandmarksMod.MOD_ID, "power"), Power.CODEC_HOLDER.codec());
-        Registry.register(Registries.DENSITY_FUNCTION_TYPE, Identifier.of(LandmarksMod.MOD_ID, "negate"), Negate.CODEC_HOLDER.codec());
-        Registry.register(Registries.DENSITY_FUNCTION_TYPE, Identifier.of(LandmarksMod.MOD_ID, "select"), Select.CODEC_HOLDER.codec());
-        Registry.register(Registries.DENSITY_FUNCTION_TYPE, Identifier.of(LandmarksMod.MOD_ID, "invert"), Invert.CODEC_HOLDER.codec());
-        Registry.register(Registries.DENSITY_FUNCTION_TYPE, Identifier.of(LandmarksMod.MOD_ID, "feature_cache"), FeatureCache.CODEC_HOLDER.codec());
-        Registry.register(Registries.DENSITY_FUNCTION_TYPE, Identifier.of(LandmarksMod.MOD_ID, "feature_max_y"), FeatureMaxY.CODEC_HOLDER.codec());
-        Registry.register(Registries.DENSITY_FUNCTION_TYPE, Identifier.of(LandmarksMod.MOD_ID, "feature_min_y"), FeatureMinY.CODEC_HOLDER.codec());
-        Registry.register(Registries.DENSITY_FUNCTION_TYPE, Identifier.of(LandmarksMod.MOD_ID, "feature_min_x"), FeatureMinX.CODEC_HOLDER.codec());
-        Registry.register(Registries.DENSITY_FUNCTION_TYPE, Identifier.of(LandmarksMod.MOD_ID, "feature_min_z"), FeatureMinZ.CODEC_HOLDER.codec());
-        Registry.register(Registries.DENSITY_FUNCTION_TYPE, Identifier.of(LandmarksMod.MOD_ID, "feature_max_x"), FeatureMaxX.CODEC_HOLDER.codec());
-        Registry.register(Registries.DENSITY_FUNCTION_TYPE, Identifier.of(LandmarksMod.MOD_ID, "feature_max_z"), FeatureMaxZ.CODEC_HOLDER.codec());
-        Registry.register(Registries.DENSITY_FUNCTION_TYPE, Identifier.of(LandmarksMod.MOD_ID, "feature_origin_x"), FeatureOriginX.CODEC_HOLDER.codec());
-        Registry.register(Registries.DENSITY_FUNCTION_TYPE, Identifier.of(LandmarksMod.MOD_ID, "feature_origin_y"), FeatureOriginY.CODEC_HOLDER.codec());
-        Registry.register(Registries.DENSITY_FUNCTION_TYPE, Identifier.of(LandmarksMod.MOD_ID, "feature_origin_z"), FeatureOriginZ.CODEC_HOLDER.codec());
-        Registry.register(Registries.DENSITY_FUNCTION_TYPE, Identifier.of(LandmarksMod.MOD_ID, "feature_user_parameter"), FeatureUserParameter.CODEC_HOLDER.codec());
-        Registry.register(Registries.DENSITY_FUNCTION_TYPE, Identifier.of(LandmarksMod.MOD_ID, "feature_mass"), FeatureMass.CODEC_HOLDER.codec());
-        Registry.register(Registries.DENSITY_FUNCTION_TYPE, Identifier.of(LandmarksMod.MOD_ID, "feature_random_number"), FeatureRandomNumber.CODEC_HOLDER.codec());
-        Registry.register(Registries.DENSITY_FUNCTION_TYPE, Identifier.of(LandmarksMod.MOD_ID, "feature_random_grid"), FeatureRandomGrid.CODEC_HOLDER.codec());
-        Registry.register(Registries.DENSITY_FUNCTION_TYPE, Identifier.of(LandmarksMod.MOD_ID, "feature_block_matches"), FeatureBlockMatches.CODEC_HOLDER.codec());
-        Registry.register(Registries.DENSITY_FUNCTION_TYPE, Identifier.of(LandmarksMod.MOD_ID, "feature_biome_matches"), FeatureBiomeMatches.CODEC_HOLDER.codec());
-        Registry.register(Registries.DENSITY_FUNCTION_TYPE, Identifier.of(LandmarksMod.MOD_ID, "max_density_square"), MaxDensitySquare.CODEC_HOLDER.codec());
-        Registry.register(Registries.DENSITY_FUNCTION_TYPE, Identifier.of(LandmarksMod.MOD_ID, "cuboid"), Cuboid.CODEC_HOLDER.codec());
-        Registry.register(Registries.DENSITY_FUNCTION_TYPE, Identifier.of(LandmarksMod.MOD_ID, "cylinder"), Cylinder.CODEC_HOLDER.codec());
-        Registry.register(Registries.DENSITY_FUNCTION_TYPE, Identifier.of(LandmarksMod.MOD_ID, "sphere"), Sphere.CODEC_HOLDER.codec());
-        Registry.register(Registries.DENSITY_FUNCTION_TYPE, Identifier.of(LandmarksMod.MOD_ID, "add_along_y"), AddAlongY.CODEC_HOLDER.codec());
-        Registry.register(Registries.DENSITY_FUNCTION_TYPE, Identifier.of(LandmarksMod.MOD_ID, "mul_along_y"), MulAlongY.CODEC_HOLDER.codec());
-        Registry.register(Registries.DENSITY_FUNCTION_TYPE, Identifier.of(LandmarksMod.MOD_ID, "max_along_y"), MaxAlongY.CODEC_HOLDER.codec());
-        Registry.register(Registries.DENSITY_FUNCTION_TYPE, Identifier.of(LandmarksMod.MOD_ID, "min_along_y"), MinAlongY.CODEC_HOLDER.codec());
+        Registry.register(BuiltInRegistries.DENSITY_FUNCTION_TYPE, id("chamfer_distance_transform"), ChamferDistanceTransform.CODEC_HOLDER.codec());
+        Registry.register(BuiltInRegistries.DENSITY_FUNCTION_TYPE, id("gaussian_blur_2d"), GaussianBlur.CODEC_HOLDER.codec());
+        Registry.register(BuiltInRegistries.DENSITY_FUNCTION_TYPE, id("noise2d"), Noise2D.CODEC_HOLDER.codec());
+        Registry.register(BuiltInRegistries.DENSITY_FUNCTION_TYPE, id("noise3d"), Noise3D.CODEC_HOLDER.codec());
+        Registry.register(BuiltInRegistries.DENSITY_FUNCTION_TYPE, id("x"), X.CODEC_HOLDER.codec());
+        Registry.register(BuiltInRegistries.DENSITY_FUNCTION_TYPE, id("y"), Y.CODEC_HOLDER.codec());
+        Registry.register(BuiltInRegistries.DENSITY_FUNCTION_TYPE, id("z"), Z.CODEC_HOLDER.codec());
+        Registry.register(BuiltInRegistries.DENSITY_FUNCTION_TYPE, id("swap_xy"), SwapXY.CODEC_HOLDER.codec());
+        Registry.register(BuiltInRegistries.DENSITY_FUNCTION_TYPE, id("swap_yz"), SwapYZ.CODEC_HOLDER.codec());
+        Registry.register(BuiltInRegistries.DENSITY_FUNCTION_TYPE, id("shift"), Shift.CODEC_HOLDER.codec());
+        Registry.register(BuiltInRegistries.DENSITY_FUNCTION_TYPE, id("map"), Map.CODEC_HOLDER.codec());
+        Registry.register(BuiltInRegistries.DENSITY_FUNCTION_TYPE, id("convolution"), Convolution.CODEC_HOLDER.codec());
+        Registry.register(BuiltInRegistries.DENSITY_FUNCTION_TYPE, id("power"), Power.CODEC_HOLDER.codec());
+        Registry.register(BuiltInRegistries.DENSITY_FUNCTION_TYPE, id("negate"), Negate.CODEC_HOLDER.codec());
+        Registry.register(BuiltInRegistries.DENSITY_FUNCTION_TYPE, id("select"), Select.CODEC_HOLDER.codec());
+        Registry.register(BuiltInRegistries.DENSITY_FUNCTION_TYPE, id("invert"), Invert.CODEC_HOLDER.codec());
+        Registry.register(BuiltInRegistries.DENSITY_FUNCTION_TYPE, id("feature_cache"), FeatureCache.CODEC_HOLDER.codec());
+        Registry.register(BuiltInRegistries.DENSITY_FUNCTION_TYPE, id("feature_max_y"), FeatureMaxY.CODEC_HOLDER.codec());
+        Registry.register(BuiltInRegistries.DENSITY_FUNCTION_TYPE, id("feature_min_y"), FeatureMinY.CODEC_HOLDER.codec());
+        Registry.register(BuiltInRegistries.DENSITY_FUNCTION_TYPE, id("feature_min_x"), FeatureMinX.CODEC_HOLDER.codec());
+        Registry.register(BuiltInRegistries.DENSITY_FUNCTION_TYPE, id("feature_min_z"), FeatureMinZ.CODEC_HOLDER.codec());
+        Registry.register(BuiltInRegistries.DENSITY_FUNCTION_TYPE, id("feature_max_x"), FeatureMaxX.CODEC_HOLDER.codec());
+        Registry.register(BuiltInRegistries.DENSITY_FUNCTION_TYPE, id("feature_max_z"), FeatureMaxZ.CODEC_HOLDER.codec());
+        Registry.register(BuiltInRegistries.DENSITY_FUNCTION_TYPE, id("feature_origin_x"), FeatureOriginX.CODEC_HOLDER.codec());
+        Registry.register(BuiltInRegistries.DENSITY_FUNCTION_TYPE, id("feature_origin_y"), FeatureOriginY.CODEC_HOLDER.codec());
+        Registry.register(BuiltInRegistries.DENSITY_FUNCTION_TYPE, id("feature_origin_z"), FeatureOriginZ.CODEC_HOLDER.codec());
+        Registry.register(BuiltInRegistries.DENSITY_FUNCTION_TYPE, id("feature_user_parameter"), FeatureUserParameter.CODEC_HOLDER.codec());
+        Registry.register(BuiltInRegistries.DENSITY_FUNCTION_TYPE, id("feature_mass"), FeatureMass.CODEC_HOLDER.codec());
+        Registry.register(BuiltInRegistries.DENSITY_FUNCTION_TYPE, id("feature_random_number"), FeatureRandomNumber.CODEC_HOLDER.codec());
+        Registry.register(BuiltInRegistries.DENSITY_FUNCTION_TYPE, id("feature_random_grid"), FeatureRandomGrid.CODEC_HOLDER.codec());
+        Registry.register(BuiltInRegistries.DENSITY_FUNCTION_TYPE, id("feature_block_matches"), FeatureBlockMatches.CODEC_HOLDER.codec());
+        Registry.register(BuiltInRegistries.DENSITY_FUNCTION_TYPE, id("feature_biome_matches"), FeatureBiomeMatches.CODEC_HOLDER.codec());
+        Registry.register(BuiltInRegistries.DENSITY_FUNCTION_TYPE, id("max_density_square"), MaxDensitySquare.CODEC_HOLDER.codec());
+        Registry.register(BuiltInRegistries.DENSITY_FUNCTION_TYPE, id("cuboid"), Cuboid.CODEC_HOLDER.codec());
+        Registry.register(BuiltInRegistries.DENSITY_FUNCTION_TYPE, id("cylinder"), Cylinder.CODEC_HOLDER.codec());
+        Registry.register(BuiltInRegistries.DENSITY_FUNCTION_TYPE, id("sphere"), Sphere.CODEC_HOLDER.codec());
+        Registry.register(BuiltInRegistries.DENSITY_FUNCTION_TYPE, id("add_along_y"), AddAlongY.CODEC_HOLDER.codec());
+        Registry.register(BuiltInRegistries.DENSITY_FUNCTION_TYPE, id("mul_along_y"), MulAlongY.CODEC_HOLDER.codec());
+        Registry.register(BuiltInRegistries.DENSITY_FUNCTION_TYPE, id("max_along_y"), MaxAlongY.CODEC_HOLDER.codec());
+        Registry.register(BuiltInRegistries.DENSITY_FUNCTION_TYPE, id("min_along_y"), MinAlongY.CODEC_HOLDER.codec());
 
         BiomeModifications.addFeature(
-            BiomeSelectors.tag(TagKey.of(RegistryKeys.BIOME, Identifier.of(LandmarksMod.MOD_ID, "has_ocean_rocks_deep"))), GenerationStep.Feature.TOP_LAYER_MODIFICATION,
-            RegistryKey.of(RegistryKeys.PLACED_FEATURE, Identifier.of(LandmarksMod.MOD_ID, "ocean_rocks_deep"))
+            BiomeSelectors.tag(TagKey.create(Registries.BIOME, id("has_ocean_rocks_deep"))), GenerationStep.Decoration.TOP_LAYER_MODIFICATION,
+            ResourceKey.create(Registries.PLACED_FEATURE, id("ocean_rocks_deep"))
         );
         BiomeModifications.addFeature(
-            BiomeSelectors.tag(TagKey.of(RegistryKeys.BIOME, Identifier.of(LandmarksMod.MOD_ID, "has_ocean_rocks_shallow"))), GenerationStep.Feature.TOP_LAYER_MODIFICATION,
-            RegistryKey.of(RegistryKeys.PLACED_FEATURE, Identifier.of(LandmarksMod.MOD_ID, "ocean_rocks_shallow"))
+            BiomeSelectors.tag(TagKey.create(Registries.BIOME, id("has_ocean_rocks_shallow"))), GenerationStep.Decoration.TOP_LAYER_MODIFICATION,
+            ResourceKey.create(Registries.PLACED_FEATURE, id("ocean_rocks_shallow"))
         );
         BiomeModifications.addFeature(
-            BiomeSelectors.tag(TagKey.of(RegistryKeys.BIOME, Identifier.of(LandmarksMod.MOD_ID, "has_underwater_rocks"))), GenerationStep.Feature.TOP_LAYER_MODIFICATION,
-            RegistryKey.of(RegistryKeys.PLACED_FEATURE, Identifier.of(LandmarksMod.MOD_ID, "underwater_rocks"))
+            BiomeSelectors.tag(TagKey.create(Registries.BIOME, id("has_underwater_rocks"))), GenerationStep.Decoration.TOP_LAYER_MODIFICATION,
+            ResourceKey.create(Registries.PLACED_FEATURE, id("underwater_rocks"))
         );
         BiomeModifications.addFeature(
-            BiomeSelectors.tag(TagKey.of(RegistryKeys.BIOME, Identifier.of(LandmarksMod.MOD_ID, "has_ocean_rocks_deep"))), GenerationStep.Feature.TOP_LAYER_MODIFICATION,
-            RegistryKey.of(RegistryKeys.PLACED_FEATURE, Identifier.of(LandmarksMod.MOD_ID, "thermal_vent"))
+            BiomeSelectors.tag(TagKey.create(Registries.BIOME, id("has_ocean_rocks_deep"))), GenerationStep.Decoration.TOP_LAYER_MODIFICATION,
+            ResourceKey.create(Registries.PLACED_FEATURE, id("thermal_vent"))
         );
         BiomeModifications.addFeature(
-            BiomeSelectors.tag(TagKey.of(RegistryKeys.BIOME, Identifier.of(LandmarksMod.MOD_ID, "has_forest_clearing"))), GenerationStep.Feature.LAKES,
-            RegistryKey.of(RegistryKeys.PLACED_FEATURE, Identifier.of(LandmarksMod.MOD_ID, "forest_clearing"))
+            BiomeSelectors.tag(TagKey.create(Registries.BIOME, id("has_forest_clearing"))), GenerationStep.Decoration.LAKES,
+            ResourceKey.create(Registries.PLACED_FEATURE, id("forest_clearing"))
         );
         BiomeModifications.addFeature(
-            BiomeSelectors.tag(TagKey.of(RegistryKeys.BIOME, Identifier.of(LandmarksMod.MOD_ID, "has_rocks"))), GenerationStep.Feature.TOP_LAYER_MODIFICATION,
-            RegistryKey.of(RegistryKeys.PLACED_FEATURE, Identifier.of(LandmarksMod.MOD_ID, "rocks"))
+            BiomeSelectors.tag(TagKey.create(Registries.BIOME, id("has_rocks"))), GenerationStep.Decoration.TOP_LAYER_MODIFICATION,
+            ResourceKey.create(Registries.PLACED_FEATURE, id("rocks"))
         );
         BiomeModifications.addFeature(
-            BiomeSelectors.tag(TagKey.of(RegistryKeys.BIOME, Identifier.of(LandmarksMod.MOD_ID, "has_ponds"))), GenerationStep.Feature.LAKES,
-            RegistryKey.of(RegistryKeys.PLACED_FEATURE, Identifier.of(LandmarksMod.MOD_ID, "pond"))
+            BiomeSelectors.tag(TagKey.create(Registries.BIOME, id("has_ponds"))), GenerationStep.Decoration.LAKES,
+            ResourceKey.create(Registries.PLACED_FEATURE, id("pond"))
         );
         BiomeModifications.addFeature(
-            BiomeSelectors.tag(TagKey.of(RegistryKeys.BIOME, Identifier.of(LandmarksMod.MOD_ID, "has_sinkholes"))), GenerationStep.Feature.LAKES,
-            RegistryKey.of(RegistryKeys.PLACED_FEATURE, Identifier.of(LandmarksMod.MOD_ID, "sinkhole"))
+            BiomeSelectors.tag(TagKey.create(Registries.BIOME, id("has_sinkholes"))), GenerationStep.Decoration.LAKES,
+            ResourceKey.create(Registries.PLACED_FEATURE, id("sinkhole"))
         );
         BiomeModifications.addFeature(
-            BiomeSelectors.tag(TagKey.of(RegistryKeys.BIOME, Identifier.of(LandmarksMod.MOD_ID, "has_fairy_rings"))), GenerationStep.Feature.TOP_LAYER_MODIFICATION,
-            RegistryKey.of(RegistryKeys.PLACED_FEATURE, Identifier.of(LandmarksMod.MOD_ID, "fairy_ring"))
+            BiomeSelectors.tag(TagKey.create(Registries.BIOME, id("has_fairy_rings"))), GenerationStep.Decoration.TOP_LAYER_MODIFICATION,
+            ResourceKey.create(Registries.PLACED_FEATURE, id("fairy_ring"))
         );
+    }
+
+    private static Identifier id(String path) {
+        return Identifier.fromNamespaceAndPath(LandmarksMod.MOD_ID, path);
     }
 }

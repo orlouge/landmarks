@@ -2,12 +2,12 @@ package io.github.orlouge.landmarks.features;
 
 import io.github.orlouge.landmarks.utils.RandomProperty;
 import io.github.orlouge.landmarks.utils.TopologicalSort;
-import net.minecraft.registry.DynamicRegistryManager;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.Pair;
-import net.minecraft.util.math.random.Random;
+import com.mojang.datafixers.util.Pair;
+import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.util.RandomSource;
 
 import java.util.*;
 
@@ -19,8 +19,8 @@ public record VariantWithFragment<T extends VariantWithFragment.Fragment<T>>(
     static <T extends Fragment<T>> Map<Identifier, Map<String, List<RandomProperty.WrappedEntry<NamedVariant<T>, VariantContext.Predicate>>>> getChildVariants(
         Registry<RandomProperty.WrappedEntry<VariantWithFragment<T>, VariantContext.Predicate>> registry, T emptyFragment) {
     HashMap<Identifier, Map<String, List<RandomProperty.WrappedEntry<NamedVariant<T>, VariantContext.Predicate>>>> childVariants = new HashMap<>();
-        for (Map.Entry<RegistryKey<RandomProperty.WrappedEntry<VariantWithFragment<T>, VariantContext.Predicate>>, RandomProperty.WrappedEntry<VariantWithFragment<T>, VariantContext.Predicate>> entry : registry.getEntrySet()) {
-            Identifier id = entry.getKey().getValue();
+        for (Map.Entry<ResourceKey<RandomProperty.WrappedEntry<VariantWithFragment<T>, VariantContext.Predicate>>, RandomProperty.WrappedEntry<VariantWithFragment<T>, VariantContext.Predicate>> entry : registry.entrySet()) {
+            Identifier id = entry.getKey().identifier();
             String[] parts = id.getPath().split("/");
             if (parts.length < 2) continue;
             StringBuilder parentPath = new StringBuilder(parts[0]);
@@ -28,7 +28,7 @@ public record VariantWithFragment<T extends VariantWithFragment.Fragment<T>>(
             for (; i < parts.length - 2; i++) {
                 parentPath.append("/").append(parts[i]);
             }
-            Identifier parentId = Identifier.of(id.getNamespace(), parentPath.toString());
+            Identifier parentId = Identifier.fromNamespaceAndPath(id.getNamespace(), parentPath.toString());
             if (parts.length == 2) {
                 List<RandomProperty.WrappedEntry<NamedVariant<T>, VariantContext.Predicate>> entries =
                     childVariants.computeIfAbsent(parentId, k -> new HashMap<>())
@@ -49,14 +49,13 @@ public record VariantWithFragment<T extends VariantWithFragment.Fragment<T>>(
     }
 
     static <T extends Fragment<T>> Pair<T, VariantContext> getAndMerge(
-            List<Identifier> variants, T baseFragment, T emptyFragment, Random random,
-            VariantContext baseContext, DynamicRegistryManager registryManager,
-            RegistryKey<Registry<RandomProperty.WrappedEntry<VariantWithFragment<T>, VariantContext.Predicate>>> registryKey,
+            List<Identifier> variants, T baseFragment, T emptyFragment, RandomSource random,
+            VariantContext baseContext, RegistryAccess registryManager,
+            ResourceKey<Registry<RandomProperty.WrappedEntry<VariantWithFragment<T>, VariantContext.Predicate>>> registryKey,
             Map<Identifier, Map<String, List<RandomProperty.WrappedEntry<NamedVariant<T>, VariantContext.Predicate>>>> childVariants) throws RandomProperty.NoRandomMatchException {
-        Registry<RandomProperty.WrappedEntry<VariantWithFragment<T>, VariantContext.Predicate>> registry = registryManager.getOrThrow(registryKey);
+        Registry<RandomProperty.WrappedEntry<VariantWithFragment<T>, VariantContext.Predicate>> registry = registryManager.lookupOrThrow(registryKey);
         List<Pair<Identifier, VariantWithFragment<T>>> baseVariants = variants.stream().map(id -> new Pair<>(id, registry
-            .getOptional(RegistryKey.of(registryKey, id))
-            .flatMap(e -> e.getKeyOrValue().right())
+            .getOptional(ResourceKey.create(registryKey, id))
             .map(RandomProperty.WrappedEntry::value)
             .orElse(new VariantWithFragment<>(Collections.emptyMap(), Optional.empty(), emptyFragment))
         )).toList();
@@ -64,9 +63,9 @@ public record VariantWithFragment<T extends VariantWithFragment.Fragment<T>>(
         VariantSampler<T> sampler = new VariantSampler<>();
 
         for (Pair<Identifier, VariantWithFragment<T>> variant : baseVariants) {
-            sampler.addUnconditionalSubvariants(variant.getRight());
+            sampler.addUnconditionalSubvariants(variant.getSecond());
             Map<String, List<RandomProperty.WrappedEntry<NamedVariant<T>, VariantContext.Predicate>>> children =
-                childVariants.getOrDefault(variant.getLeft(), Collections.emptyMap());
+                childVariants.getOrDefault(variant.getFirst(), Collections.emptyMap());
             for (Map.Entry<String, List<RandomProperty.WrappedEntry<NamedVariant<T>, VariantContext.Predicate>>> typeEntry : children.entrySet()) {
                 sampler.addChoicesWithFragments(typeEntry.getKey(), new RandomProperty<>(typeEntry.getValue()));
             }
@@ -76,7 +75,7 @@ public record VariantWithFragment<T extends VariantWithFragment.Fragment<T>>(
         VariantContext context = sampler.sampleContext(random, baseContext);
         T fragment = baseFragment;
         for (int i = 0; i < baseVariants.size(); i++) {
-            fragment = fragment.merge(baseVariants.get(i).getRight().fragment());
+            fragment = fragment.merge(baseVariants.get(i).getSecond().fragment());
             fragment = sampler.mergeVariant(fragment, relevantTypes.get(i), context);
         }
 
@@ -125,7 +124,7 @@ public record VariantWithFragment<T extends VariantWithFragment.Fragment<T>>(
             typeSamplers.merge(type, variant, RandomProperty::merge);
         }
 
-        public VariantContext sampleContext(Random random, VariantContext baseContext) throws RandomProperty.NoRandomMatchException {
+    public VariantContext sampleContext(RandomSource random, VariantContext baseContext) throws RandomProperty.NoRandomMatchException {
             List<String> typeOrder = TopologicalSort.sort(typeSamplers.keySet(), v -> typeDeps.getOrDefault(v, Collections.emptySet()).stream().filter(typeSamplers::containsKey).toList());
             VariantContext context = baseContext.withVariants(new HashMap<>());
             for (String type : typeOrder) {

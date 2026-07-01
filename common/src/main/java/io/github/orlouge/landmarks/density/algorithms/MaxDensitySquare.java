@@ -5,24 +5,24 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.github.orlouge.landmarks.density.BoundedFunction;
 import io.github.orlouge.landmarks.density.FunctionWithCache;
-import net.minecraft.util.dynamic.CodecHolder;
-import net.minecraft.util.math.random.Random;
-import net.minecraft.world.gen.densityfunction.DensityFunction;
+import net.minecraft.util.KeyDispatchDataCodec;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.levelgen.DensityFunction;
 
 public class MaxDensitySquare implements DensityFunction, BoundedFunction, FunctionWithCache.Simple {
     public static final MapCodec<MaxDensitySquare> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
         Codec.STRING.optionalFieldOf("key", "").forGetter(s -> s.key),
-        DensityFunction.FUNCTION_CODEC.fieldOf("min_x").forGetter(s -> s.x1),
-        DensityFunction.FUNCTION_CODEC.fieldOf("max_x").forGetter(s -> s.x2),
-        DensityFunction.FUNCTION_CODEC.fieldOf("min_y").forGetter(s -> s.y1),
-        DensityFunction.FUNCTION_CODEC.fieldOf("max_y").forGetter(s -> s.y2),
-        DensityFunction.FUNCTION_CODEC.fieldOf("min_z").forGetter(s -> s.z1),
-        DensityFunction.FUNCTION_CODEC.fieldOf("max_z").forGetter(s -> s.z2),
-        DensityFunction.FUNCTION_CODEC.fieldOf("argument").forGetter(s -> s.density),
-        DensityFunction.FUNCTION_CODEC.fieldOf("min_side").forGetter(s -> s.minSide),
-        DensityFunction.FUNCTION_CODEC.fieldOf("max_side").forGetter(s -> s.maxSide)
+        DensityFunction.CODEC.fieldOf("min_x").forGetter(s -> s.x1),
+        DensityFunction.CODEC.fieldOf("max_x").forGetter(s -> s.x2),
+        DensityFunction.CODEC.fieldOf("min_y").forGetter(s -> s.y1),
+        DensityFunction.CODEC.fieldOf("max_y").forGetter(s -> s.y2),
+        DensityFunction.CODEC.fieldOf("min_z").forGetter(s -> s.z1),
+        DensityFunction.CODEC.fieldOf("max_z").forGetter(s -> s.z2),
+        DensityFunction.CODEC.fieldOf("argument").forGetter(s -> s.density),
+        DensityFunction.CODEC.fieldOf("min_side").forGetter(s -> s.minSide),
+        DensityFunction.CODEC.fieldOf("max_side").forGetter(s -> s.maxSide)
     ).apply(instance, MaxDensitySquare::new));
-    public static final CodecHolder<MaxDensitySquare> CODEC_HOLDER = CodecHolder.of(CODEC);
+    public static final KeyDispatchDataCodec<MaxDensitySquare> CODEC_HOLDER = KeyDispatchDataCodec.of(CODEC);
 
     public final String key;
     public final DensityFunction x1, x2, y1, y2, z1, z2, density, minSide, maxSide;
@@ -46,19 +46,19 @@ public class MaxDensitySquare implements DensityFunction, BoundedFunction, Funct
     }
 
     @Override
-    public double sample(NoisePos pos) {
-        compute(pos);
+    public double compute(DensityFunction.FunctionContext pos) {
+        computeCache(pos);
         if (cache.invalid) return 0;
         return pos.blockX() >= cache.minX && pos.blockX() <= cache.maxX && pos.blockY() >= cache.minY && pos.blockY() <= cache.maxY && pos.blockZ() >= cache.minZ && pos.blockZ() <= cache.maxZ ? 1 : 0;
     }
 
-    private void compute(NoisePos pos) {
+    private void computeCache(DensityFunction.FunctionContext pos) {
         if (!cache.computed) {
             cache.computed = true;
             cache.minY = -30000000;
             cache.maxY = 30000000;
-            int _x1 = (int) x1.sample(pos), _x2 = (int) x2.sample(pos), _y1 = (int) y1.sample(pos);
-            int _y2 = (int) y2.sample(pos), _z1 = (int) z1.sample(pos), _z2 = (int) z2.sample(pos);
+            int _x1 = (int) x1.compute(pos), _x2 = (int) x2.compute(pos), _y1 = (int) y1.compute(pos);
+            int _y2 = (int) y2.compute(pos), _z1 = (int) z1.compute(pos), _z2 = (int) z2.compute(pos);
 
             if (density instanceof BoundedFunction maskBounds) {
                 _z1 = Math.max(_z1, maskBounds.minZ());
@@ -69,7 +69,7 @@ public class MaxDensitySquare implements DensityFunction, BoundedFunction, Funct
                 _y2 = Math.min(_y2, maskBounds.maxY());
             }
 
-            int _minSide = (int) minSide.sample(pos), _maxSide = (int) maxSide.sample(pos);
+            int _minSide = (int) minSide.compute(pos), _maxSide = (int) maxSide.compute(pos);
 
             if (_x2 < _x1 || _z2 < _z1 || _y2 < _y1 || _maxSide < _minSide) {
                 cache.minX = _x2;
@@ -85,14 +85,14 @@ public class MaxDensitySquare implements DensityFunction, BoundedFunction, Funct
             for (int x = _x1; x <= _x2; x++) {
                 for (int z = _z1; z <= _z2; z++) {
                     for (int y = _y1; y <= _y2; y++) {
-                        density[x - _x1][z - _z1] += this.density.sample(new UnblendedNoisePos(x, y, z));
+                        density[x - _x1][z - _z1] += this.density.compute(new DensityFunction.SinglePointContext(x, y, z));
                     }
                 }
             }
 
             io.github.orlouge.landmarks.utils.MaxDensitySquare.Result square = io.github.orlouge.landmarks.utils.MaxDensitySquare.findDenseSquare(
-                density, 1000, Random.create(0),
-                rnd -> rnd.nextBetween(_minSide, _maxSide),
+                density, 1000, RandomSource.create(0),
+                rnd -> rnd.nextIntBetweenInclusive(_minSide, _maxSide),
                 r -> r.density()
                 );
             cache.minX = _x1 + square.x();
@@ -103,13 +103,13 @@ public class MaxDensitySquare implements DensityFunction, BoundedFunction, Funct
     }
 
     @Override
-    public void fill(double[] densities, EachApplier applier) {
-        applier.fill(densities, this);
+    public void fillArray(double[] densities, DensityFunction.ContextProvider applier) {
+        applier.fillAllDirectly(densities, this);
     }
 
     @Override
-    public DensityFunction apply(DensityFunctionVisitor visitor) {
-        return visitor.apply(new MaxDensitySquare(key, x1.apply(visitor), x2.apply(visitor), y1.apply(visitor), y2.apply(visitor), z1.apply(visitor), z2.apply(visitor), density.apply(visitor), minSide.apply(visitor), maxSide.apply(visitor), cache));
+    public DensityFunction mapChildren(DensityFunction.Visitor visitor) {
+        return new MaxDensitySquare(key, visitor.apply(x1), visitor.apply(x2), visitor.apply(y1), visitor.apply(y2), visitor.apply(z1), visitor.apply(z2), visitor.apply(density), visitor.apply(minSide), visitor.apply(maxSide), cache);
     }
 
     @Override
@@ -123,7 +123,7 @@ public class MaxDensitySquare implements DensityFunction, BoundedFunction, Funct
     }
 
     @Override
-    public CodecHolder<? extends DensityFunction> getCodecHolder() {
+    public KeyDispatchDataCodec<? extends DensityFunction> codec() {
         return CODEC_HOLDER;
     }
 
@@ -170,7 +170,7 @@ public class MaxDensitySquare implements DensityFunction, BoundedFunction, Funct
     @Override
     public FunctionWithCache.Simple setCache(Object cache) {
         MaxDensitySquare fun = new MaxDensitySquare(key, x1, x2, y1, y2, z1, z2, density, minSide, maxSide, (Cache) cache);
-        fun.compute(new UnblendedNoisePos(0, 0, 0));
+        fun.compute(new DensityFunction.SinglePointContext(0, 0, 0));
         return fun;
     }
 

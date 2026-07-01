@@ -1,6 +1,6 @@
 package io.github.orlouge.landmarks.density;
 
-import net.minecraft.world.gen.densityfunction.DensityFunction;
+import net.minecraft.world.level.levelgen.DensityFunction;
 
 public interface FunctionWithCache extends DensityFunction {
     String key();

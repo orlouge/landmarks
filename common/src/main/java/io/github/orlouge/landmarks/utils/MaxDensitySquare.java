@@ -1,6 +1,6 @@
 package io.github.orlouge.landmarks.utils;
 
-import net.minecraft.util.math.random.Random;
+import net.minecraft.util.RandomSource;
 
 import java.util.function.Function;
 
@@ -8,7 +8,7 @@ public class MaxDensitySquare {
 
     public record Result(int x, int y, int size, double density) {}
 
-    public static Result findDenseSquare(double[][] density, int iterations, Random rnd, Function<Random, Integer> side, Function<Result, Double> scoreFun) {
+    public static Result findDenseSquare(double[][] density, int iterations, RandomSource rnd, Function<RandomSource, Integer> side, Function<Result, Double> scoreFun) {
         int n = density.length;
         int m = density[0].length;
 

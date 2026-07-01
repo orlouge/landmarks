@@ -5,24 +5,24 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import io.github.orlouge.landmarks.density.BoundedFunction;
 import io.github.orlouge.landmarks.density.feature.FeatureUserParameter;
-import net.minecraft.world.gen.densityfunction.DensityFunction;
-import net.minecraft.world.gen.densityfunction.DensityFunctionTypes;
+import net.minecraft.world.level.levelgen.DensityFunction;
+import net.minecraft.world.level.levelgen.DensityFunctions;
 
 import java.util.*;
 
 public abstract class Parameter {
-    public abstract Sampler createSampler(DensityFunction.DensityFunctionVisitor visitor);
+    public abstract Sampler createSampler(DensityFunction.Visitor visitor);
     public abstract Collection<String> referencedParameters();
 
     public interface Sampler {
-        double sample(DensityFunction.NoisePos pos);
+        double sample(DensityFunction.FunctionContext pos);
         Optional<BoundedFunction> bounds();
 
         double min();
         double max();
     }
 
-    public static final Codec<Parameter> CODEC = Codec.either(Codec.DOUBLE, DensityFunction.FUNCTION_CODEC).xmap(
+    public static final Codec<Parameter> CODEC = Codec.either(Codec.DOUBLE, DensityFunction.CODEC).xmap(
         either -> either.map(Constant::new, Density::new),
         par -> par instanceof Constant cons ? Either.left(cons.value) : Either.right(((Density) par).function)
     );
@@ -40,10 +40,10 @@ public abstract class Parameter {
         }
 
         @Override
-        public Sampler createSampler(DensityFunction.DensityFunctionVisitor visitor) {
+        public Sampler createSampler(DensityFunction.Visitor visitor) {
             return new Sampler() {
                 @Override
-                public double sample(DensityFunction.NoisePos pos) {
+                public double sample(DensityFunction.FunctionContext pos) {
                     return value;
                 }
 
@@ -78,12 +78,12 @@ public abstract class Parameter {
         }
 
         @Override
-        public Sampler createSampler(DensityFunction.DensityFunctionVisitor visitor) {
-            DensityFunction visitedFunction = this.function.apply(visitor);
+        public Sampler createSampler(DensityFunction.Visitor visitor) {
+            DensityFunction visitedFunction = this.function.mapAll(visitor);
             return new Sampler() {
                 @Override
-                public double sample(DensityFunction.NoisePos pos) {
-                    return visitedFunction.sample(pos);
+                public double sample(DensityFunction.FunctionContext pos) {
+                    return visitedFunction.compute(pos);
                 }
 
                 @Override
@@ -106,9 +106,9 @@ public abstract class Parameter {
         @Override
         public Collection<String> referencedParameters() {
             HashSet<String> deps = new HashSet<>();
-            this.function.apply(fun -> {
+            this.function.mapAll(fun -> {
                 if (fun instanceof FeatureUserParameter par) deps.add(par.parameter);
-                if (fun instanceof DensityFunctionTypes.RegistryEntryHolder reg && reg.function().value() instanceof FeatureUserParameter par) deps.add(par.parameter);
+                if (fun instanceof DensityFunctions.HolderHolder reg && reg.function().value() instanceof FeatureUserParameter par) deps.add(par.parameter);
                 return fun;
             });
             return deps;
@@ -154,7 +154,7 @@ public abstract class Parameter {
             return new Condition(operands, operators);
         }
 
-        public boolean test(DensityFunction.NoisePos pos) {
+        public boolean test(DensityFunction.FunctionContext pos) {
             if (operands.size() > 1) {
                 List<Double> conditionOperands = new ArrayList<>();
                 List<Operator> conditionOperators = new ArrayList<>();

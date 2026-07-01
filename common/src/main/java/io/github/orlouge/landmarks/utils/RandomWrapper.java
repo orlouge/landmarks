@@ -1,7 +1,7 @@
 package io.github.orlouge.landmarks.utils;
 
-import net.minecraft.util.math.random.Random;
+import net.minecraft.util.RandomSource;
 
 public interface RandomWrapper<T, C> {
-    T sample(Random random, C context) throws RandomProperty.NoRandomMatchException;
+    T sample(RandomSource random, C context) throws RandomProperty.NoRandomMatchException;
 }

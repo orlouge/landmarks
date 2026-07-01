@@ -7,14 +7,14 @@ import io.github.orlouge.landmarks.LandmarksMod;
 import io.github.orlouge.landmarks.utils.RandomProperty;
 import io.github.orlouge.landmarks.utils.RandomWrapper;
 import io.github.orlouge.landmarks.utils.TopologicalSort;
-import net.minecraft.registry.DynamicRegistryManager;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.Pair;
-import net.minecraft.util.math.random.Random;
-import net.minecraft.world.StructureWorldAccess;
-import net.minecraft.world.gen.densityfunction.DensityFunction;
+import com.mojang.datafixers.util.Pair;
+import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.WorldGenLevel;
+import net.minecraft.world.level.levelgen.DensityFunction;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -26,12 +26,16 @@ public record Generator(
     Palette palette,
     List<ProcessingStep> processingSteps
 ) {
-    public VariantContext generate(StructureWorldAccess world, Random random, VariantContext context) {
-        if (skip || abort) return context;
+    public VariantContext generate(WorldGenLevel world, RandomSource random, VariantContext context) {
+        if (skip || abort) {
+            return context;
+        }
         context = context.withParameters(parameters);
         context = context.withPalette(palette);
+        int stepIndex = 0;
         for (ProcessingStep step : processingSteps) {
             step.process(world, random, context);
+            stepIndex++;
         }
         return context;
     }
@@ -66,29 +70,30 @@ public record Generator(
          */
         public static final Codec<RandomProperty.WrappedEntry<VariantWithFragment<RandomizedGeneratorConfig>, VariantContext.Predicate>> RANDOM_ENTRY_CODEC =
             RandomProperty.WrappedEntry.extendCodec(VARIANT_MAP_CODEC, VariantContext.Predicate.CODEC);
-        public static final RegistryKey<Registry<RandomProperty.WrappedEntry<VariantWithFragment<RandomizedGeneratorConfig>, VariantContext.Predicate>>> REGISTRY_KEY = RegistryKey.ofRegistry(
-            Identifier.of(LandmarksMod.MOD_ID + "_worldgen", "generators"));
+        public static final ResourceKey<Registry<RandomProperty.WrappedEntry<VariantWithFragment<RandomizedGeneratorConfig>, VariantContext.Predicate>>> REGISTRY_KEY = ResourceKey.createRegistryKey(
+            Identifier.fromNamespaceAndPath(LandmarksMod.MOD_ID + "_worldgen", "generators"));
         public static Map<Identifier, Map<String, List<RandomProperty.WrappedEntry<VariantWithFragment.NamedVariant<RandomizedGeneratorConfig>, VariantContext.Predicate>>>> childVariants = null;
 
         public RandomizedGeneratorConfig() {
             this(Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty());
         }
 
-        public static Map<Identifier, Map<String, List<RandomProperty.WrappedEntry<VariantWithFragment.NamedVariant<RandomizedGeneratorConfig>, VariantContext.Predicate>>>> getChildVariants(DynamicRegistryManager registryManager) {
+        public static Map<Identifier, Map<String, List<RandomProperty.WrappedEntry<VariantWithFragment.NamedVariant<RandomizedGeneratorConfig>, VariantContext.Predicate>>>> getChildVariants(RegistryAccess registryManager) {
             if (childVariants == null) {
-                childVariants = VariantWithFragment.getChildVariants(registryManager.getOrThrow(REGISTRY_KEY), new RandomizedGeneratorConfig());
+                childVariants = VariantWithFragment.getChildVariants(registryManager.lookupOrThrow(REGISTRY_KEY), new RandomizedGeneratorConfig());
             }
             return childVariants;
         }
 
         public static Pair<RandomizedGeneratorConfig, VariantContext> getAndMerge(
             List<Identifier> variants, RandomizedGeneratorConfig baseConfig,
-            Random random, VariantContext baseContext, DynamicRegistryManager registryManager
+            RandomSource random, VariantContext baseContext, RegistryAccess registryManager
         ) throws RandomProperty.NoRandomMatchException {
-            return VariantWithFragment.getAndMerge(
+            Pair<RandomizedGeneratorConfig, VariantContext> result = VariantWithFragment.getAndMerge(
                 variants, baseConfig, new RandomizedGeneratorConfig(),
                 random, baseContext, registryManager, REGISTRY_KEY,
                 getChildVariants(registryManager));
+            return result;
         }
 
         public RandomizedGeneratorConfig merge(RandomizedGeneratorConfig config) {
@@ -108,17 +113,19 @@ public record Generator(
         }
 
         @Override
-        public Generator sample(Random random, VariantContext context) throws RandomProperty.NoRandomMatchException {
-            DensityFunction.DensityFunctionVisitor visitor = context.getVisitor();
+        public Generator sample(RandomSource random, VariantContext context) throws RandomProperty.NoRandomMatchException {
+            DensityFunction.Visitor visitor = context.getVisitor();
             Map<String, Parameter.Sampler> parameters = new HashMap<>();
             if (this.userParameters.isPresent()) {
                 RandomProperty.Sampler<Map<String, RandomProperty<Parameter, VariantContext, VariantContext.Predicate>>> sampler =
                     this.userParameters.get().withoutReplacement(context, false, true).sampler(random);
                 Map<String, RandomProperty<Parameter, VariantContext, VariantContext.Predicate>> mergedParameters = new HashMap<>();
+                int parameterSampleCount = 0;
                 for (;;) {
                     Map<String, RandomProperty<Parameter, VariantContext, VariantContext.Predicate>> parameters2 = sampler.sample();
                     if (parameters2 == null) break;
-                    if (parameters2.keySet().stream().anyMatch(parameters.keySet()::contains)) continue;
+                    parameterSampleCount++;
+                    if (parameters2.keySet().stream().anyMatch(mergedParameters.keySet()::contains)) continue;
                     mergedParameters.putAll(parameters2);
                 }
                 HashMap<String, Set<String>> deps = new HashMap<>();
@@ -138,15 +145,19 @@ public record Generator(
 
             boolean skip = this.skip.isPresent() ? this.skip.get().sample(random, context) : false;
             boolean abort = this.abort.isPresent() ? this.abort.get().sample(random, context): false;
-            if (skip || abort) return new Generator(skip, abort, parameters, new Palette(), List.of());
+            if (skip || abort) {
+                return new Generator(skip, abort, parameters, new Palette(), List.of());
+            }
 
             Palette palette = new Palette();
             if (this.palette.isPresent()) {
                 RandomProperty.Sampler<Palette.RandomizedPalette> sampler = this.palette.get().withoutReplacement(context, false, true).sampler(random);
                 Palette.RandomizedPalette randomPalette = new Palette.RandomizedPalette(), fallbackPalette = new Palette.RandomizedPalette();
+                int paletteSampleCount = 0;
                 for (;;) {
                     Palette.RandomizedPalette palette2 = sampler.sample();
                     if (palette2 == null) break;
+                    paletteSampleCount++;
                     if (palette2.overwritable()) {
                         fallbackPalette = fallbackPalette.merge(palette2);
                     }
@@ -161,9 +172,11 @@ public record Generator(
             LinkedHashMap<Integer, ProcessingStep> steps = new LinkedHashMap<>();
             if (this.processingSteps.isPresent()) {
                 RandomProperty.Sampler<List<ProcessingStep.RandomizedProcessingStep>> sampler = this.processingSteps.get().withoutReplacement(context, false, false).sampler(random);
+                int stepSampleCount = 0;
                 for (;;) {
                     List<ProcessingStep.RandomizedProcessingStep> steps2 = sampler.sample();
                     if (steps2 == null) break;
+                    stepSampleCount++;
                     LinkedHashMap<Integer, ProcessingStep.RandomizedProcessingStep> steps2Map = new LinkedHashMap<>();
                     int lastIndex = -1;
                     for (ProcessingStep.RandomizedProcessingStep step : steps2) {

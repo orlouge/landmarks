@@ -1,6 +1,6 @@
 package io.github.orlouge.landmarks.utils;
 
-import net.minecraft.util.math.random.Random;
+import net.minecraft.util.RandomSource;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -31,12 +31,12 @@ public class WeightedRandomList<T> implements Iterable<T> {
         weightMap.put(this.totalWeight, element);
     }
 
-    public T sample(Random random) {
+    public T sample(RandomSource random) {
         Map.Entry<Double, T> entry = weightMap.higherEntry(random.nextDouble() * this.totalWeight);
         return entry != null ? entry.getValue() : null;
     }
 
-    public T popSample(Random random) {
+    public T popSample(RandomSource random) {
         Map.Entry<Double, T> sample;
         if (weightMap.size() == 1) {
             sample = weightMap.firstEntry();

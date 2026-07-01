@@ -58,7 +58,7 @@
         "y": "landmarks:feature_surface_y",
         "z": "landmarks:z",
         "reset_state": true,
-        "can_copy": "#minecraft:dirt"
+        "can_copy": "#minecraft:substrate_overworld"
       }
     }
   },
@@ -171,7 +171,7 @@
         },
         {
           "place": "%?exposed_surface_dirt",
-          "block_is": "#minecraft:dirt",
+          "block_is": "#minecraft:substrate_overworld",
           "conditions": ["rock_heightmap>=0.005"]
         },
         {
@@ -187,7 +187,7 @@
         {
           "place": "%?above_surface_dirt",
           "block_is": "#landmarks:rocks_replace",
-          "block_below_is": "#minecraft:dirt",
+          "block_below_is": "#minecraft:substrate_overworld",
           "pass_through_if_not_replaced": true,
           "conditions": ["rock_heightmap>=0.02"]
         },
@@ -213,7 +213,7 @@
         {
           "place": "%?above_top_dirt",
           "block_is": "#minecraft:air",
-          "block_below_is": "#minecraft:dirt",
+          "block_below_is": "#minecraft:substrate_overworld",
           "pass_through_if_not_replaced": true,
           "conditions": ["rock_heightmap>=0.02"]
         },

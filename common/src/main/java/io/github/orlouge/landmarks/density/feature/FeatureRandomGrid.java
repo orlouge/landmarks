@@ -5,23 +5,23 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.github.orlouge.landmarks.density.FunctionWithCache;
-import net.minecraft.util.dynamic.CodecHolder;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.random.Random;
-import net.minecraft.world.gen.densityfunction.DensityFunction;
+import net.minecraft.util.KeyDispatchDataCodec;
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.levelgen.DensityFunction;
 
 import java.util.Optional;
 
 public class FeatureRandomGrid implements DensityFunction, FunctionWithCache {
     public static final MapCodec<FeatureRandomGrid> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-        DensityFunction.FUNCTION_CODEC.fieldOf("min").forGetter(d -> d.min),
-        DensityFunction.FUNCTION_CODEC.fieldOf("max").forGetter(d -> d.max),
-        DensityFunction.FUNCTION_CODEC.optionalFieldOf("mean").forGetter(d -> d.mean),
-        DensityFunction.FUNCTION_CODEC.optionalFieldOf("std").forGetter(d -> d.std),
+        DensityFunction.CODEC.fieldOf("min").forGetter(d -> d.min),
+        DensityFunction.CODEC.fieldOf("max").forGetter(d -> d.max),
+        DensityFunction.CODEC.optionalFieldOf("mean").forGetter(d -> d.mean),
+        DensityFunction.CODEC.optionalFieldOf("std").forGetter(d -> d.std),
         Codec.BOOL.optionalFieldOf("integer", true).forGetter(d -> d.integer),
         Codec.either(Codec.LONG, Codec.STRING).xmap(e -> e.map(l -> l, s -> (long) s.hashCode()), Either::left).fieldOf("seed").forGetter(d -> d.seed)
     ).apply(instance, FeatureRandomGrid::new));
-    public static final CodecHolder<FeatureRandomGrid> CODEC_HOLDER = CodecHolder.of(CODEC);
+    public static final KeyDispatchDataCodec<FeatureRandomGrid> CODEC_HOLDER = KeyDispatchDataCodec.of(CODEC);
 
     public final DensityFunction min, max;
     public final Optional<DensityFunction> mean, std;
@@ -50,9 +50,9 @@ public class FeatureRandomGrid implements DensityFunction, FunctionWithCache {
     }
 
     @Override
-    public double sample(NoisePos pos) {
+    public double compute(DensityFunction.FunctionContext pos) {
         if (cache == null) throw new RuntimeException("FeatureRandomCreed sampled outside of the feature type.");
-        Random random = Random.create(seed + cache.featureSeed + new BlockPos(pos.blockX(), pos.blockY(), pos.blockZ()).hashCode());
+        RandomSource random = RandomSource.create(seed + cache.featureSeed + new BlockPos(pos.blockX(), pos.blockY(), pos.blockZ()).hashCode());
         double value;
         if (cache.min > cache.max) {
             value = cache.min;
@@ -63,7 +63,7 @@ public class FeatureRandomGrid implements DensityFunction, FunctionWithCache {
                 if (integer) value = Math.round(value);
             } else {
                 if (integer) {
-                    value = random.nextBetween((int) cache.min, (int) cache.max);
+                    value = random.nextIntBetweenInclusive((int) cache.min, (int) cache.max);
                 } else {
                     value = random.nextDouble() * (cache.max - cache.min) + cache.min;
                 }
@@ -83,25 +83,25 @@ public class FeatureRandomGrid implements DensityFunction, FunctionWithCache {
     }
 
     @Override
-    public void fill(double[] densities, EachApplier applier) {
-        applier.fill(densities, this);
+    public void fillArray(double[] densities, DensityFunction.ContextProvider applier) {
+        applier.fillAllDirectly(densities, this);
     }
 
     @Override
-    public DensityFunction apply(DensityFunctionVisitor visitor) {
-        return visitor.apply(new FeatureRandomGrid(this.min.apply(visitor), this.max.apply(visitor), this.mean.map(f -> f.apply(visitor)), this.std.map(f -> f.apply(visitor)), integer, seed, cache));
+    public DensityFunction mapChildren(DensityFunction.Visitor visitor) {
+        return new FeatureRandomGrid(visitor.apply(this.min), visitor.apply(this.max), this.mean.map(visitor::apply), this.std.map(visitor::apply), integer, seed, cache);
     }
 
     @Override
-    public CodecHolder<? extends DensityFunction> getCodecHolder() {
+    public KeyDispatchDataCodec<? extends DensityFunction> codec() {
         return CODEC_HOLDER;
     }
 
     public FeatureRandomGrid create(long featureSeed) {
-        double minValue = min.sample(new UnblendedNoisePos(0, 0, 0));
-        double maxValue = max.sample(new UnblendedNoisePos(0, 0, 0));
-        double stdValue = std.map(s -> s.sample(new UnblendedNoisePos(0, 0, 0))).orElse(0.0);
-        double meanValue = mean.map(m -> m.sample(new UnblendedNoisePos(0, 0, 0))).orElse((maxValue + minValue) / 2);
+        double minValue = min.compute(new DensityFunction.SinglePointContext(0, 0, 0));
+        double maxValue = max.compute(new DensityFunction.SinglePointContext(0, 0, 0));
+        double stdValue = std.map(s -> s.compute(new DensityFunction.SinglePointContext(0, 0, 0))).orElse(0.0);
+        double meanValue = mean.map(m -> m.compute(new DensityFunction.SinglePointContext(0, 0, 0))).orElse((maxValue + minValue) / 2);
         return new FeatureRandomGrid(min, max, mean, std, integer, seed, new Cache(featureSeed, minValue, maxValue, meanValue, stdValue));
     }
 

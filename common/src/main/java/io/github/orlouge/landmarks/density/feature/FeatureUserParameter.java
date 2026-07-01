@@ -4,14 +4,14 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.github.orlouge.landmarks.features.Parameter;
-import net.minecraft.util.dynamic.CodecHolder;
-import net.minecraft.world.gen.densityfunction.DensityFunction;
+import net.minecraft.util.KeyDispatchDataCodec;
+import net.minecraft.world.level.levelgen.DensityFunction;
 
-public class FeatureUserParameter implements DensityFunction.Base {
+public class FeatureUserParameter implements DensityFunction.SimpleFunction {
     public static final MapCodec<FeatureUserParameter> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
         Codec.STRING.fieldOf("parameter").forGetter(d -> d.parameter)
     ).apply(instance, FeatureUserParameter::new));
-    public static final CodecHolder<FeatureUserParameter> CODEC_HOLDER = CodecHolder.of(CODEC);
+    public static final KeyDispatchDataCodec<FeatureUserParameter> CODEC_HOLDER = KeyDispatchDataCodec.of(CODEC);
     private Parameter.Sampler sampler = null;
     private double min = 0, max = 0;
     public final String parameter;
@@ -29,7 +29,7 @@ public class FeatureUserParameter implements DensityFunction.Base {
     }
 
     @Override
-    public double sample(NoisePos pos) {
+    public double compute(DensityFunction.FunctionContext pos) {
         if (sampler == null) throw new RuntimeException("Attempted to read unset user parameter: " + this.parameter);
         //System.out.println(this.parameter + " = " + input);
         return sampler.sample(pos);
@@ -46,7 +46,7 @@ public class FeatureUserParameter implements DensityFunction.Base {
     }
 
     @Override
-    public CodecHolder<? extends DensityFunction> getCodecHolder() {
+    public KeyDispatchDataCodec<? extends DensityFunction> codec() {
         return CODEC_HOLDER;
     }
 }

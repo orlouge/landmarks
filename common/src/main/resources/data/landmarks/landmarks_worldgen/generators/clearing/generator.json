@@ -39,30 +39,30 @@
           "place": "%?layer5",
           "conditions": ["noise>=0.25"],
           "pass_through_if_not_replaced": true,
-          "block_is": "#minecraft:dirt"
+          "block_is": "#minecraft:substrate_overworld"
         },
         {
           "place": "%?layer4",
           "conditions": ["noise>=0.1"],
           "pass_through_if_not_replaced": true,
-          "block_is": "#minecraft:dirt"
+          "block_is": "#minecraft:substrate_overworld"
         },
         {
           "place": "%?layer3",
           "conditions": ["noise>=-0.2"],
           "pass_through_if_not_replaced": true,
-          "block_is": "#minecraft:dirt"
+          "block_is": "#minecraft:substrate_overworld"
         },
         {
           "place": "%?layer2",
           "conditions": ["noise>=-0.5"],
           "pass_through_if_not_replaced": true,
-          "block_is": "#minecraft:dirt"
+          "block_is": "#minecraft:substrate_overworld"
         },
         {
           "place": "%?layer1",
           "conditions": ["noise>=-0.85"],
-          "block_is": "#minecraft:dirt"
+          "block_is": "#minecraft:substrate_overworld"
         }
       ]
     },
@@ -71,21 +71,21 @@
       "rules": [
         {
           "place": "%?layer3",
-          "block_is": "#minecraft:dirt",
+          "block_is": "#minecraft:substrate_overworld",
           "pass_through_if_not_replaced": true,
           "conditions": ["noise>=0.1"]
         },
         {
           "place": "%?on_soil_extra",
           "block_is": "#landmarks:clearing_replace_above",
-          "block_below_is": "#minecraft:dirt",
+          "block_below_is": "#minecraft:substrate_overworld",
           "pass_through_if_not_replaced": true,
           "conditions": ["noise>=-0.4"]
         },
         {
           "place": "%?on_soil",
           "block_is": "#landmarks:clearing_replace_above",
-          "block_below_is": "#minecraft:dirt",
+          "block_below_is": "#minecraft:substrate_overworld",
           "conditions": ["noise>=-0.99"]
         },
         {

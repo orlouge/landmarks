@@ -6,19 +6,19 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.github.orlouge.landmarks.density.BoundedFunction;
 import io.github.orlouge.landmarks.utils.RandomProperty;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.Pair;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkPos;
-import net.minecraft.util.math.random.Random;
-import net.minecraft.world.StructureWorldAccess;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.gen.densityfunction.DensityFunction;
-import net.minecraft.world.gen.feature.Feature;
-import net.minecraft.world.gen.feature.FeatureConfig;
-import net.minecraft.world.gen.feature.util.FeatureContext;
+import com.mojang.datafixers.util.Pair;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.WorldGenLevel;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.levelgen.DensityFunction;
+import net.minecraft.world.level.levelgen.feature.Feature;
+import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
+import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
 
 import java.util.*;
 
@@ -28,31 +28,31 @@ public class SurfaceNoiseFeature extends Feature<SurfaceNoiseFeature.Config> {
     }
 
     @Override
-    public boolean generate(FeatureContext<Config> context) {
-        StructureWorldAccess world = context.getWorld();
-        Random random = context.getRandom();
-        BlockPos origin = context.getOrigin();
-        RegistryEntry<Biome> biome = context.getWorld().getBiome(origin);
-        ChunkPos originChunk = new ChunkPos(origin);
+    public boolean place(FeaturePlaceContext<Config> context) {
+        WorldGenLevel world = context.level();
+        RandomSource random = context.random();
+        BlockPos origin = context.origin();
+        Holder<Biome> biome = context.level().getBiome(origin);
+        ChunkPos originChunk = ChunkPos.containing(origin);
         long seed = random.nextLong();
-        random = Random.create(seed);
+        random = RandomSource.create(seed);
         long startTime = System.currentTimeMillis();
 
-        int minZ = (originChunk.z - 1) * 16, maxZ = (originChunk.z + 2) * 16 - 1;
-        int minX = (originChunk.x - 1) * 16, maxX = (originChunk.x + 2) * 16 - 1;
-        int minY = world.getBottomY(), maxY = world.getTopYInclusive();
+        int minZ = (originChunk.z() - 1) * 16, maxZ = (originChunk.z() + 2) * 16 - 1;
+        int minX = (originChunk.x() - 1) * 16, maxX = (originChunk.x() + 2) * 16 - 1;
+        int minY = world.getMinY(), maxY = world.getMaxY();
 
         try {
-            Config config = context.getConfig();
+            Config config = context.config();
             boolean debug = config.debug;
 
             if (debug) {
                 System.out.println("#################################");
-                context.getFeature().flatMap(world.getRegistryManager().getOrThrow(RegistryKeys.CONFIGURED_FEATURE)::getKey).ifPresentOrElse(
-                    k -> System.out.println("Generating configured feature " + k.getValue()),
+                context.topFeature().map(world.registryAccess().lookupOrThrow(Registries.CONFIGURED_FEATURE)::getKey).ifPresentOrElse(
+                    k -> System.out.println("Generating configured feature " + k),
                     () -> System.out.println("Generating surface noise feature")
                 );
-                System.out.println("  at " + origin + " (" + biome.getIdAsString() + ") with seed " + seed);
+                System.out.println("  at " + origin + " (" + biome.unwrapKey().map(key -> key.identifier().toString()).orElse("unknown") + ") with seed " + seed);
             }
 
             BlockPos minPos = new BlockPos(minX, minY, minZ), maxPos = new BlockPos(maxX, maxY, maxZ);
@@ -70,9 +70,11 @@ public class SurfaceNoiseFeature extends Feature<SurfaceNoiseFeature.Config> {
                 if (debug) printContext("(Aborted)", variantContext.withParameters(baseGenerator.parameters()));
                 return false;
             }
-            if (!baseGenerator.skip()) variantContext = baseGenerator.generate(world, random, variantContext);
+            if (!baseGenerator.skip()) {
+                variantContext = baseGenerator.generate(world, random, variantContext);
+            }
 
-            DensityFunction.DensityFunctionVisitor visitor = variantContext.getVisitor();
+            DensityFunction.Visitor visitor = variantContext.getVisitor();
             if (config.bounds.isPresent()) {
                 Parameter.Sampler sampler = config.bounds.get().map(variantContext.userParameters()::get, p -> p.createSampler(visitor));
                 if (sampler.bounds().isPresent()) {
@@ -90,7 +92,7 @@ public class SurfaceNoiseFeature extends Feature<SurfaceNoiseFeature.Config> {
                     for (int x = minX; x <= maxX; x++) {
                         for (int y = minY; y <= maxY; y++) {
                             for (int z = minZ; z < maxZ; z++) {
-                                if (sampler.sample(new DensityFunction.UnblendedNoisePos(x, y, z)) > 0) {
+                                if (sampler.sample(new DensityFunction.SinglePointContext(x, y, z)) > 0) {
                                     if (x < _minX) _minX = x;
                                     if (x > _maxX) _maxX = x;
                                     if (y < _minY) _minY = y;
@@ -107,7 +109,7 @@ public class SurfaceNoiseFeature extends Feature<SurfaceNoiseFeature.Config> {
                 }
             }
 
-            DensityFunction.UnblendedNoisePos zeroPos = new DensityFunction.UnblendedNoisePos(0, 0, 0);
+            DensityFunction.SinglePointContext zeroPos = new DensityFunction.SinglePointContext(0, 0, 0);
             if (config.minX.isPresent()) minX = Math.max(minX, (int) (config.minX.get().map(variantContext.userParameters()::get, p -> p.createSampler(visitor)).sample(zeroPos)));
             if (config.minY.isPresent()) minY = Math.max(minY, (int) (config.minY.get().map(variantContext.userParameters()::get, p -> p.createSampler(visitor)).sample(zeroPos)));
             if (config.minZ.isPresent()) minZ = Math.max(minZ, (int) (config.minZ.get().map(variantContext.userParameters()::get, p -> p.createSampler(visitor)).sample(zeroPos)));
@@ -116,13 +118,14 @@ public class SurfaceNoiseFeature extends Feature<SurfaceNoiseFeature.Config> {
             if (config.maxZ.isPresent()) maxZ = Math.min(maxZ, (int) (config.maxZ.get().map(variantContext.userParameters()::get, p -> p.createSampler(visitor)).sample(zeroPos)));
             variantContext = variantContext.withBounds(minX, minY, minZ, maxX, maxY, maxZ);
 
+            int generatorIndex = 0;
             for (Either<Identifier, VariantWithFragment<Generator.RandomizedGeneratorConfig>> referenceOrGenerator : config.generators) {
                 if (debug) printContext(referenceOrGenerator.map(Identifier::toString, r -> "(Anonymous)"), variantContext);
                 Generator generator;
                 if (referenceOrGenerator.left().isPresent()) {
-                    Pair<Generator.RandomizedGeneratorConfig, VariantContext> pair = Generator.RandomizedGeneratorConfig.getAndMerge(List.of(referenceOrGenerator.left().get()), new Generator.RandomizedGeneratorConfig(), random, variantContext, world.getRegistryManager());
-                    variantContext = pair.getRight();
-                    generator = pair.getLeft().sample(random, variantContext);
+                    Pair<Generator.RandomizedGeneratorConfig, VariantContext> pair = Generator.RandomizedGeneratorConfig.getAndMerge(List.of(referenceOrGenerator.left().get()), new Generator.RandomizedGeneratorConfig(), random, variantContext, world.registryAccess());
+                    variantContext = pair.getSecond();
+                    generator = pair.getFirst().sample(random, variantContext);
                 } else {
                     VariantWithFragment<Generator.RandomizedGeneratorConfig> randomGen = referenceOrGenerator.right().get();
                     VariantWithFragment.VariantSampler<Generator.RandomizedGeneratorConfig> sampler = new VariantWithFragment.VariantSampler<>();
@@ -136,9 +139,11 @@ public class SurfaceNoiseFeature extends Feature<SurfaceNoiseFeature.Config> {
                 }
                 if (generator.skip()) {
                     if (debug) System.out.println("Skipped");
+                    generatorIndex++;
                     continue;
                 }
                 variantContext = generator.generate(world, random, variantContext);
+                generatorIndex++;
             }
             if (debug) printContext("(Exiting)", variantContext);
 
@@ -171,8 +176,8 @@ public class SurfaceNoiseFeature extends Feature<SurfaceNoiseFeature.Config> {
                                 if (value.length() > 7) value = String.format("%.3f", cons.value);
                             } else {
                                 double min = Double.POSITIVE_INFINITY, max = Double.NEGATIVE_INFINITY, mean = 0, cnt = 0, std = 0;
-                                for (BlockPos pos : BlockPos.iterate(variantContext.minPos(), variantContext.maxPos())) {
-                                    double val = e.getValue().sample(new DensityFunction.UnblendedNoisePos(pos.getX(), pos.getY(), pos.getZ()));
+                                for (BlockPos pos : BlockPos.betweenClosed(variantContext.minPos(), variantContext.maxPos())) {
+                                    double val = e.getValue().sample(new DensityFunction.SinglePointContext(pos.getX(), pos.getY(), pos.getZ()));
                                     min = Math.min(val, min);
                                     max = Math.max(val, max);
                                     mean += val;
@@ -183,8 +188,8 @@ public class SurfaceNoiseFeature extends Feature<SurfaceNoiseFeature.Config> {
                                     value = "" + mean;
                                     if (value.length() > 7) value = String.format("%.3f", mean);
                                 } else {
-                                    for (BlockPos pos : BlockPos.iterate(variantContext.minPos(), variantContext.maxPos())) {
-                                        double val = e.getValue().sample(new DensityFunction.UnblendedNoisePos(pos.getX(), pos.getY(), pos.getZ()));
+                                    for (BlockPos pos : BlockPos.betweenClosed(variantContext.minPos(), variantContext.maxPos())) {
+                                        double val = e.getValue().sample(new DensityFunction.SinglePointContext(pos.getX(), pos.getY(), pos.getZ()));
                                         std += (val - mean) * (val - mean);
                                     }
                                     std = Math.sqrt(std / cnt);
@@ -219,7 +224,7 @@ public class SurfaceNoiseFeature extends Feature<SurfaceNoiseFeature.Config> {
         Optional<Either<String, Parameter>> maxZ,
         Optional<Either<String, Parameter>> bounds,
         boolean debug
-    ) implements FeatureConfig {
+    ) implements FeatureConfiguration {
         public static final MapCodec<Config> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             Codec.either(Identifier.CODEC, Generator.RandomizedGeneratorConfig.VARIANT_MAP_CODEC.codec()).listOf()
                 .optionalFieldOf("generators", Collections.emptyList()).forGetter(Config::generators),

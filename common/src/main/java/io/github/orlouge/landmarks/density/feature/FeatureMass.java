@@ -5,15 +5,15 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.github.orlouge.landmarks.density.BoundedFunction;
 import io.github.orlouge.landmarks.density.FunctionWithCache;
-import net.minecraft.util.dynamic.CodecHolder;
-import net.minecraft.world.gen.densityfunction.DensityFunction;
+import net.minecraft.util.KeyDispatchDataCodec;
+import net.minecraft.world.level.levelgen.DensityFunction;
 
 public class FeatureMass implements DensityFunction, FunctionWithCache.Simple {
     public static final MapCodec<FeatureMass> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-        DensityFunction.FUNCTION_CODEC.fieldOf("argument").forGetter(d -> d.argument),
+        DensityFunction.CODEC.fieldOf("argument").forGetter(d -> d.argument),
         Codec.STRING.optionalFieldOf("key", "").forGetter(d -> d.key)
     ).apply(instance, FeatureMass::new));
-    public static final CodecHolder<FeatureMass> CODEC_HOLDER = CodecHolder.of(CODEC);
+    public static final KeyDispatchDataCodec<FeatureMass> CODEC_HOLDER = KeyDispatchDataCodec.of(CODEC);
 
     public final DensityFunction argument;
     public final String key;
@@ -32,7 +32,7 @@ public class FeatureMass implements DensityFunction, FunctionWithCache.Simple {
     }
 
     @Override
-    public double sample(NoisePos pos) {
+    public double compute(DensityFunction.FunctionContext pos) {
         if (cache == null) throw new RuntimeException("FeatureMass sampled outside of the feature type.");
         return cache.value;
     }
@@ -48,17 +48,17 @@ public class FeatureMass implements DensityFunction, FunctionWithCache.Simple {
     }
 
     @Override
-    public void fill(double[] densities, EachApplier applier) {
-        applier.fill(densities, this);
+    public void fillArray(double[] densities, DensityFunction.ContextProvider applier) {
+        applier.fillAllDirectly(densities, this);
     }
 
     @Override
-    public DensityFunction apply(DensityFunctionVisitor visitor) {
-        return visitor.apply(new FeatureMass(this.argument.apply(visitor), key, cache));
+    public DensityFunction mapChildren(DensityFunction.Visitor visitor) {
+        return new FeatureMass(visitor.apply(this.argument), key, cache);
     }
 
     @Override
-    public CodecHolder<? extends DensityFunction> getCodecHolder() {
+    public KeyDispatchDataCodec<? extends DensityFunction> codec() {
         return CODEC_HOLDER;
     }
 
@@ -81,7 +81,7 @@ public class FeatureMass implements DensityFunction, FunctionWithCache.Simple {
         for (int x = minX; x <= maxX; x++) {
             for (int z = minZ; z <= maxZ; z++) {
                 for (int y = minY; y <= maxY; y++) {
-                    value += argument.sample(new UnblendedNoisePos(x, y, z));
+                    value += argument.compute(new DensityFunction.SinglePointContext(x, y, z));
                 }
             }
         }

@@ -14,7 +14,7 @@
         "type": "landmarks:feature_cache",
         "argument": {
           "type": "landmarks:feature_block_matches",
-          "matches": ["#minecraft:dirt"]
+          "matches": ["#minecraft:substrate_overworld"]
         }
       }
     },

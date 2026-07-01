@@ -6,7 +6,6 @@
   "client": [
   ],
   "mixins": [
-    "ChunkRegionMixin"
   ],
   "injectors": {
     "defaultRequire": 1

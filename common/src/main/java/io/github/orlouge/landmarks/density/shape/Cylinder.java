@@ -3,33 +3,33 @@ package io.github.orlouge.landmarks.density.shape;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.github.orlouge.landmarks.density.BoundedFunction;
-import net.minecraft.util.dynamic.CodecHolder;
-import net.minecraft.world.gen.densityfunction.DensityFunction;
+import net.minecraft.util.KeyDispatchDataCodec;
+import net.minecraft.world.level.levelgen.DensityFunction;
 
 public record Cylinder(DensityFunction x, DensityFunction z, DensityFunction _minY, DensityFunction _maxY, DensityFunction _radius, DensityFunction inside) implements DensityFunction, BoundedFunction {
     public static final MapCodec<Cylinder> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-        DensityFunction.FUNCTION_CODEC.fieldOf("x").forGetter(Cylinder::x),
-        DensityFunction.FUNCTION_CODEC.fieldOf("z").forGetter(Cylinder::z),
-        DensityFunction.FUNCTION_CODEC.fieldOf("min_y").forGetter(Cylinder::_minY),
-        DensityFunction.FUNCTION_CODEC.fieldOf("max_y").forGetter(Cylinder::_maxY),
-        DensityFunction.FUNCTION_CODEC.fieldOf("radius").forGetter(Cylinder::_radius),
-        DensityFunction.FUNCTION_CODEC.fieldOf("inside").forGetter(Cylinder::inside)
+        DensityFunction.CODEC.fieldOf("x").forGetter(Cylinder::x),
+        DensityFunction.CODEC.fieldOf("z").forGetter(Cylinder::z),
+        DensityFunction.CODEC.fieldOf("min_y").forGetter(Cylinder::_minY),
+        DensityFunction.CODEC.fieldOf("max_y").forGetter(Cylinder::_maxY),
+        DensityFunction.CODEC.fieldOf("radius").forGetter(Cylinder::_radius),
+        DensityFunction.CODEC.fieldOf("inside").forGetter(Cylinder::inside)
     ).apply(instance, Cylinder::new));
-    public static final CodecHolder<Cylinder> CODEC_HOLDER = CodecHolder.of(CODEC);
+    public static final KeyDispatchDataCodec<Cylinder> CODEC_HOLDER = KeyDispatchDataCodec.of(CODEC);
 
     @Override
-    public double sample(NoisePos pos) {
-        return Math.sqrt(Math.pow(pos.blockX() - x.sample(new UnblendedNoisePos(0, 0, 0)), 2) + Math.pow(pos.blockZ() - z.sample(new UnblendedNoisePos(0, 0, 0)), 2)) <= _radius.sample(new UnblendedNoisePos(0, 0, 0)) && pos.blockY() >= _minY.sample(new UnblendedNoisePos(0, 0, 0)) && pos.blockY() <= _maxY.sample(new UnblendedNoisePos(0, 0, 0)) ? inside.sample(pos) : 0;
+    public double compute(DensityFunction.FunctionContext pos) {
+        return Math.sqrt(Math.pow(pos.blockX() - x.compute(new DensityFunction.SinglePointContext(0, 0, 0)), 2) + Math.pow(pos.blockZ() - z.compute(new DensityFunction.SinglePointContext(0, 0, 0)), 2)) <= _radius.compute(new DensityFunction.SinglePointContext(0, 0, 0)) && pos.blockY() >= _minY.compute(new DensityFunction.SinglePointContext(0, 0, 0)) && pos.blockY() <= _maxY.compute(new DensityFunction.SinglePointContext(0, 0, 0)) ? inside.compute(pos) : 0;
     }
 
     @Override
-    public void fill(double[] densities, EachApplier applier) {
-        applier.fill(densities, this);
+    public void fillArray(double[] densities, DensityFunction.ContextProvider applier) {
+        applier.fillAllDirectly(densities, this);
     }
 
     @Override
-    public DensityFunction apply(DensityFunctionVisitor visitor) {
-        return visitor.apply(new Cylinder(x.apply(visitor), z.apply(visitor), _minY.apply(visitor), _maxY.apply(visitor), _radius.apply(visitor), inside.apply(visitor)));
+    public DensityFunction mapChildren(DensityFunction.Visitor visitor) {
+        return new Cylinder(visitor.apply(x), visitor.apply(z), visitor.apply(_minY), visitor.apply(_maxY), visitor.apply(_radius), visitor.apply(inside));
     }
 
     @Override
@@ -43,37 +43,37 @@ public record Cylinder(DensityFunction x, DensityFunction z, DensityFunction _mi
     }
 
     @Override
-    public CodecHolder<? extends DensityFunction> getCodecHolder() {
+    public KeyDispatchDataCodec<? extends DensityFunction> codec() {
         return CODEC_HOLDER;
     }
 
     @Override
     public int minX() {
-        return (int) (x.sample(new UnblendedNoisePos(0, 0, 0)) - _radius.sample(new UnblendedNoisePos(0, 0, 0)));
+        return (int) (x.compute(new DensityFunction.SinglePointContext(0, 0, 0)) - _radius.compute(new DensityFunction.SinglePointContext(0, 0, 0)));
     }
 
     @Override
     public int maxX() {
-        return (int) (x.sample(new UnblendedNoisePos(0, 0, 0)) + _radius.sample(new UnblendedNoisePos(0, 0, 0)));
+        return (int) (x.compute(new DensityFunction.SinglePointContext(0, 0, 0)) + _radius.compute(new DensityFunction.SinglePointContext(0, 0, 0)));
     }
 
     @Override
     public int minY() {
-        return (int) _minY.sample(new UnblendedNoisePos(0, 0, 0));
+        return (int) _minY.compute(new DensityFunction.SinglePointContext(0, 0, 0));
     }
 
     @Override
     public int maxY() {
-        return (int) _maxY.sample(new UnblendedNoisePos(0, 0, 0));
+        return (int) _maxY.compute(new DensityFunction.SinglePointContext(0, 0, 0));
     }
 
     @Override
     public int minZ() {
-        return (int) (z.sample(new UnblendedNoisePos(0, 0, 0)) - _radius.sample(new UnblendedNoisePos(0, 0, 0)));
+        return (int) (z.compute(new DensityFunction.SinglePointContext(0, 0, 0)) - _radius.compute(new DensityFunction.SinglePointContext(0, 0, 0)));
     }
 
     @Override
     public int maxZ() {
-        return (int) (z.sample(new UnblendedNoisePos(0, 0, 0)) + _radius.sample(new UnblendedNoisePos(0, 0, 0)));
+        return (int) (z.compute(new DensityFunction.SinglePointContext(0, 0, 0)) + _radius.compute(new DensityFunction.SinglePointContext(0, 0, 0)));
     }
 }

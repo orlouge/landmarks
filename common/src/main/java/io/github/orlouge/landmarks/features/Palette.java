@@ -8,12 +8,12 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.github.orlouge.landmarks.generation.BlockTemplate;
 import io.github.orlouge.landmarks.utils.RandomProperty;
 import io.github.orlouge.landmarks.utils.RandomWrapper;
-import net.minecraft.block.Block;
-import net.minecraft.registry.RegistryCodecs;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.entry.RegistryEntryList;
-import net.minecraft.util.math.random.Random;
-import net.minecraft.world.gen.densityfunction.DensityFunction;
+import net.minecraft.core.HolderSet;
+import net.minecraft.core.RegistryCodecs;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.levelgen.DensityFunction;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -59,19 +59,19 @@ public record Palette(
         Either<String, Parameter> x,
         Either<String, Parameter> y,
         Either<String, Parameter> z,
-        RegistryEntryList<Block> canCopy,
+        HolderSet<Block> canCopy,
         boolean resetState
     ) {
         public static final MapCodec<CopiedEntry> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             Parameter.CODEC_NAMED.fieldOf("x").forGetter(CopiedEntry::x),
             Parameter.CODEC_NAMED.fieldOf("y").forGetter(CopiedEntry::y),
             Parameter.CODEC_NAMED.fieldOf("z").forGetter(CopiedEntry::z),
-            RegistryCodecs.entryList(RegistryKeys.BLOCK).fieldOf("can_copy").forGetter(CopiedEntry::canCopy),
+            RegistryCodecs.homogeneousList(Registries.BLOCK).fieldOf("can_copy").forGetter(CopiedEntry::canCopy),
             Codec.BOOL.fieldOf("reset_state").forGetter(CopiedEntry::resetState)
         ).apply(instance, CopiedEntry::new));
 
         public ResolvedCopiedEntry resolve(VariantContext context) {
-            DensityFunction.DensityFunctionVisitor visitor = context.getVisitor();
+            DensityFunction.Visitor visitor = context.getVisitor();
             Parameter.Sampler x = this.x.map(context.userParameters()::get, par -> par.createSampler(visitor));
             Parameter.Sampler y = this.y.map(context.userParameters()::get, par -> par.createSampler(visitor));
             Parameter.Sampler z = this.z.map(context.userParameters()::get, par -> par.createSampler(visitor));
@@ -83,7 +83,7 @@ public record Palette(
         Parameter.Sampler x,
         Parameter.Sampler y,
         Parameter.Sampler z,
-        RegistryEntryList<Block> canCopy,
+        HolderSet<Block> canCopy,
         boolean resetState
     ) { }
 
@@ -114,7 +114,7 @@ public record Palette(
         }
 
         @Override
-        public Palette sample(Random random, VariantContext context) throws RandomProperty.NoRandomMatchException {
+        public Palette sample(RandomSource random, VariantContext context) throws RandomProperty.NoRandomMatchException {
             Map<String, BlockTemplate> resolved = new HashMap<>();
             Map<String, String> unresolved = new HashMap<>();
 

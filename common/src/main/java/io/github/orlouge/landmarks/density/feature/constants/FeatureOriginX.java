@@ -1,12 +1,12 @@
 package io.github.orlouge.landmarks.density.feature.constants;
 
 import com.mojang.serialization.MapCodec;
-import net.minecraft.util.dynamic.CodecHolder;
-import net.minecraft.world.gen.densityfunction.DensityFunction;
+import net.minecraft.util.KeyDispatchDataCodec;
+import net.minecraft.world.level.levelgen.DensityFunction;
 
-public class FeatureOriginX implements DensityFunction.Base {
+public class FeatureOriginX implements DensityFunction.SimpleFunction {
     public static final MapCodec<FeatureOriginX> CODEC = MapCodec.unit(new FeatureOriginX());
-    public static final CodecHolder<FeatureOriginX> CODEC_HOLDER = CodecHolder.of(CODEC);
+    public static final KeyDispatchDataCodec<FeatureOriginX> CODEC_HOLDER = KeyDispatchDataCodec.of(CODEC);
     private double value = 0;
 
     public FeatureOriginX create(double value) {
@@ -16,7 +16,7 @@ public class FeatureOriginX implements DensityFunction.Base {
     }
 
     @Override
-    public double sample(NoisePos pos) {
+    public double compute(DensityFunction.FunctionContext pos) {
         return value;
     }
 
@@ -31,7 +31,7 @@ public class FeatureOriginX implements DensityFunction.Base {
     }
 
     @Override
-    public CodecHolder<? extends DensityFunction> getCodecHolder() {
+    public KeyDispatchDataCodec<? extends DensityFunction> codec() {
         return CODEC_HOLDER;
     }
 }

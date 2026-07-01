@@ -1,36 +1,35 @@
 {
-  "schemaVersion": 1,
-  "id": "landmarks",
-  "version": "${version}",
-  "name": "Landmarks",
-  "description": "This is an example description! Tell everyone what your mod is about!",
-  "authors": [
-    "orlouge"
-  ],
-  "contact": {
-    "homepage": "https://fabricmc.net/",
-    "sources": "https://github.com/FabricMC/fabric-example-mod"
-  },
-  "license": "ARR",
-  "icon": "assets/landmarks/icon.png",
-  "environment": "*",
-  "entrypoints": {
-    "main": [
-      "io.github.orlouge.landmarks.fabric.LandmarksModFabric"
+    "schemaVersion": 1,
+    "id": "${mod_id}",
+    "version": "${version}",
+    "name": "${mod_name}",
+    "description": "${description}",
+    "authors": [
+        "${mod_author}"
     ],
-    "client": [
-    ]
-  },
-  "mixins": [
-    "landmarks.mixins.json"
-  ],
-  "depends": {
-    "fabricloader": ">=0.17.2",
-    "minecraft": "~1.21.8",
-    "java": ">=21",
-    "fabric-api": "*"
-  },
-  "suggests": {
-    "another-mod": "*"
-  }
+    "contact": {
+        "homepage": "https://fabricmc.net/",
+        "sources": "https://github.com/FabricMC/fabric-example-mod"
+    },
+    "license": "${license}",
+    "icon": "${mod_id}.png",
+    "environment": "*",
+    "entrypoints": {
+        "main": [
+            "io.github.orlouge.landmarks.fabric.LandmarksModFabric"
+        ]
+    },
+    "mixins": [
+        "${mod_id}.mixins.json"
+    ],
+    "depends": {
+        "fabricloader": ">=${fabric_loader_version}",
+        "fabric-api": "*",
+        "minecraft": "~${minecraft_version}",
+        "java": ">=${java_version}"
+    },
+    "suggests": {
+        "another-mod": "*"
+    }
 }
+  

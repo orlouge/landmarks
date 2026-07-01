@@ -2,18 +2,18 @@ package io.github.orlouge.landmarks.density.operations;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.util.dynamic.CodecHolder;
-import net.minecraft.world.gen.densityfunction.DensityFunction;
+import net.minecraft.util.KeyDispatchDataCodec;
+import net.minecraft.world.level.levelgen.DensityFunction;
 
 public record Negate(DensityFunction argument) implements DensityFunction {
     public static final MapCodec<Negate> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-        DensityFunction.FUNCTION_CODEC.fieldOf("argument").forGetter(Negate::argument)
+        DensityFunction.CODEC.fieldOf("argument").forGetter(Negate::argument)
     ).apply(instance, Negate::new));
-    public static final CodecHolder<Negate> CODEC_HOLDER = CodecHolder.of(CODEC);
+    public static final KeyDispatchDataCodec<Negate> CODEC_HOLDER = KeyDispatchDataCodec.of(CODEC);
 
     @Override
-    public double sample(NoisePos pos) {
-        return - argument.sample(pos);
+    public double compute(DensityFunction.FunctionContext pos) {
+        return - argument.compute(pos);
     }
 
     @Override
@@ -27,17 +27,17 @@ public record Negate(DensityFunction argument) implements DensityFunction {
     }
 
     @Override
-    public void fill(double[] densities, EachApplier applier) {
-        applier.fill(densities, this);
+    public void fillArray(double[] densities, DensityFunction.ContextProvider applier) {
+        applier.fillAllDirectly(densities, this);
     }
 
     @Override
-    public DensityFunction apply(DensityFunctionVisitor visitor) {
-        return visitor.apply(new Negate(this.argument.apply(visitor)));
+    public DensityFunction mapChildren(DensityFunction.Visitor visitor) {
+        return new Negate(visitor.apply(this.argument));
     }
 
     @Override
-    public CodecHolder<? extends DensityFunction> getCodecHolder() {
+    public KeyDispatchDataCodec<? extends DensityFunction> codec() {
         return CODEC_HOLDER;
     }
 }

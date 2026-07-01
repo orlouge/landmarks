@@ -34,7 +34,7 @@
           "place": "%mushroom",
           "conditions": ["mushroom_density>=density_threshold"],
           "block_is": "#landmarks:rocks_replace",
-          "block_below_is": "#minecraft:dirt",
+          "block_below_is": "#minecraft:substrate_overworld",
           "post_processing": false
         }
       ]

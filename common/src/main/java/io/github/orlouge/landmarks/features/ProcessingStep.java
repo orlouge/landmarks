@@ -4,27 +4,26 @@ import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import io.github.orlouge.landmarks.LandmarksMod;
 import io.github.orlouge.landmarks.density.BoundedFunction;
 import io.github.orlouge.landmarks.generation.BlockTemplate;
 import io.github.orlouge.landmarks.utils.RandomProperty;
 import io.github.orlouge.landmarks.utils.RandomWrapper;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.fluid.Fluids;
-import net.minecraft.registry.RegistryCodecs;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.registry.entry.RegistryEntryList;
-import net.minecraft.registry.tag.BlockTags;
-import net.minecraft.registry.tag.FluidTags;
-import net.minecraft.registry.tag.TagKey;
-import net.minecraft.state.property.Properties;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.random.Random;
-import net.minecraft.world.StructureWorldAccess;
-import net.minecraft.world.gen.densityfunction.DensityFunction;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderSet;
+import net.minecraft.core.RegistryCodecs;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.FluidTags;
+import net.minecraft.tags.TagKey;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.WorldGenLevel;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.levelgen.DensityFunction;
+import net.minecraft.world.level.material.Fluids;
 
 import java.util.*;
 import java.util.function.BiFunction;
@@ -38,8 +37,10 @@ public record ProcessingStep(
     List<Rule> rules
 ) {
 
-    public void process(StructureWorldAccess world, Random random, VariantContext context) {
-        if (rules.isEmpty()) return;
+    public void process(WorldGenLevel world, RandomSource random, VariantContext context) {
+        if (rules.isEmpty()) {
+            return;
+        }
         VariantContext localContext = context.withParameters(localParameters);
 
         Optional<BoundedFunction> maskBounds = mask.bounds();
@@ -53,17 +54,25 @@ public record ProcessingStep(
             minY = Math.max(minY, maskBounds.get().minY());
             maxY = Math.min(maxY, maskBounds.get().maxY());
         }
+        long volume = (long) (maxX - minX + 1) * (long) (maxY - minY + 1) * (long) (maxZ - minZ + 1);
 
+        long sampled = 0;
+        long maskedIn = 0;
+        long placedOrStopped = 0;
         for (int _z = 0; _z <= maxZ - minZ; _z++) {
             for (int _x = 0; _x <= maxX - minX; _x++) {
                 for (int _y = 0; _y <= maxY - minY; _y++) {
                     int x = xAscending ? minX + _x : maxX - _x;
                     int y = yAscending ? minY + _y : maxY - _y;
                     int z = zAscending ? minZ + _z : maxZ - _z;
-                    if (mask.sample(new DensityFunction.UnblendedNoisePos(x, y, z)) <= 0) continue;
+                    sampled++;
+                    if (sampled % 250000 == 0) {
+                    }
+                    if (mask.sample(new DensityFunction.SinglePointContext(x, y, z)) <= 0) continue;
+                    maskedIn++;
 
                     BlockPos pos = new BlockPos(x, y, z);
-                    DensityFunction.UnblendedNoisePos noisePos = new DensityFunction.UnblendedNoisePos(x,  y, z);
+                    DensityFunction.SinglePointContext noisePos = new DensityFunction.SinglePointContext(x,  y, z);
                     Map<String, BlockTemplate> copiedEntries = new HashMap<>();
 
                     BiFunction<String, Boolean, BlockTemplate> palette = (entry, strict) -> localContext.palette().get(entry, strict).map(
@@ -71,7 +80,10 @@ public record ProcessingStep(
                         resolved -> copiedEntries.computeIfAbsent(entry, entry2 -> copyBlock(world, resolved, noisePos))
                     );
                     for (Rule rule : rules) {
-                        if (rule.process(pos, world.getBlockState(pos), palette, world, random, localContext)) break;
+                        if (rule.process(pos, world.getBlockState(pos), palette, world, random, localContext)) {
+                            placedOrStopped++;
+                            break;
+                        }
                     }
                 }
             }
@@ -79,13 +91,13 @@ public record ProcessingStep(
     }
 
 
-    private static BlockTemplate copyBlock(StructureWorldAccess world, Palette.ResolvedCopiedEntry resolved, DensityFunction.UnblendedNoisePos noisePos) {
+    private static BlockTemplate copyBlock(WorldGenLevel world, Palette.ResolvedCopiedEntry resolved, DensityFunction.SinglePointContext noisePos) {
         int x = (int) (resolved.x().sample(noisePos));
         int y = (int) (resolved.y().sample(noisePos));
         int z = (int) (resolved.z().sample(noisePos));
         BlockState state = world.getBlockState(new BlockPos(x, y, z));
-        if (!resolved.canCopy().contains(state.getRegistryEntry())) return BlockTemplate.empty();
-        if (resolved.resetState()) state = state.getBlock().getDefaultState();
+        if (!resolved.canCopy().contains(state.typeHolder())) return BlockTemplate.empty();
+        if (resolved.resetState()) state = state.getBlock().defaultBlockState();
         return BlockTemplate.block(state);
     }
 
@@ -111,7 +123,7 @@ public record ProcessingStep(
         ).apply(instance, RandomizedProcessingStep::new));
 
         @Override
-        public ProcessingStep sample(Random random, VariantContext context) throws RandomProperty.NoRandomMatchException {
+        public ProcessingStep sample(RandomSource random, VariantContext context) throws RandomProperty.NoRandomMatchException {
             Map<String, Parameter.Sampler> localParameters = new HashMap<>();
             for (Map.Entry<String, RandomProperty<Parameter, VariantContext, VariantContext.Predicate>> entry : this.localParameters.entrySet()) {
                 localParameters.put(entry.getKey(), entry.getValue().sample(random, context).createSampler(context.getVisitor()));
@@ -119,16 +131,17 @@ public record ProcessingStep(
             VariantContext localContext = context.withParameters(localParameters);
 
             List<Rule> rules = new ArrayList<>();
+            int ruleIndex = 0;
             for (RandomProperty<Rule.RandomizedRule, VariantContext, VariantContext.Predicate> rule : this.rules) {
                 try {
                     rules.add(Rule.sampleAll(rule.sample(random, context), random, context));
                 } catch (RandomProperty.NoRandomMatchException ignored) {
-
                 }
+                ruleIndex++;
             }
 
             Either<String, Parameter> mask = this.mask.sample(random, localContext);
-            return new ProcessingStep(
+            ProcessingStep result = new ProcessingStep(
                 mask.map(
                     parRef -> localContext.userParameters().get(parRef),
                     par -> par.createSampler(localContext.getVisitor())
@@ -139,6 +152,7 @@ public record ProcessingStep(
                 zAscending.sample(random, context),
                 rules
             );
+            return result;
         }
     }
 
@@ -148,17 +162,17 @@ public record ProcessingStep(
         boolean autoWaterlog,
         boolean passThroughIfNotReplaced,
         boolean impossible,
-        Optional<RegistryEntryList<Block>> blockBelow,
-        Optional<RegistryEntryList<Block>> blockBeingReplaced,
-        Optional<RegistryEntryList<Block>> blockAbove,
-        Either<TagKey<Block>, RegistryEntryList<Block>> cantReplace,
+        Optional<HolderSet<Block>> blockBelow,
+        Optional<HolderSet<Block>> blockBeingReplaced,
+        Optional<HolderSet<Block>> blockAbove,
+        Either<TagKey<Block>, HolderSet<Block>> cantReplace,
         List<Parameter.Condition> densityConditions
     ) {
-        public static Rule sampleAll(RandomizedRule rule, Random random, VariantContext context) throws RandomProperty.NoRandomMatchException {
-            Optional<RegistryEntryList<Block>> blockBelow = Optional.empty();
-            Optional<RegistryEntryList<Block>> blockBeingReplaced = Optional.empty();
-            Optional<RegistryEntryList<Block>> blockAbove = Optional.empty();
-            Either<TagKey<Block>, RegistryEntryList<Block>> cantReplace;
+        public static Rule sampleAll(RandomizedRule rule, RandomSource random, VariantContext context) throws RandomProperty.NoRandomMatchException {
+            Optional<HolderSet<Block>> blockBelow = Optional.empty();
+            Optional<HolderSet<Block>> blockBeingReplaced = Optional.empty();
+            Optional<HolderSet<Block>> blockAbove = Optional.empty();
+            Either<TagKey<Block>, HolderSet<Block>> cantReplace;
             List<Parameter.Condition> conditions = new ArrayList<>();
 
             if (rule.blockBelow.isPresent()) blockBelow = Optional.of(rule.blockBelow.get().sample(random, context));
@@ -180,7 +194,7 @@ public record ProcessingStep(
                 template = rule.template.sample(random, context).referenceOrTemplate().map(context.palette()::get, t -> Either.left(t.copy()));
             } catch (RandomProperty.NoRandomMatchException ignored) {}
 
-            return new Rule(
+            Rule result = new Rule(
                 template,
                 rule.postProcessing,
                 rule.autoWaterlog,
@@ -192,22 +206,23 @@ public record ProcessingStep(
                 cantReplace,
                 conditions
             );
+            return result;
         }
 
-        public boolean process(BlockPos pos, BlockState currentBlockState, BiFunction<String, Boolean, BlockTemplate> palette, StructureWorldAccess world, Random random, VariantContext context) {
+        public boolean process(BlockPos pos, BlockState currentBlockState, BiFunction<String, Boolean, BlockTemplate> palette, WorldGenLevel world, RandomSource random, VariantContext context) {
             if (impossible) return false;
 
-            RegistryEntry<Block> currentBlock = currentBlockState.getRegistryEntry();
-            if (blockAbove.isPresent() && !blockAbove.get().contains(world.getBlockState(pos.add(0, 1, 0)).getRegistryEntry()))
+            Holder<Block> currentBlock = currentBlockState.typeHolder();
+            if (blockAbove.isPresent() && !blockAbove.get().contains(world.getBlockState(pos.above()).typeHolder()))
                 return false;
-            if (blockBelow.isPresent() && !blockBelow.get().contains(world.getBlockState(pos.add(0, -1, 0)).getRegistryEntry()))
+            if (blockBelow.isPresent() && !blockBelow.get().contains(world.getBlockState(pos.below()).typeHolder()))
                 return false;
             if (blockBeingReplaced.isPresent() && !blockBeingReplaced.get().contains(currentBlock))
                 return false;
-            if (cantReplace.map(currentBlock::isIn, list -> list.contains(currentBlock)))
+            if (cantReplace.map(currentBlock::is, list -> list.contains(currentBlock)))
                 return false;
 
-            DensityFunction.UnblendedNoisePos noisePos = new DensityFunction.UnblendedNoisePos(pos.getX(), pos.getY(), pos.getZ());
+            DensityFunction.SinglePointContext noisePos = new DensityFunction.SinglePointContext(pos.getX(), pos.getY(), pos.getZ());
 
             for (Parameter.Condition condition : densityConditions) {
                 if (!condition.test(noisePos)) return false;
@@ -218,13 +233,12 @@ public record ProcessingStep(
                 resolved -> copyBlock(world, resolved, noisePos).getBlockState(world, random, palette)
             );
             if (blockToPlace != null) {
-                if (autoWaterlog && currentBlockState.getFluidState().isIn(FluidTags.WATER) && blockToPlace.contains(Properties.WATERLOGGED)) {
-                    blockToPlace = blockToPlace.with(Properties.WATERLOGGED, true);
+                if (autoWaterlog && currentBlockState.getFluidState().is(FluidTags.WATER) && blockToPlace.hasProperty(BlockStateProperties.WATERLOGGED)) {
+                    blockToPlace = blockToPlace.setValue(BlockStateProperties.WATERLOGGED, true);
                 }
 
-                if (!postProcessing) LandmarksMod.DISABLE_POST_PROCESSING_ONCE = true;
-
-                world.setBlockState(pos, blockToPlace, 2);
+                int updateFlags = postProcessing ? Block.UPDATE_CLIENTS : Block.UPDATE_CLIENTS | Block.UPDATE_KNOWN_SHAPE;
+                world.setBlock(pos, blockToPlace, updateFlags);
                 return true;
             } else return !passThroughIfNotReplaced;
         }
@@ -235,10 +249,10 @@ public record ProcessingStep(
             boolean autoWaterlog,
             boolean passThroughIfNotReplaced,
             boolean impossible,
-            Optional<RandomProperty<RegistryEntryList<Block>, VariantContext, VariantContext.Predicate>> blockBelow,
-            Optional<RandomProperty<RegistryEntryList<Block>, VariantContext, VariantContext.Predicate>> blockBeingReplaced,
-            Optional<RandomProperty<RegistryEntryList<Block>, VariantContext, VariantContext.Predicate>> blockAbove,
-            Either<TagKey<Block>, RandomProperty<RegistryEntryList<Block>, VariantContext, VariantContext.Predicate>> cantReplace,
+            Optional<RandomProperty<HolderSet<Block>, VariantContext, VariantContext.Predicate>> blockBelow,
+            Optional<RandomProperty<HolderSet<Block>, VariantContext, VariantContext.Predicate>> blockBeingReplaced,
+            Optional<RandomProperty<HolderSet<Block>, VariantContext, VariantContext.Predicate>> blockAbove,
+            Either<TagKey<Block>, RandomProperty<HolderSet<Block>, VariantContext, VariantContext.Predicate>> cantReplace,
             RandomProperty<List<RandomProperty<String, VariantContext, VariantContext.Predicate>>, VariantContext, VariantContext.Predicate> densityConditions
         ) {
             public static final MapCodec<RandomizedRule> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
@@ -248,12 +262,12 @@ public record ProcessingStep(
                 Codec.BOOL.optionalFieldOf("auto_waterlog", false).forGetter(RandomizedRule::autoWaterlog),
                 Codec.BOOL.optionalFieldOf("pass_through_if_not_replaced", false).forGetter(RandomizedRule::passThroughIfNotReplaced),
                 Codec.BOOL.optionalFieldOf("impossible", false).forGetter(RandomizedRule::impossible),
-                VariantContext.strictWrappedRandomCodec(RegistryCodecs.entryList(RegistryKeys.BLOCK), "blocks").optionalFieldOf("block_below_is").forGetter(RandomizedRule::blockBelow),
-                VariantContext.strictWrappedRandomCodec(RegistryCodecs.entryList(RegistryKeys.BLOCK), "blocks").optionalFieldOf("block_is").forGetter(RandomizedRule::blockBeingReplaced),
-                VariantContext.strictWrappedRandomCodec(RegistryCodecs.entryList(RegistryKeys.BLOCK), "blocks").optionalFieldOf("block_above_is").forGetter(RandomizedRule::blockAbove),
+                VariantContext.strictWrappedRandomCodec(RegistryCodecs.homogeneousList(Registries.BLOCK), "blocks").optionalFieldOf("block_below_is").forGetter(RandomizedRule::blockBelow),
+                VariantContext.strictWrappedRandomCodec(RegistryCodecs.homogeneousList(Registries.BLOCK), "blocks").optionalFieldOf("block_is").forGetter(RandomizedRule::blockBeingReplaced),
+                VariantContext.strictWrappedRandomCodec(RegistryCodecs.homogeneousList(Registries.BLOCK), "blocks").optionalFieldOf("block_above_is").forGetter(RandomizedRule::blockAbove),
                 Codec.either(
-                    TagKey.codec(RegistryKeys.BLOCK),
-                    VariantContext.strictWrappedRandomCodec(RegistryCodecs.entryList(RegistryKeys.BLOCK), "blocks")
+                    TagKey.codec(Registries.BLOCK),
+                    VariantContext.strictWrappedRandomCodec(RegistryCodecs.homogeneousList(Registries.BLOCK), "blocks")
                 ).optionalFieldOf("cant_replace", Either.left(BlockTags.FEATURES_CANNOT_REPLACE)).forGetter(RandomizedRule::cantReplace),
                 VariantContext.strictWrappedRandomCodec(VariantContext.strictWrappedRandomCodec(Codec.STRING).listOf(), "conditions").optionalFieldOf(
                     "conditions", VariantContext.defaultRandomProperty(List.of())).forGetter(RandomizedRule::densityConditions)

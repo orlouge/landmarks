@@ -89,7 +89,7 @@
           "place": "%?on_bottom_dirt_water",
           "block_is": "minecraft:water",
           "auto_waterlog": true,
-          "block_below_is": "#minecraft:dirt",
+          "block_below_is": "#minecraft:substrate_overworld",
           "conditions": ["hole_probability>=hole_threshold"],
           "pass_through_if_not_replaced": true
         },
@@ -103,7 +103,7 @@
         {
           "place": "%?on_bottom_dirt",
           "block_is": "minecraft:air",
-          "block_below_is": "#minecraft:dirt",
+          "block_below_is": "#minecraft:substrate_overworld",
           "conditions": ["hole_probability>=hole_threshold"],
           "pass_through_if_not_replaced": true
         },
@@ -121,7 +121,7 @@
         {
           "place": "%?on_bank_dirt",
           "block_is": "#minecraft:air",
-          "block_below_is": "#minecraft:dirt",
+          "block_below_is": "#minecraft:substrate_overworld",
           "pass_through_if_not_replaced": true,
           "conditions": ["0<heightmap<0.55", "border_distance>0"]
         },

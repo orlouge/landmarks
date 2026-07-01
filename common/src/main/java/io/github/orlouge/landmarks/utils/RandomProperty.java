@@ -4,7 +4,7 @@ import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.util.math.random.Random;
+import net.minecraft.util.RandomSource;
 
 import java.util.List;
 import java.util.function.Function;
@@ -67,7 +67,7 @@ public record RandomProperty<T, C, S extends RandomProperty.ContextPredicate<C>>
         }
     }
 
-    public Sampler<T> sampler(Random random, C context, boolean forced) throws NoRandomMatchException {
+    public Sampler<T> sampler(RandomSource random, C context, boolean forced) throws NoRandomMatchException {
         WeightedRandomList<T> regularSampler = new WeightedRandomList<>(), fallbackSampler = new WeightedRandomList<>();
         for (WrappedEntry<T, ? extends ContextPredicate<C>> entry : entries) {
             if (entry.weight > 0 && entry.contextPredicate.test(context)) {
@@ -93,7 +93,7 @@ public record RandomProperty<T, C, S extends RandomProperty.ContextPredicate<C>>
     }
 
     @Override
-    public T sample(Random random, C context) throws NoRandomMatchException {
+    public T sample(RandomSource random, C context) throws NoRandomMatchException {
         return sampler(random, context, false).sample();
     }
 
@@ -248,7 +248,7 @@ public record RandomProperty<T, C, S extends RandomProperty.ContextPredicate<C>>
     }
 
     public interface SamplerCreator<T> {
-        Sampler<T> sampler(Random random);
+        Sampler<T> sampler(RandomSource random);
     }
 
     public interface Sampler<T> {

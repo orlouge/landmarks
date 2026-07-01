@@ -5,14 +5,14 @@ import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.command.argument.BlockArgumentParser;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.random.Random;
-import net.minecraft.world.StructureWorldAccess;
+import net.minecraft.commands.arguments.blocks.BlockStateParser;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.WorldGenLevel;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.*;
 import java.util.function.BiFunction;
@@ -20,8 +20,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public abstract class BlockTemplate {
-    public abstract BlockState getBlockState(StructureWorldAccess world, Random random, BiFunction<String, Boolean, BlockTemplate> palette);
-    public abstract void process(StructureWorldAccess world, Random random, BlockPos pos, Direction direction);
+    public abstract BlockState getBlockState(WorldGenLevel world, RandomSource random, BiFunction<String, Boolean, BlockTemplate> palette);
+    public abstract void process(WorldGenLevel world, RandomSource random, BlockPos pos, Direction direction);
     public abstract Collection<String> getReferencedPaletteEntries();
     public abstract BlockTemplate copy();
 
@@ -36,7 +36,7 @@ public abstract class BlockTemplate {
     }
 
     public static BlockTemplate block(Block block) {
-        return block(block.getDefaultState());
+        return block(block.defaultBlockState());
     }
 
     public static BlockTemplate parse(String blockArgument) {
@@ -137,12 +137,12 @@ public abstract class BlockTemplate {
         }
 
         @Override
-        public BlockState getBlockState(StructureWorldAccess world, Random random, BiFunction<String, Boolean, BlockTemplate> palette) {
+        public BlockState getBlockState(WorldGenLevel world, RandomSource random, BiFunction<String, Boolean, BlockTemplate> palette) {
             return state;
         }
 
         @Override
-        public void process(StructureWorldAccess world, Random random, BlockPos pos, Direction direction) {
+        public void process(WorldGenLevel world, RandomSource random, BlockPos pos, Direction direction) {
         }
 
         @Override
@@ -181,7 +181,7 @@ public abstract class BlockTemplate {
         }
 
         @Override
-        public BlockState getBlockState(StructureWorldAccess world, Random random, BiFunction<String, Boolean, BlockTemplate> palette) {
+        public BlockState getBlockState(WorldGenLevel world, RandomSource random, BiFunction<String, Boolean, BlockTemplate> palette) {
             if (!parseAttempt && state == null) {
                 parseAttempt = true;
                 try {
@@ -191,7 +191,7 @@ public abstract class BlockTemplate {
                         BlockTemplate template = palette.apply(blockString.substring(1), true);
                         state = template == null ? null : template.getBlockState(world, random, palette);
                     } else {
-                        BlockArgumentParser.BlockResult result = BlockArgumentParser.block(world.createCommandRegistryWrapper(RegistryKeys.BLOCK), blockString, false);
+                        BlockStateParser.BlockResult result = BlockStateParser.parseForBlock(world.registryAccess().lookupOrThrow(Registries.BLOCK), blockString, false);
                         state = result.blockState();
                     }
                 } catch (CommandSyntaxException e) {
@@ -202,7 +202,7 @@ public abstract class BlockTemplate {
         }
 
         @Override
-        public void process(StructureWorldAccess world, Random random, BlockPos pos, Direction direction) {
+        public void process(WorldGenLevel world, RandomSource random, BlockPos pos, Direction direction) {
         }
 
         @Override
@@ -237,7 +237,7 @@ public abstract class BlockTemplate {
         }
 
         @Override
-        public BlockState getBlockState(StructureWorldAccess world, Random random, BiFunction<String, Boolean, BlockTemplate> palette) {
+        public BlockState getBlockState(WorldGenLevel world, RandomSource random, BiFunction<String, Boolean, BlockTemplate> palette) {
             if (!parseAttempt && template == null) {
                 parseAttempt = true;
                 parse(palette);
@@ -288,7 +288,7 @@ public abstract class BlockTemplate {
         }
 
         @Override
-        public void process(StructureWorldAccess world, Random random, BlockPos pos, Direction direction) {
+        public void process(WorldGenLevel world, RandomSource random, BlockPos pos, Direction direction) {
         }
 
         @Override
@@ -328,14 +328,14 @@ public abstract class BlockTemplate {
         }
 
         @Override
-        public BlockState getBlockState(StructureWorldAccess world, Random random, BiFunction<String, Boolean, BlockTemplate> palette) {
+        public BlockState getBlockState(WorldGenLevel world, RandomSource random, BiFunction<String, Boolean, BlockTemplate> palette) {
             int maxChoice = this.choices.size() + emptyWeight;
             int choice = maxChoice > 0 ? random.nextInt(maxChoice) : 0;
             return choice < this.choices.size() ? this.choices.get(choice).getBlockState(world, random, palette) : null;
         }
 
         @Override
-        public void process(StructureWorldAccess world, Random random, BlockPos pos, Direction direction) {
+        public void process(WorldGenLevel world, RandomSource random, BlockPos pos, Direction direction) {
         }
 
         @Override
